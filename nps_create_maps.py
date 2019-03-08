@@ -72,7 +72,7 @@ historic_sites = ['National Historical Park', 'National Historic Site',
                   'International Historic Site', 'National Heritage Area',
                   'International Park', 'National Battlefield',
                   'National Battlefield Site', 'National Military Park',
-                  'National Battlefield Park']
+                  'National Battlefield Park', 'National Historic Landmark District']
 df.loc[df.designation.isin(historic_sites), ['color', 'icon']] = 'red', 'university'
 
 # National memorials
@@ -89,7 +89,8 @@ df.loc[df.designation.isin(parkways), ['color', 'icon']] = 'beige', 'road'
 
 # National heritage areas
 heritage_areas = ['National Heritage Partnership',  'Heritage Area',
-                 'National Heritage Corridor', 'Cultural Heritage Corridor']
+                 'National Heritage Corridor', 'Cultural Heritage Corridor',
+                 'Heritage Center']
 df.loc[df.designation.isin(heritage_areas), ['color', 'icon']] = 'red', 'univeristy'
 
 # Other affiliated sites

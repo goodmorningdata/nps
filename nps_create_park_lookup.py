@@ -2,8 +2,13 @@
 import urllib.request, urllib.parse
 import json
 import pandas as pd
+import os, sys
 
-apikey = 'itjuKSNUeQFjDlscdfr6H5es8FFlnVqQahBHaMSU'
+# Get the nps api key from the config file.
+# Store the key in the file, nps_config.py, in the home directory, so that code
+# can be pushed to GitHub with no security concerns.
+sys.path.append(os.path.expanduser('~'))
+from nps_config import *
 
 def retrieve_data(url):
     print('')
@@ -31,13 +36,15 @@ def get_api_data():
     domain_path = domain + path
 
     # Retrieve the total number of park sites.
-    url = domain_path + urllib.parse.urlencode({'limit': 1, 'api_key': apikey})
+    url = domain_path + urllib.parse.urlencode({'limit': 1,
+                                                'api_key': apikey})
     js = retrieve_data(url)
     total_sites = js['total']
     print('Total number of park sites: ', js['total'])
 
     # Retrieve all park sites using the total number as the limit.
-    url = domain_path + urllib.parse.urlencode({'limit': total_sites, 'api_key': apikey})
+    url = domain_path + urllib.parse.urlencode({'limit': total_sites,
+                                                'api_key': apikey})
     js = retrieve_data(url)
 
     # Create parks dataframe.
@@ -63,33 +70,35 @@ def get_api_data():
     # up park info on nps site.
     df.loc[df.park_code.isin(['frde', 'kowa', 'linc', 'lyba', 'this', 'thje',
                               'vive', 'wamo', 'wwii', 'arho', 'mlkm', 'afam']),
-           'designation'] = 'National Memorial'
+                              'designation'] = 'National Memorial'
 
     df.loc[df.park_code.isin(['alca']),
-           'designation'] = 'National Recreation Area'
+                              'designation'] = 'National Recreation Area'
 
-    df.loc[df.park_code.isin(['foth']), 'designation'] = 'National Historic Site'
+    df.loc[df.park_code.isin(['foth']),
+                              'designation'] = 'National Historic Site'
 
-    df.loc[df.park_code.isin(['cahi', 'cogo', 'cwdw', 'fodu', 'haha', 'keaq', 'nace',
-                              'nama', 'npnh', 'oxhi', 'paav', 'whho', 'prwi',
-                              'wotr']),
-           'designation'] = 'Park'
+    df.loc[df.park_code.isin(['cahi', 'cogo', 'cwdw', 'fodu', 'haha', 'keaq',
+                              'nace', 'nama', 'npnh', 'oxhi', 'paav', 'whho',
+                              'prwi', 'wotr']), 'designation'] = 'Park'
 
     df.loc[df.park_code.isin(['greg']),
-           'designation'] = 'Scenic & Recreational River'
+                              'designation'] = 'Scenic & Recreational River'
 
     df.loc[df.park_code.isin(['grsp']),
-           'designation'] = 'National Historic Landmark District'
+                              'designation'] =
+                              'National Historic Landmark District'
 
     df.loc[df.park_code.isin(['tule']), 'designation'] = 'National Monument'
     df.loc[df.park_code.isin(['inup']), 'designation'] = 'Heritage Center'
 
-    # Data Cleanup - Change designation, National Parks, to the singular.
+    # Data Cleanup - Change designation, "National Parks", to the singular.
     df.designation.replace(
         {'National Parks':'National Park'},
          regex=True, inplace=True)
 
-    return df[['park_code', 'park_name', 'designation', 'states', 'lat', 'long']]
+    return df[['park_code', 'park_name', 'designation',
+               'states', 'lat', 'long']]
 
 df = get_api_data()
 df.to_excel('park_lookup.xlsx', index=False)
