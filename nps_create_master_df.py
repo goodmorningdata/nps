@@ -60,7 +60,7 @@ def read_park_lookup():
     '''
 
     df = pd.read_excel('nps_park_lookup.xlsx', header=0)
-    df.set_index(df.park_code, inplace=True, drop=True)
+    #df.set_index(df.park_code, inplace=True, drop=True)
 
     return df
 
@@ -86,8 +86,8 @@ def strip_park_lookup(df):
       and park_code only.
     '''
 
-    df = df[['park_name', 'park_code']]
-    df['park_name'].replace({
+    stripped_df = df.copy()[['park_name', 'park_code']]
+    stripped_df.park_name.replace({
        'National Historical Park and Ecological Preserve':'',
        'National Park & Preserve':'', 'National Historic':'',
        'National Memorial':'', 'National Heritage':'',
@@ -104,7 +104,7 @@ def strip_park_lookup(df):
        'National Scenic':'', 'Site':'', 'Park':'', 'Area':''},
        regex=True, inplace=True)
 
-    return df
+    return stripped_df
 
 def read_acreage_data(df_parks_lookup):
     '''

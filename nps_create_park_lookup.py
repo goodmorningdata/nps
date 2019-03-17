@@ -30,8 +30,6 @@ import pandas as pd
 
 # Retrieve the nps api key from the config file, nps_config.py, stored.
 # in the root directory.
-# file, nps_config.py, in the root directory to avoid uploading it to
-# Github.
 sys.path.append(os.path.expanduser('~'))
 from nps_config import *
 
