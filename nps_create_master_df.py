@@ -169,7 +169,7 @@ def read_acreage_data(df_parks_lookup):
     # necessary because some parks have more than one row in the
     # acreage data file. For example: 'GLACIER BAY NP', and 'GLACIER
     # BAY N PRESERVE'.
-    df['gross_area_acres'] = pd.to_numeric(df_acre['gross_area_acres'],
+    df['gross_area_acres'] = pd.to_numeric(df['gross_area_acres'],
                                            errors='coerce')
     df = df.groupby(['park_code'], as_index=False).sum()
 
@@ -250,33 +250,13 @@ def read_visitor_data(df_parks_lookup):
     df['park_code'] = df.park_name.apply(
                          lambda x: lookup_park_code(x, df_parks_lookup))
 
-    # Group and sum visitor rows assigned the same park code.
-    print ('Checking group by by visitor data:')
-    print(df.shape[0])
-    print('** duplicates:')
-    print(df[df.duplicated(['park_code'], keep=False)])
-
+    # Group and sum visitor rows assigned the same park code. This is
+    # necessary because some parks report visitor data separately, but
+    # roll up to one park in the NPS master park list. For example:
+    # 'Sequoia NP', and 'Kings Canyon NP'
     df = df.groupby(['park_code'], as_index=False).sum()
-    print(df.shape[0])
 
     return df
-
-# def read_wikipedia_data():
-#     df = pd.read_excel('20181225_wikipedia_list_of_national_parks.xlsx',
-#                        header=0,
-#                        names=['Name', 'Location', 'State', 'Date Established',
-#                               'Area (2017)', 'Visitors (2017)', 'Description'])
-#     df.rename(columns = {'Name':'park_name',
-#                          'Location':'location',
-#                          'State':'state',
-#                          'Date Established':'date_established',
-#                          'Area (2017)':'area_2017'}, inplace=True)
-#     df['park_name'] = df.park_name.apply(lambda x: x.replace('*','').strip())
-#     df['park_code'] = df.park_name.apply(lambda x: lookup_park_code(x))
-#     df.drop(columns=['park_name'], inplace=True)
-#     df.set_index(df.park_code, inplace=True)
-#
-#     return df
 
 def main():
     pd.set_option('display.max_rows', 1000)
@@ -292,8 +272,6 @@ def main():
 
     df_master.designation.fillna('Other', inplace=True)
 
-    print('** duplicates:')
-    print(df_master[df_master.duplicated(['park_code'], keep=False)])
     df_master.to_excel('nps_df_parks_master.xlsx')
 
 if __name__ == '__main__':
