@@ -29,12 +29,14 @@ Dependencies:
 
 This script contains the following functions:
 
-    *
-
+    * read_park_lookup - read the park lookup table from file.
+    * strip_park_lookup - prep lookup table for park name matching.
+    * lookup_park_code - lookup park code with park name.
+    * read_acreage_data - read park acreage data from file.
+    * read_visitor_data - read park visitation data from file.
 '''
 
 import os.path
-#import requests
 import pandas as pd
 import numpy as np
 from difflib import SequenceMatcher
@@ -60,7 +62,6 @@ def read_park_lookup():
     '''
 
     df = pd.read_excel('nps_park_lookup.xlsx', header=0)
-    #df.set_index(df.park_code, inplace=True, drop=True)
 
     return df
 
@@ -105,6 +106,34 @@ def strip_park_lookup(df):
        regex=True, inplace=True)
 
     return stripped_df
+
+def lookup_park_code(lookup_park_name, lookup_df):
+    '''
+    Lookup the park code using park name.
+
+    This function finds the row matching the lookup_park_name parameter
+    in the lookup_df park dataframe using SequenceMatcher, and returns
+    the four-character park code of the closest match.
+
+    Parameters
+    ----------
+    lookup_park_name : str
+      Park name to look up.
+    lookup_df : Pandas dataframe
+      Lookup table dataframe.
+
+    Returns
+    -------
+    df : Pandas dataframe
+      Park acreage dataframe.
+    '''
+
+    df = lookup_df[['park_name', 'park_code']]
+    df['name_match'] = df['park_name'].apply(
+                       lambda x: SequenceMatcher(None, x.lower(),
+                       lookup_park_name.lower()).ratio())
+
+    return df.loc[df['name_match'].idxmax()].park_code
 
 def read_acreage_data(df_parks_lookup):
     '''
@@ -174,34 +203,6 @@ def read_acreage_data(df_parks_lookup):
     df = df.groupby(['park_code'], as_index=False).sum()
 
     return df
-
-def lookup_park_code(lookup_park_name, lookup_df):
-    '''
-    Lookup the park code using park name.
-
-    This function finds the row matching the lookup_park_name parameter
-    in the lookup_df park dataframe using SequenceMatcher, and returns
-    the four-character park code of the closest match.
-
-    Parameters
-    ----------
-    lookup_park_name : str
-      Park name to look up.
-    lookup_df : Pandas dataframe
-      Lookup table dataframe.
-
-    Returns
-    -------
-    df : Pandas dataframe
-      Park acreage dataframe.
-    '''
-
-    df = lookup_df[['park_name', 'park_code']]
-    df['name_match'] = df['park_name'].apply(
-                       lambda x: SequenceMatcher(None, x.lower(),
-                       lookup_park_name.lower()).ratio())
-
-    return df.loc[df['name_match'].idxmax()].park_code
 
 def read_visitor_data(df_parks_lookup):
     '''
