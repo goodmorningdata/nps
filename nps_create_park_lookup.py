@@ -1,8 +1,8 @@
-"""Create NPS Park Lookup Table
+'''Create NPS park lookup table
 
 This script allows the user to create an excel spreadsheet lookup table of all of the National Park Service sites. NPS Sites include National Parks, Monuments, Historic Sites, etc.
 
-The script creates an Excel file as output named "park_lookup.xlsx" with column headers. Columns include: park_code, park_name, designation, states, lat, and long.
+The script creates an Excel file as output named "nps_park_lookup.xlsx" with column headers. Columns include: park_code, park_name, designation, states, lat, and long.
 
 This script requires the following libraries: os, sys, urllib, json, and pandas.
 
@@ -11,7 +11,7 @@ This script contains the following functions:
     * get_api_data - retrives data from the NPS API.
     * create_parks_df - creates a pandas dataframe from the NPS data.
     * clean_parks_df - performs data cleanup tasks on the dataframe.
-"""
+'''
 
 import os
 import sys
@@ -168,7 +168,7 @@ def clean_parks_df(df):
 def main():
     parks_df = create_parks_df()
     cleaned_parks_df = clean_parks_df(parks_df)
-    cleaned_parks_df.to_excel('park_lookup.xlsx', index=False)
+    cleaned_parks_df.to_excel('nps_park_lookup.xlsx', index=False)
 
 if __name__ == '__main__':
     main()
