@@ -1,13 +1,14 @@
 import pandas as pd
 import folium
 
-def add_locations(map, df):
-#icon_color, icon_type):
+def add_locations(map, df, park_set):
+
+    if park_set == 'national parks':
+        df = df[df.designation.isin(national_parks)]
 
     # Plot each park site on the map
     for _, row in df.iterrows():
         marker = folium.Marker(location=[row.lat, row.long],
-                               #icon=folium.Icon(color='green'),
                                icon=folium.Icon(color=row.color,
                                                 prefix='fa',
                                                 icon=row.icon),
@@ -15,6 +16,10 @@ def add_locations(map, df):
                                                     parse_html=True))
 
         marker.add_to(park_map)
+
+    # Print the mapped park List
+    print(df[['park_code', 'park_name', 'designation', 'states']])
+    print('Count: ', df.shape[0])
 
     return map
 
@@ -128,11 +133,8 @@ park_map = folium.Map(location = center_lower_48,
 #              df[df.designation.isin(historic_sites) & ~df.lat.isnull()])
 
 add_locations(park_map,
-              df[~df.lat.isnull()])
-
-#, 'green', 'tree')
-#add_locations(park_map, nm_df, 'monument', 'orange')
-#add_locations(park_map, nhp_df, 'university', 'red')
+              df[~df.lat.isnull()],
+              'national parks')
 
 # Folium legend code from:
 # https://medium.com/@bobhaffner/creating-a-legend-for-a-folium-map-c1e0ffc34373
@@ -143,7 +145,7 @@ legend_html = '''
     background-color: white;
     ">&nbsp; Cool Legend <br>
     &nbsp; National Parks &nbsp; <i class="fa fa-tree fa-2x"
-    #             style="color:green"></i><br>
+    #             style="color:darkgreen"></i><br>
     </div>
     '''
 
