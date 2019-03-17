@@ -1,10 +1,19 @@
 '''Create NPS park lookup table
 
-This script allows the user to create an excel spreadsheet lookup table of all of the National Park Service sites. NPS Sites include National Parks, Monuments, Historic Sites, etc.
+This script allows the user to create an excel spreadsheet lookup table
+of all of the National Park Service sites. NPS Sites include National
+Parks, Monuments, Historic Sites, etc.
 
-The script creates an Excel file as output named "nps_park_lookup.xlsx" with column headers. Columns include: park_code, park_name, designation, states, lat, and long.
+The script creates an Excel file as output named "nps_park_lookup.xlsx"
+with column headers. Columns include: park_code, park_name, designation, states, lat, and long.
 
-This script requires the following libraries: os, sys, urllib, json, and pandas.
+This script requires the following libraries: os, sys, urllib, json,
+and pandas.
+
+Dependencies:
+    * Create file, nps_config.py file in the root directory to store
+      the user's NPS API key. File should contain the line:
+      "api_key = ", followed by the API key in quotations.
 
 This script contains the following functions:
 
@@ -19,7 +28,8 @@ import urllib.request, urllib.parse
 import json
 import pandas as pd
 
-# Retrieve the nps api key from the config file. API key stored in the
+# Retrieve the nps api key from the config file, nps_config.py, stored.
+# in the root directory.
 # file, nps_config.py, in the root directory to avoid uploading it to
 # Github.
 sys.path.append(os.path.expanduser('~'))

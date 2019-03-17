@@ -1,9 +1,9 @@
 '''Create master dataframe of National Park Service park data.
 
 This script allows the user to create an excel spreadsheet of all of the
-National Park Service sites to be used by reporting tools. NPS Sites
-include National Parks, Monuments, Historic Sites, etc. General park
-data, location, acreage, and visitation data are all included.
+National Park Service sites with relevant data to be used by reporting
+tools. NPS Sites include National Parks, Monuments, Historic Sites, etc.
+General park data, location, acreage, and visitation data are included.
 
 The script creates an Excel file as output named
 "nps_df_parks_master.xlsx" with column headers. Columns include:
@@ -13,21 +13,22 @@ and columns 2008-2017 of total park visitors.
 This script requires the following libraries: os, pandas, numpy, and
 difflib.
 
-Data sources:
+Dependencies:
 
-    * General Park Data - NPS Data API
-
+    * Run the script, nps_create_park_lookup.py, to create the file,
+      'nps_park_lookup.xls'
+    * Download the most recent acreage report from the nps website at:
+      https://www.nps.gov/subjects/lwcf/acreagereports.htm Place this
+      file in the acreage_data directory of this project.
+    * Download the most recent visitation report from the nps webiste
+      at: https://irma.nps.gov/Stats/SSRSReports/National%20Reports/
+      Annual%20Visitation%20By%20Park%20(1979%20-%20Last%20Calendar
+      %20Year Place this file in the visitation_data directory of this
+      project.
 
 This script contains the following functions:
 
     *
-
-Read data sources and create a master dataframe of NPS data for reporting.
-Export this dataframe to be used by reporting tools.
-
-List of sources:
-
-List of data elements:
 
 '''
 
@@ -38,15 +39,53 @@ import numpy as np
 from difflib import SequenceMatcher
 
 def read_park_lookup():
-    df = pd.read_excel('park_lookup.xlsx', header=0)
+    '''
+    Read the park lookup table.
+
+    This function reads the park lookup table from the Excel file,
+    'nps_park_lookup.xls' into a pandas dataframe and sets the index
+    to park_code. The park code is a 4 character code that uniquely
+    identifies a NPS site. Lookup table columns include: park_code,
+    park_name, designation, states, lat, long.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    df : Pandas dataframe
+      Park lookup dataframe.
+    '''
+
+    df = pd.read_excel('nps_park_lookup.xlsx', header=0)
     df.set_index(df.park_code, inplace=True, drop=True)
 
     return df
 
 def strip_park_lookup(df):
+    '''
+    Simplify the park name.
+
+    This function strips all designation text, such as 'National
+    Monument' from the park_name column of the dataframe to distill the
+    essence of the name. This allows for easier lookups by park name
+    when trying to lookup the park_code for park data from sources other
+    than the NPS API.
+
+    Parameters
+    ----------
+    df : Pandas dataframe
+      Park lookup dataframe.
+
+    Returns
+    -------
+    df : Pandas dataframe
+      Dataframe with stripped park name values and columns park_name,
+      and park_code only.
+    '''
+
     df = df[['park_name', 'park_code']]
-    # Strip out all desgnations and abbreviations to distill the essence of the
-    # park name to make lookups work correctly.
     df['park_name'].replace({
        'National Historical Park and Ecological Preserve':'',
        'National Park & Preserve':'', 'National Historic':'',
