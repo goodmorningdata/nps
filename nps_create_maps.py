@@ -24,97 +24,6 @@ This script contains the following functions:
 import pandas as pd
 import folium
 
-def add_park_subsets(df):
-    '''
-    Assign attributes to the different nps site subsets.
-
-    This function...
-
-    Parameters
-    ----------
-    df : Pandas dataframe
-
-    Returns
-    -------
-    df : Pandas dataframe
-    '''
-
-    national_parks = ['National Park', 'National Park & Preserve',
-                      'National and State Parks']
-    df.loc[df.designation.isin(national_parks),
-          'park_set'] = 'National Park'
-
-    monuments = ['National Monument', 'National Monument & Preserve',
-                 'Part of Statue of Liberty National Monument',
-                 'National Monument and Historic Shrine',
-                 'National Monument of America']
-    df.loc[df.designation.isin(monuments),
-          ['park_set']] = 'National Monument'
-
-    preserves_reserves = ['National Preserve', 'National Reserve']
-    df.loc[df.designation.isin(preserves_reserves),
-          ['park_set']] = 'National Preserve or Reserve'
-
-    lakeshores_seashores = ['National Lakeshore', 'National Seashore']
-    df.loc[df.designation.isin(lakeshores_seashores),
-          ['park_set']] = 'National Lakeshore or Seashore'
-
-    rivers = ['National River & Recreation Area', 'National Scenic River',
-              'National River', 'Scenic & Recreational River', 'Wild River',
-              'National River and Recreation Area', 'National Scenic Riverway',
-              'National Recreational River', 'Wild & Scenic River',
-              'National Scenic Riverways', 'National Wild and Scenic River']
-    df.loc[df.designation.isin(rivers),
-          ['park_set']] = 'National River'
-
-    trails = ['National Scenic Trail', 'National Geologic Trail',
-              'National Historic Trail']
-    df.loc[df.designation.isin(trails),
-          ['park_set']] = 'National Trail'
-
-    historic_sites = ['National Historical Park', 'National Historic Site',
-                      'National Historic Area', 'National Historical Reserve',
-                      'Part of Colonial National Historical Park',
-                      'National Historical Park and Preserve',
-                      'National Historical Park and Ecological Preserve',
-                      'National Historic District',
-                      'Ecological & Historic Preserve',
-                      'International Historic Site',
-                      'International Park', 'National Battlefield',
-                      'National Battlefield Site', 'National Military Park',
-                      'National Battlefield Park',
-                      'National Historic Landmark District']
-    df.loc[df.designation.isin(historic_sites),
-          ['park_set']] = 'National Historic Site'
-
-    memorials = ['National Memorial', 'Memorial']
-    df.loc[df.designation.isin(memorials),
-          ['park_set']] = 'National Memorial'
-
-    recreation_areas = ['National Recreation Area']
-    df.loc[df.designation.isin(recreation_areas),
-          ['park_set']] = 'National Recreation Area'
-
-    parkways = ['Parkway', 'Memorial Parkway']
-    df.loc[df.designation.isin(parkways),
-          ['park_set']] = 'National Parkway'
-
-    heritage_areas = ['National Heritage Partnership',  'Heritage Area',
-                      'National Heritage Corridor', 'Heritage Center',
-                      'Cultural Heritage Corridor', 'National Heritage Area']
-    df.loc[df.designation.isin(heritage_areas),
-          ['park_set']] = 'National Heritage Area'
-
-    affiliated_areas = ['Affiliated Area']
-    df.loc[df.designation.isin(affiliated_areas),
-          ['park_set']] = 'Affiliated Area'
-
-    others = ['Park', 'Other']
-    df.loc[df.designation.isin(others),
-          ['park_set']] = 'Other'
-
-    return df
-
 def create_map():
     center_lower_48 = [39.833333, -98.583333]
     map = folium.Map(location = center_lower_48,
@@ -134,7 +43,7 @@ def main():
     # Create subsets of park designations.
     df = add_park_subsets(df)
 
-    # Assign icons and colors to subsets
+    # Assign map icons and colors to subsets
     icon_df = pd.DataFrame(
               {'park_set' : ['National Park', 'National Monument',
                              'National Preserve or Reserve',

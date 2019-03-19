@@ -259,6 +259,103 @@ def read_visitor_data(df_parks_lookup):
 
     return df
 
+def add_park_sets(df):
+    '''
+    Assign park set to each NPS site.
+
+    This function assigns a park set to each NPS park site based on
+    designation. This is done to allow for reporting and mapping based
+    on park set. Park sets include National Monuments, National
+    Historic Sites, etc. A number of designations may roll up into one
+    park set.
+
+    Parameters
+    ----------
+    df : Pandas dataframe
+      Master dataframe of all NPS park sites.
+
+    Returns
+    -------
+    df : Pandas dataframe
+      Master dataframe with park_set column added.
+    '''
+
+    national_parks = ['National Park', 'National Park & Preserve',
+                      'National and State Parks']
+    df.loc[df.designation.isin(national_parks),
+          'park_set'] = 'National Park'
+
+    monuments = ['National Monument', 'National Monument & Preserve',
+                 'Part of Statue of Liberty National Monument',
+                 'National Monument and Historic Shrine',
+                 'National Monument of America']
+    df.loc[df.designation.isin(monuments),
+          ['park_set']] = 'National Monument'
+
+    preserves_reserves = ['National Preserve', 'National Reserve']
+    df.loc[df.designation.isin(preserves_reserves),
+          ['park_set']] = 'National Preserve or Reserve'
+
+    lakeshores_seashores = ['National Lakeshore', 'National Seashore']
+    df.loc[df.designation.isin(lakeshores_seashores),
+          ['park_set']] = 'National Lakeshore or Seashore'
+
+    rivers = ['National River & Recreation Area', 'National Scenic River',
+              'National River', 'Scenic & Recreational River', 'Wild River',
+              'National River and Recreation Area', 'National Scenic Riverway',
+              'National Recreational River', 'Wild & Scenic River',
+              'National Scenic Riverways', 'National Wild and Scenic River']
+    df.loc[df.designation.isin(rivers),
+          ['park_set']] = 'National River'
+
+    trails = ['National Scenic Trail', 'National Geologic Trail',
+              'National Historic Trail']
+    df.loc[df.designation.isin(trails),
+          ['park_set']] = 'National Trail'
+
+    historic_sites = ['National Historical Park', 'National Historic Site',
+                      'National Historic Area', 'National Historical Reserve',
+                      'Part of Colonial National Historical Park',
+                      'National Historical Park and Preserve',
+                      'National Historical Park and Ecological Preserve',
+                      'National Historic District',
+                      'Ecological & Historic Preserve',
+                      'International Historic Site',
+                      'International Park', 'National Battlefield',
+                      'National Battlefield Site', 'National Military Park',
+                      'National Battlefield Park',
+                      'National Historic Landmark District']
+    df.loc[df.designation.isin(historic_sites),
+          ['park_set']] = 'National Historic Site'
+
+    memorials = ['National Memorial', 'Memorial']
+    df.loc[df.designation.isin(memorials),
+          ['park_set']] = 'National Memorial'
+
+    recreation_areas = ['National Recreation Area']
+    df.loc[df.designation.isin(recreation_areas),
+          ['park_set']] = 'National Recreation Area'
+
+    parkways = ['Parkway', 'Memorial Parkway']
+    df.loc[df.designation.isin(parkways),
+          ['park_set']] = 'National Parkway'
+
+    heritage_areas = ['National Heritage Partnership',  'Heritage Area',
+                      'National Heritage Corridor', 'Heritage Center',
+                      'Cultural Heritage Corridor', 'National Heritage Area']
+    df.loc[df.designation.isin(heritage_areas),
+          ['park_set']] = 'National Heritage Area'
+
+    affiliated_areas = ['Affiliated Area']
+    df.loc[df.designation.isin(affiliated_areas),
+          ['park_set']] = 'Affiliated Area'
+
+    others = ['Park', 'Other']
+    df.loc[df.designation.isin(others),
+          ['park_set']] = 'Other'
+
+    return df
+
 def main():
     pd.set_option('display.max_rows', 1000)
 
@@ -272,6 +369,7 @@ def main():
     df_master = pd.merge(df_master, df_visitor, how='left', on='park_code')
 
     df_master.designation.fillna('Other', inplace=True)
+    df_master = add_park_subsets(df_master)
 
     df_master.to_excel('nps_df_parks_master.xlsx')
 
