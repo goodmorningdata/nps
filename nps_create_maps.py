@@ -33,15 +33,21 @@ def create_map():
                      tiles = 'Stamen Terrain')
     return map
 
-def add_map_location(map,):
+def add_map_location(map, name, lat, long, icon, color):
+    popup_string = '<a href="https://www.nps.gov"target"_blank">Test</a>'
+    marker = folium.Marker(location=[lat, long],
+                           icon=folium.Icon(color=color,
+                                            prefix='fa',                        icon=icon),
+                           #popup = folium.Popup(name,
+                            #    parse_html=True))
+                           popup = folium.Popup(popup_string)
+    marker.add_to(map)
+
     return map
 
 def main():
     # Read in the park master dataframe.
-    df = pd.read_excel('df_master.xlsx', header=0)
-
-    # Create subsets of park designations.
-    df = add_park_subsets(df)
+    df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
     # Assign map icons and colors to subsets
     icon_df = pd.DataFrame(
@@ -62,28 +68,21 @@ def main():
               }
     )
 
-    # Craete folium map centered on lower 48 center point.
-    park_map = create_folium_map()
+    park_map = create_map()
+    #map_park_set = 'National Park'
+    map_park_set = 'National Monument'
+    #map_park_set = ''
 
-    if ~(park_set == 'all'):
-        map_df = df[df.designation.isin(park_set)]
-    else:
-        map_df = df
+    if map_park_set:
+        map_df = df[df.park_set == map_park_set]
+    else: map_df = df
 
-    # Plot each park site on the map
-    for _, row in map_df.iterrows():
-        marker = folium.Marker(location=[row.lat, row.long],
-                               icon=folium.Icon(color='green',
-                                                prefix='fa',
-                                                icon='tree'),
-                               popup = folium.Popup(row.park_name,
-                                                    parse_html=True))
-
-        marker.add_to(map)
-
-    add_locations(park_map,
-                  df[~df.lat.isnull()],
-                  ['National Park'])
+    for _, row in map_df[~map_df.lat.isnull()].iterrows():
+        icon_df_row = icon_df[icon_df.park_set == row.park_set]
+        park_map = add_map_location(park_map, row.park_name,
+                                    row.lat, row.long,
+                                    icon_df_row.values[0][2],
+                                    icon_df_row.values[0][1])
 
     park_map.save('nps_parks_map.html')
 
