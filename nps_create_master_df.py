@@ -34,6 +34,7 @@ This script contains the following functions:
     * lookup_park_code - lookup park code with park name.
     * read_acreage_data - read park acreage data from file.
     * read_visitor_data - read park visitation data from file.
+    * add_park_sets - add a parent designation, park set, to dataframe.
 '''
 
 import os.path
@@ -264,8 +265,8 @@ def add_park_sets(df):
     Assign park set to each NPS site.
 
     This function assigns a park set to each NPS park site based on
-    designation. This is done to allow for reporting and mapping based
-    on park set. Park sets include National Monuments, National
+    it's designation. This is done to allow for reporting and mapping
+    based on park set. Park sets include National Monuments, National
     Historic Sites, etc. A number of designations may roll up into one
     park set.
 
@@ -279,6 +280,8 @@ def add_park_sets(df):
     df : Pandas dataframe
       Master dataframe with park_set column added.
     '''
+
+    df['park_set'] = 'Other'
 
     national_parks = ['National Park', 'National Park & Preserve',
                       'National and State Parks']
@@ -369,9 +372,9 @@ def main():
     df_master = pd.merge(df_master, df_visitor, how='left', on='park_code')
 
     df_master.designation.fillna('Other', inplace=True)
-    df_master = add_park_subsets(df_master)
+    df_master = add_park_sets(df_master)
 
-    df_master.to_excel('nps_df_parks_master.xlsx')
+    df_master.to_excel('nps_parks_master_df.xlsx')
 
 if __name__ == '__main__':
     main()
