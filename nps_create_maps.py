@@ -1,6 +1,7 @@
 '''Create Folium map of National Park Service sites.
 
-This script allows the user to...
+This script allows the user to create a map of the United States with a
+set of park site locations marked by icons.
 
 The script creates an html file as output named
 "nps_parks_map.html".
@@ -9,13 +10,13 @@ This script requires the following libraries: pandas, folium.
 
 Dependencies:
 
-    *
+    * Run the script, nps_create_master_df.py to create the file,
+      nps_parks_master_df.xlsx.
 
 This script contains the following functions:
 
-    * create_map :
-    * add_map_location :
-
+    * create_map : creates a Folium map.
+    * add_map_location : adds NPS site locations to the map.
 '''
 
 import pandas as pd
