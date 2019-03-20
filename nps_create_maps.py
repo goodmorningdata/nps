@@ -1,14 +1,9 @@
-'''Create master dataframe of National Park Service park data.
+'''Create Folium map of National Park Service sites.
 
-This script allows the user to create an excel spreadsheet of all of the
-National Park Service sites with relevant data to be used by reporting
-tools. NPS Sites include National Parks, Monuments, Historic Sites, etc.
-General park data, location, acreage, and visitation data are included.
+This script allows the user to...
 
-The script creates an Excel file as output named
-"nps_df_parks_master.xlsx" with column headers. Columns include:
-park_code, park_name, designation, states, lat, long, gross_area_acres,
-and columns 2008-2017 of total park visitors.
+The script creates an html file as output named
+"nps_parks_map.html".
 
 This script requires the following libraries: pandas, folium.
 
@@ -33,14 +28,13 @@ def create_map():
                      tiles = 'Stamen Terrain')
     return map
 
-def add_map_location(map, name, lat, long, icon, color):
-    popup_string = '<a href="https://www.nps.gov"target"_blank">Test</a>'
-    marker = folium.Marker(location=[lat, long],
-                           icon=folium.Icon(color=color,
+def add_map_location(map, popup, lat, long, icon, color):
+    popup_html = folium.Html(popup, script=True)
+        marker = folium.Marker(location = [lat, long],
+                           icon = folium.Icon(color=color,
                                             prefix='fa',                        icon=icon),
-                           #popup = folium.Popup(name,
-                            #    parse_html=True))
-                           popup = folium.Popup(popup_string)
+                           popup = folium.Popup(popup_html)
+                           )
     marker.add_to(map)
 
     return map
@@ -69,8 +63,10 @@ def main():
     )
 
     park_map = create_map()
-    #map_park_set = 'National Park'
-    map_park_set = 'National Monument'
+
+    # TODO - Allow user to specify park_set as a command line argument.
+    map_park_set = 'National Park'
+    #map_park_set = 'National Monument'
     #map_park_set = ''
 
     if map_park_set:
@@ -79,7 +75,11 @@ def main():
 
     for _, row in map_df[~map_df.lat.isnull()].iterrows():
         icon_df_row = icon_df[icon_df.park_set == row.park_set]
-        park_map = add_map_location(park_map, row.park_name,
+        popup_string = ('<a href="'
+                        + 'https://www.nps.gov/' + row.park_code
+                        + '" target="_blank">'
+                        + row.park_name + '</a>').replace("'", r"\'")
+        park_map = add_map_location(park_map, popup_string,
                                     row.lat, row.long,
                                     icon_df_row.values[0][2],
                                     icon_df_row.values[0][1])
