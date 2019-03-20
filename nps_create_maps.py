@@ -81,7 +81,8 @@ def add_map_location(map, lat, long, icon, color, popup):
     popup_html = folium.Html(popup, script=True)
     marker = folium.Marker(location = [lat, long],
                            icon = folium.Icon(color=color,
-                                            prefix='fa',                        icon=icon),
+                                              prefix='fa',
+                                              icon=icon),
                            popup = folium.Popup(popup_html)
                            ).add_to(map)
 
@@ -101,12 +102,12 @@ def main():
                              'National Recreation Area', 'National Parkway',
                              'National Heritage Area', 'Affiliated Area',
                              'Other'],
-                'color' : ['darkgreen', 'darkblue', 'beige', 'lightblue',
-                           'lightblue', 'beige', 'red', 'blue', 'beige',
+                'color' : ['green', 'lightgreen', 'beige', 'lightblue',
+                           'lightblue', 'beige', 'red', 'red', 'beige',
                            'beige', 'red', 'orange', 'orange'],
-                'icon' : ['tree', 'monument', 'pagelines', 'water', 'water',
-                          'sign', 'university', 'monument', 'pagelines',
-                          'road', 'univeristy', 'map-marker-alt', 'orange']
+                'icon' : ['tree', 'tree', 'pagelines', 'tint', 'tint',
+                          'pagelines', 'university', 'university', 'pagelines',
+                          'road', 'univeristy', 'map-marker', 'map-marker']
               }
     )
 
@@ -114,8 +115,7 @@ def main():
 
     # TODO - Allow user to specify park_set as a command line argument.
     map_park_set = 'National Park'
-    #map_park_set = 'National Monument'
-    #map_park_set = ''
+    map_park_set = ''
 
     if map_park_set:
         map_df = df[df.park_set == map_park_set]
