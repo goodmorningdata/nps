@@ -1,0 +1,6 @@
+# Don't track content of the directories containing input files.
+acreage_data/
+visitation_data/
+
+# Don't track map.html files.
+nps_parks_map.html
