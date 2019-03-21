@@ -6,7 +6,7 @@ set of park site locations marked by icons.
 The script creates an html file as output named
 "nps_parks_map.html".
 
-This script requires the following libraries: pandas, folium.
+This script requires the following libraries: argparse, pandas, folium.
 
 Dependencies:
 
@@ -19,6 +19,7 @@ This script contains the following functions:
     * add_map_location : adds NPS site locations to the map.
 '''
 
+import argparse
 import pandas as pd
 import folium
 
@@ -104,21 +105,32 @@ def main():
                              'Other'],
                 'color' : ['green', 'lightgreen', 'beige', 'lightblue',
                            'lightblue', 'beige', 'red', 'red', 'beige',
-                           'beige', 'red', 'orange', 'orange'],
+                           'beige', 'red',  'orange', 'orange'],
                 'icon' : ['tree', 'tree', 'pagelines', 'tint', 'tint',
                           'pagelines', 'university', 'university', 'pagelines',
-                          'road', 'univeristy', 'map-marker', 'map-marker']
+                          'road', 'university', 'map-marker', 'map-marker']
               }
     )
 
     park_map = create_map()
 
-    # TODO - Allow user to specify park_set as a command line argument.
-    map_park_set = 'National Park'
-    map_park_set = ''
+    # The user can specify the set of parks to map using the command
+    # line parameter, parkset. If no parameter specified, all park sites
+    # should be added as locations to the map.
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--parkset', type=str,
+           help="Set of parks for which to display locations. If not \
+                 specified, all park sites will be mapped.\
+                 Possible values are: 'National Park', 'National Monument', \
+                   'National Preserve or Reserve', 'National Lakeshore or \
+                    Seashore', 'National River', 'National Trail', 'National \
+                    Historic Site', 'National Memorial', 'National Recreation \
+                    Area', 'National Parkway', 'National Heritage Area', \
+                   'Affiliated Area', 'Other'")
+    args = parser.parse_args()
 
-    if map_park_set:
-        map_df = df[df.park_set == map_park_set]
+    if args.parkset:
+        map_df = df[df.park_set == args.parkset]
     else: map_df = df
 
     # Add each location in the park set dataframe to the map.
