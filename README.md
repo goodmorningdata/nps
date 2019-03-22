@@ -4,7 +4,7 @@ NPS is a project built in Python to report on and analyze data concerning the Na
 
 ## Description
 
-In an attempt to better understand the National Park System, this project is being developed to find all available data and consolidate it for the creation of useful maps and tables.
+In an attempt to better understand the National Park System, this project is being developed to find all available NPS data and consolidate it for the creation of useful maps and tables.
 
 Read more about project progress on the blog, [Good Morning Data](goodmorningdata.com).
 

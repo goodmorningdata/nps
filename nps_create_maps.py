@@ -44,7 +44,6 @@ def create_map():
     map = folium.Map(location = center_lower_48,
                      zoom_start = 4,
                      control_scale = True,
-                     #tiles = 'Stamen Toner')
                      tiles = 'Stamen Terrain')
     return map
 
