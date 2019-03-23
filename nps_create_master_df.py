@@ -8,7 +8,7 @@ General park data, location, acreage, and visitation data are included.
 The script creates an Excel file as output named
 "nps_df_parks_master.xlsx" with column headers. Columns include:
 park_code, park_name, designation, states, lat, long, gross_area_acres,
-and columns 2008-2017 of total park visitors.
+gross_area_square_mile, and columns 2008-2017 of total park visitors.
 
 This script requires the following libraries: os, pandas, numpy, and
 difflib.
@@ -195,13 +195,17 @@ def read_acreage_data(df_parks_lookup):
 
     df = df[['park_code', 'gross_area_acres']]
 
-    # Convert gross acres to numeric and total for each park. This is
+    # Convert gross acres to numeric and sum for each park. This is
     # necessary because some parks have more than one row in the
     # acreage data file. For example: 'GLACIER BAY NP', and 'GLACIER
     # BAY N PRESERVE'.
     df['gross_area_acres'] = pd.to_numeric(df['gross_area_acres'],
                                            errors='coerce')
     df = df.groupby(['park_code'], as_index=False).sum()
+
+    # Add square miles and square meters columns for reporting.
+    df['gross_area_square_miles'] = df.gross_area_acres * 0.0015625
+    df['gross_area_square_meters'] = df.gross_area_acres * 4046.86
 
     return df
 

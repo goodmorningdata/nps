@@ -1,12 +1,13 @@
 '''Create Folium map of National Park Service sites.
 
 This script allows the user to create a map of the United States with a
-set of park site locations marked by icons.
+  set of park site locations marked by icons.
 
 The script creates an html file as output named
-"nps_parks_map.html".
+  "nps_parks_map.html".
 
-This script requires the following libraries: argparse, pandas, folium.
+This script requires the following libraries: math, argparse, pandas,
+  folium.
 
 Dependencies:
 
@@ -19,6 +20,7 @@ This script contains the following functions:
     * add_map_location : adds NPS site locations to the map.
 '''
 
+import math
 import argparse
 import pandas as pd
 import folium
@@ -111,40 +113,58 @@ def main():
               }
     )
 
-    park_map = create_map()
-
     # The user can specify the set of parks to map using the command
     # line parameter, parkset. If no parameter specified, all park sites
     # should be added as locations to the map.
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--parkset', type=str,
-           help="Set of parks for which to display locations. If not \
-                 specified, all park sites will be mapped.\
-                 Possible values are: 'National Park', 'National Monument', \
-                   'National Preserve or Reserve', 'National Lakeshore or \
-                    Seashore', 'National River', 'National Trail', 'National \
-                    Historic Site', 'National Memorial', 'National Recreation \
-                    Area', 'National Parkway', 'National Heritage Area', \
-                   'Affiliated Area', 'Other'")
+           help = "Set of parks for which to display locations. If not \
+                  specified, all park sites will be mapped.\
+                  Possible values are: 'National Park', 'National Monument', \
+                    'National Preserve or Reserve', 'National Lakeshore or \
+                     Seashore', 'National River', 'National Trail', 'National \
+                     Historic Site', 'National Memorial', 'National Recreation \
+                     Area', 'National Parkway', 'National Heritage Area', \
+                    'Affiliated Area', 'Other'")
+    parser.add_argument('-m', '--maptype', type=str,
+           help = "Type of map to produce.\
+                   Possible values are: 'loc', 'location' = Park Location map \
+                                        'area', 'acreage' = Park area map \
+                                        'visitor','visits' = Park visitation \ map")
     args = parser.parse_args()
 
     if args.parkset:
         map_df = df[df.park_set == args.parkset]
     else: map_df = df
 
-    # Add each location in the park set dataframe to the map.
-    for _, row in map_df[~map_df.lat.isnull()].iterrows():
-        icon_df_row = icon_df[icon_df.park_set == row.park_set]
-        popup_string = ('<a href="'
-                        + 'https://www.nps.gov/' + row.park_code
-                        + '" target="_blank">'
-                        + row.park_name + '</a>').replace("'", r"\'")
-        park_map = add_map_location(park_map, row.lat, row.long,
-                                    icon_df_row.values[0][2],
-                                    icon_df_row.values[0][1],
-                                    popup_string)
+    park_map = create_map()
 
-    park_map.save('nps_parks_map.html')
+    if args.maptype.isin(['area','acreage']):
+        # If command-line option specifies a park area map, add each
+        # park to the map with a circle approximating its size.
+        for _, row in map_df[~map_df.lat.isnull()].iterrows():
+            folium.Circle(
+                radius=math.sqrt(row.gross_area_square_meters/math.pi),
+                location=[row.lat, row.long],
+                popup=row.park_name,
+                color='crimson',
+                fill=False,
+            ).add_to(park_map)
+    else:
+        # If command-line option not specified or is type = 'location'
+        # or 'loc', add each location in the park set df to the map.
+        for _, row in map_df[~map_df.lat.isnull()].iterrows():
+            icon_df_row = icon_df[icon_df.park_set == row.park_set]
+            popup_string = ('<a href="'
+                            + 'https://www.nps.gov/' + row.park_code
+                            + '" target="_blank">'
+                            + row.park_name + '</a>').replace("'", r"\'")
+            park_map = add_map_location(park_map, row.lat, row.long,
+                                        icon_df_row.values[0][2],
+                                        icon_df_row.values[0][1],
+                                        popup_string)
+
+        park_map.save('nps_parks_map_location.html')
 
 if __name__ == '__main__':
     main()
