@@ -4,3 +4,6 @@ visitation_data/
 
 # Don't track map.html files.
 nps_parks_map.html
+
+# Don't track this stuff either.
+.DS_Store
