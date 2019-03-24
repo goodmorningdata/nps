@@ -144,9 +144,8 @@ def main():
         #folium.Popup(row.park_name.replace("'", r"\'"))
         for _, row in map_df[~map_df.lat.isnull()].iterrows():
             tooltip = (row.park_name.replace("'", r"\'")
-                       + ', {:,.0f}'.format(row.gross_area_acres)
-                       + ' acres')
-            print(tooltip)
+                       + ', {:,.0f}'.format(row.gross_area_square_miles)
+                       + ' square miles')
             folium.Circle(
                 radius=math.sqrt(row.gross_area_square_meters/math.pi),
                 location=[row.lat, row.long],
@@ -156,6 +155,7 @@ def main():
                 fill_color='crimson'
             ).add_to(park_map)
         park_map.save('nps_parks_map_area.html')
+        map_df[['park_code', 'park_name', 'gross_area_acres', 'gross_area_square_miles']].sort_values(by=['gross_area_acres']).to_excel('nps_parks_sorted_by_size.xlsx', index=False)
     else:
         # If command-line option not specified or is type = 'location'
         # or 'loc', add each location in the park set df to the map.
