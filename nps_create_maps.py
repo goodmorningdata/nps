@@ -127,10 +127,9 @@ def main():
                      Area', 'National Parkway', 'National Heritage Area', \
                     'Affiliated Area', 'Other'")
     parser.add_argument('-m', '--maptype', type=str,
-           help = "Type of map to produce.\
-                   Possible values are: 'loc', 'location' = Park Location map \
-                                        'area', 'acreage' = Park area map \
-                                        'visitor','visits' = Park visitation \ map")
+           help = "Type of map to produce. Possible values are: 'loc' or \
+                  location' = park Location map; 'area' or 'acreage' = park \
+                  area map; 'visitor' or 'visits' = park visitation map.")
     args = parser.parse_args()
 
     if args.parkset:
@@ -139,17 +138,24 @@ def main():
 
     park_map = create_map()
 
-    if args.maptype.isin(['area','acreage']):
+    if args.maptype and args.maptype in ['area','acreage']:
         # If command-line option specifies a park area map, add each
         # park to the map with a circle approximating its size.
+        #folium.Popup(row.park_name.replace("'", r"\'"))
         for _, row in map_df[~map_df.lat.isnull()].iterrows():
+            tooltip = (row.park_name.replace("'", r"\'")
+                       + ', {:,.0f}'.format(row.gross_area_acres)
+                       + ' acres')
+            print(tooltip)
             folium.Circle(
                 radius=math.sqrt(row.gross_area_square_meters/math.pi),
                 location=[row.lat, row.long],
-                popup=row.park_name,
+                tooltip=tooltip,
                 color='crimson',
-                fill=False,
+                fill=True,
+                fill_color='crimson'
             ).add_to(park_map)
+        park_map.save('nps_parks_map_area.html')
     else:
         # If command-line option not specified or is type = 'location'
         # or 'loc', add each location in the park set df to the map.
