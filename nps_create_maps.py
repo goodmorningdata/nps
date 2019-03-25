@@ -83,7 +83,7 @@ def add_park_locations_to_map(map, df):
                                prefix='fa',
                                icon=icon_df_row.values[0][2]),
         marker = folium.Marker(location = [rwo.lat, row.long],
-                               icon = map_icon
+                               icon = map_icon,
                                popup = folium.Popup(popup_html)
                               ).add_to(map)
 
