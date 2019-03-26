@@ -2,15 +2,11 @@
 acreage_data/
 visitation_data/
 
-# Don't track map.html files.
-nps_parks_map.html
-nps_parks_map_area.html
-nps_parks_map_location.html
+# Don't track html files.
+*.html
 
 # Don't track .xlsx output files.
-nps_park_lookup.xlsx
-nps_parks_master_df.xlsx
-nps_parks_sorted_by_size.xlsx
+*.xlsx
 
 # Don't track this stuff either.
 .DS_Store

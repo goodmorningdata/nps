@@ -50,7 +50,7 @@ def create_map():
 
     center_lower_48 = [39.833333, -98.583333]
     map = folium.Map(location = center_lower_48,
-                     zoom_start = 4,
+                     zoom_start = 3,
                      control_scale = True,
                      tiles = 'Stamen Terrain')
     return map
@@ -203,6 +203,11 @@ def main():
                          .sort_values(by=['gross_area_acres'], ascending=False)
                          .reset_index(drop=True))
         map_df_export.index += 1
+        export_cols = {'park_code': 'Park Code',
+                       'park_name': 'Park Name',
+                       'gross_area_acres': 'Park Size (acres)',
+                       'gross_area_square_miles': 'Park Size (square miles)'}
+        map_df_export = map_df_export.rename(columns=export_cols)
         map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
         map_df_export.to_html('nps_parks_sorted_by_size.html',
                               justify='left',
