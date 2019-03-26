@@ -4,7 +4,12 @@ This script allows the user to create a map of the United States with a
   set of park site locations marked by icons.
 
 The script creates an html file as output named
-  "nps_parks_map.html".
+  "nps_parks_map_location.html", if location map type is chosen, or
+  "nps_parks_map_area.htl", if nps_parks_map_area.html if area map type
+  is chosen. Additionaly, if area map type is chosen, a table of park
+  names and size sorted by size is exported to an Excel file,
+  nps_parks_sorted_by_size.xlsx, and to an html file,
+  nps_parks_sorted_by_size.html.
 
 This script requires the following libraries: math, argparse, pandas,
   folium.
@@ -17,7 +22,9 @@ Dependencies:
 This script contains the following functions:
 
     * create_map : creates a Folium map.
-    * add_map_location : adds NPS site locations to the map.
+    * add_park_locations_to_map : Adds park location markers to map.
+    * add_park_area_circles_to_map : Adds circle markers corresponding
+      to park area to map.
 '''
 
 import math
@@ -26,8 +33,7 @@ import pandas as pd
 import folium
 
 def create_map():
-    '''
-    Creates a Folium map.
+    ''' Create an empty Folium map.
 
     This function creates a Folium map object, centered on the lat/long
     center of the lower 48 states.
@@ -50,7 +56,26 @@ def create_map():
     return map
 
 def add_park_locations_to_map(map, df):
-    # Assign map icons and colors to park sets.
+    ''' Add park location markers to a map.
+
+    This function adds all locations in the This function creates a Folium map object, centered on the lat/long
+    center of the lower 48 states.
+
+    Parameters
+    ----------
+    map : Folium map object
+      Folium map to add location markers to.
+
+    df : Pandas DataFrame
+      DataFrame of all park locations to add to the map.
+
+    Returns
+    -------
+    map : Folium map object
+      Folium map with location markers added.
+    '''
+
+    # Create a dataframe of park sets with assigned icons and colors.
     icon_df = pd.DataFrame(
               {'park_set' : ['National Park', 'National Monument',
                              'National Preserve or Reserve',
@@ -68,7 +93,7 @@ def add_park_locations_to_map(map, df):
                           'road', 'university', 'map-marker', 'map-marker']
               })
 
-    for _, row in map_df[~map_df.lat.isnull()].iterrows():
+    for _, row in df[~df.lat.isnull()].iterrows():
 
         # Create popup with link to park website.
         popup_string = ('<a href="'
@@ -81,8 +106,9 @@ def add_park_locations_to_map(map, df):
         icon_df_row = icon_df[icon_df.park_set == row.park_set]
         map_icon = folium.Icon(color=icon_df_row.values[0][1],
                                prefix='fa',
-                               icon=icon_df_row.values[0][2]),
-        marker = folium.Marker(location = [rwo.lat, row.long],
+                               icon=icon_df_row.values[0][2])
+
+        marker = folium.Marker(location = [row.lat, row.long],
                                icon = map_icon,
                                popup = folium.Popup(popup_html)
                               ).add_to(map)
@@ -90,8 +116,33 @@ def add_park_locations_to_map(map, df):
     return map
 
 def add_park_area_circles_to_map(map, df):
-            # If command-line option specifies a park area map, add each
-            # park to the map with a circle approximating its size.
+    ''' Add park area circle markers to a map.
+
+    This function This function adds a circle marker for each park in
+    the parameter dataframe to the map. The circle size corresponds to
+    the area of the park. The Folium circle marker accepts a radius
+    parameter in meters. This radius parameter value was determined by
+    taking the area of the park in square meters, dividing it by pi and
+    then taking the square root.
+
+    These markers provide the park name and park area in square miles
+    as a tooltip. A tooltip instead of a popup is used for this map
+    because the popup was less sensitive for the circle markers.
+
+    Parameters
+    ----------
+    map : Folium map object
+      Folium map to add circle markers to.
+
+    df : Pandas DataFrame
+      DataFrame of all park areas to add to the map.
+
+    Returns
+    -------
+    map : Folium map object
+      Folium map with circle area markers added.
+    '''
+
     for _, row in df[~df.lat.isnull()].iterrows():
         tooltip = (row.park_name.replace("'", r"\'")
                    + ', {:,.0f}'.format(row.gross_area_square_miles)
@@ -107,48 +158,14 @@ def add_park_area_circles_to_map(map, df):
 
     return map
 
-# def add_map_location(map, lat, long, icon, color, popup):
-#     '''
-#     Adds locations to the Folium map object.
-#
-#     This function adds park locations to the Folium map at the latitude
-#     and longitude specified in the parameters. Locations will be
-#     marked with an icon (using Font Awesome icons:
-#     https://fontawesome.com/icons?d=gallery&m=free), and an icon color.
-#     The icon will show a popup message on click with clickable link.
-#
-#     Parameters
-#     ----------
-#     map : Folium map object
-#       Map on which to plot the location.
-#     lat : float
-#       Latitude of location to plot.
-#     long : float
-#       Longitude of location to plot.
-#     icon : str
-#       Font Awesome icon to mark location.
-#     color : str
-#       Icon color.
-#     popup : str
-#       String of html to add link to popup.
-#
-#     Returns
-#     -------
-#     map : Folium map object
-#       Map object with new location added.
-#     '''
-#
-#
-#     return map
-
 def main():
-    # Read in the park master dataframe.
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
-    # The user can specify the set of parks to map using the command
-    # line parameter, parkset. If no parameter specified, all park sites
-    # should be added as locations to the map.
     parser = argparse.ArgumentParser()
+
+    # The user can specify the set of parks to map using the command
+    # line parameter, 'parkset'. If no parameter specified, all park
+    # sites are added to the map.
     parser.add_argument('-p', '--parkset', type=str,
            help = "Set of parks for which to display locations. If not \
                   specified, all park sites will be mapped.\
@@ -158,18 +175,22 @@ def main():
                      Historic Site', 'National Memorial', 'National Recreation \
                      Area', 'National Parkway', 'National Heritage Area', \
                     'Affiliated Area', 'Other'")
+
+    # The user can specify the type of plot to produce using the
+    # command line parameter, 'maptype'. If no parameter specified,
+    # a location map is created.
     parser.add_argument('-m', '--maptype', type=str,
            help = "Type of map to produce. Possible values are: 'loc' or \
                   location' = park Location map; 'area' or 'acreage' = park \
                   area map; 'visitor' or 'visits' = park visitation map.")
     args = parser.parse_args()
 
+    # Create an empty map
+    park_map = create_map()
+
     if args.parkset:
         map_df = df[df.park_set == args.parkset]
     else: map_df = df
-
-    # Create an empty map
-    park_map = create_map()
 
     if args.maptype and args.maptype in ['area','acreage']:
         park_map = add_park_area_circles_to_map(park_map, map_df)
@@ -188,8 +209,6 @@ def main():
                               float_format=lambda x: '{:,.2f}'.format(x))
 
     else:
-        # If command-line option not specified or is type = 'location'
-        # or 'loc', add each location in the park set df to the map.
         park_map = add_park_locations_to_map(park_map, map_df)
         park_map.save('nps_parks_map_location.html')
 
