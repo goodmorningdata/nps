@@ -198,15 +198,14 @@ def main():
 
         # Export a sorted list of parks and their size to both an Excel
         # file and an html file for reference.
-        map_df_export = (map_df[['park_code', 'park_name',
+        map_df_export = (map_df[['park_name',
                                  'gross_area_acres', 'gross_area_square_miles']]
                          .sort_values(by=['gross_area_acres'], ascending=False)
                          .reset_index(drop=True))
         map_df_export.index += 1
-        export_cols = {'park_code': 'Park Code',
-                       'park_name': 'Park Name',
-                       'gross_area_acres': 'Park Size (acres)',
-                       'gross_area_square_miles': 'Park Size (square miles)'}
+        export_cols = {'park_name': 'Park Name',
+                       'gross_area_acres': 'Size (acres)',
+                       'gross_area_square_miles': 'Size (square miles)'}
         map_df_export = map_df_export.rename(columns=export_cols)
         map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
         map_df_export.to_html('nps_parks_sorted_by_size.html',
