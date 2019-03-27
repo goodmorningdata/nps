@@ -16,8 +16,11 @@ Read more about project progress on the blog, [Good Morning Data](goodmorningdat
 3. Run the script, nps_create_master_df.py to create the master parks dataframe which also includes visitation data and acreage data.
 
 ### Maps
-1. Run the script, nps_create_maps.py to generate a clickable map of all sites in the National Parks system.
-2. That previous map is a bit ugly with all those location markers, so specify the set of park sites you would like to see by running the script with the --parkset (-p) option: nps_create_maps.py -p 'National Park'. Use the -h command line argument to see all available park sets.
+The script, nps_create_maps.py, will generate location or size maps for all park sites or for a subset depending on the command line parameters.
+* Running the script with no command line parameters will generate a location map for all park sites.
+* Use 'nps_create_maps.py -h' to see all the possible values for command line parameters.
+* Use the --parkset (-p) command line parameter to create a map for a specific park set. Ex. -p 'National Parks' will generate a map for National Park sites only.
+* Use the --maptype (-m) command line parameter to generate either a location map, area map, or visitation map. Ex. -m 'area' will genearate an area map.
 
 ## Support
 Contact [goodmorningdata@gmail.com](mailto:goodmorningdata@gmail.com)
