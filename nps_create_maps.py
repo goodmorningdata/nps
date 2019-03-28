@@ -118,12 +118,12 @@ def add_park_locations_to_map(map, df):
 def add_park_area_circles_to_map(map, df):
     ''' Add park area circle markers to a map.
 
-    This function This function adds a circle marker for each park in
-    the parameter dataframe to the map. The circle size corresponds to
-    the area of the park. The Folium circle marker accepts a radius
-    parameter in meters. This radius parameter value was determined by
-    taking the area of the park in square meters, dividing it by pi and
-    then taking the square root.
+    This function adds a circle marker for each park in the parameter
+    dataframe to the map. The circle size corresponds to the area of
+    the park. The Folium circle marker accepts a radius parameter in
+    meters. This radius parameter value was determined by taking the
+    area of the park in square meters, dividing it by pi and then taking
+    the square root.
 
     These markers provide the park name and park area in square miles
     as a tooltip. A tooltip instead of a popup is used for this map
@@ -135,7 +135,7 @@ def add_park_area_circles_to_map(map, df):
       Folium map to add circle markers to.
 
     df : Pandas DataFrame
-      DataFrame of all park areas to add to the map.
+      DataFrame of all park visitors to add to the map.
 
     Returns
     -------
@@ -154,6 +154,44 @@ def add_park_area_circles_to_map(map, df):
             color='crimson',
             fill=True,
             fill_color='crimson'
+        ).add_to(map)
+
+    return map
+
+def add_park_visitor_circles_to_map(map, df):
+    ''' Add park visitor circle markers to a map.
+
+    This function adds a circle marker for each park in the parameter
+    dataframe to the map. The circle size corresponds to the number of
+    visitors to the park.
+
+    These markers provide the park name and number of vistors and the latest year that visitor counts are available for as a tooltip. A tooltip instead of a popup is used for this map because the popup was less sensitive for the circle markers.
+
+    Parameters
+    ----------
+    map : Folium map object
+      Folium map to add circle markers to.
+
+    df : Pandas DataFrame
+      DataFrame of all park areas to add to the map.
+
+    Returns
+    -------
+    map : Folium map object
+      Folium map with circle area markers added.
+    '''
+
+    for _, row in df[~df.lat.isnull()].iterrows():
+        tooltip = (row.park_name.replace("'", r"\'")
+                   + ', {:,.0f}'.format(row['2017'])
+                   + ' visitors in 2017')
+        folium.Circle(
+            radius=row['2017']/100,
+            location=[row.lat, row.long],
+            tooltip=tooltip,
+            color='blue',
+            fill=True,
+            fill_color='blue'
         ).add_to(map)
 
     return map
@@ -192,7 +230,7 @@ def main():
         map_df = df[df.park_set == args.parkset]
     else: map_df = df
 
-    if args.maptype and args.maptype in ['area','acreage']:
+    if args.maptype and args.maptype in ['area', 'acreage']:
         park_map = add_park_area_circles_to_map(park_map, map_df)
         park_map.save('nps_parks_map_area.html')
 
@@ -210,11 +248,34 @@ def main():
         map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
         map_df_export.to_html('nps_parks_sorted_by_size.html',
                               justify='left',
+                              bold_rows=True,
                               float_format=lambda x: '{:,.2f}'.format(x))
+
+    elif args.maptype and args.maptype in ['visitor', 'visits']:
+        park_map = add_park_visitor_circles_to_map(park_map, map_df)
+        park_map.save('nps_parks_map_visitors.html')
 
     else:
         park_map = add_park_locations_to_map(park_map, map_df)
         park_map.save('nps_parks_map_location.html')
+
+        # Export a sorted list of parks and their total visitors to both
+        # an Excel file and an html file for reference.
+        map_df_export = (map_df[['park_name',
+                                 'gross_area_acres', 'gross_area_square_miles']]
+                         .sort_values(by=['gross_area_acres'], ascending=False)
+                         .reset_index(drop=True))
+        map_df_export.index += 1
+        export_cols = {'park_name': 'Park Name',
+                       'gross_area_acres': 'Size (acres)',
+                       'gross_area_square_miles': 'Size (square miles)'}
+        map_df_export = map_df_export.rename(columns=export_cols)
+        map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
+        map_df_export.to_html('nps_parks_sorted_by_size.html',
+                              justify='left',
+                              bold_rows=True,
+                              classes='table table-blog',
+                              float_format=lambda x: '{:,.2f}'.format(x))
 
 if __name__ == '__main__':
     main()

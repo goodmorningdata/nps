@@ -239,6 +239,7 @@ def read_visitor_data(df_parks_lookup):
          header=8)
     df = df[['Park Name', 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]]
     df.rename(columns = {'Park Name':'park_name'}, inplace=True)
+    df.columns = df.columns.astype(str)
 
     # Remove parks not available through the NPS API park list.
     missing_list = ['Ross Lake NRA', 'Fort Caroline NMEM', 'Lake Chelan NRA',
