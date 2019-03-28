@@ -156,6 +156,24 @@ def add_park_area_circles_to_map(map, df):
             fill_color='crimson'
         ).add_to(map)
 
+    # Export a sorted list of parks and their size to both an Excel
+    # file and an html file for reference.
+    map_df_export = (map_df[['park_name',
+                             'gross_area_acres',
+                             'gross_area_square_miles']]
+                             .sort_values(by=['gross_area_acres'],
+                             ascending=False)
+                             .reset_index(drop=True))
+    map_df_export.index += 1
+    export_cols = {'park_name': 'Park Name',
+                   'gross_area_acres': 'Size (acres)',
+                   'gross_area_square_miles': 'Size (square miles)'}
+    map_df_export = map_df_export.rename(columns=export_cols)
+    map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
+    map_df_export.to_html('nps_parks_sorted_by_size.html',
+                          justify='left',
+                          float_format=lambda x: '{:,.2f}'.format(x))
+
     return map
 
 def add_park_visitor_circles_to_map(map, df):
@@ -178,7 +196,7 @@ def add_park_visitor_circles_to_map(map, df):
     Returns
     -------
     map : Folium map object
-      Folium map with circle area markers added.
+      Folium map with circle visitor markers added.
     '''
 
     for _, row in df[~df.lat.isnull()].iterrows():
@@ -193,6 +211,22 @@ def add_park_visitor_circles_to_map(map, df):
             fill=True,
             fill_color='blue'
         ).add_to(map)
+
+    # Export a sorted list of parks and their total visitors to both
+    # an Excel file and an html file for reference.
+    map_df_export = (map_df[['park_name',
+                             '2017']]
+                             .sort_values(by=['2017'], ascending=False)
+                             .reset_index(drop=True))
+    map_df_export.index += 1
+    export_cols = {'park_name': 'Park Name',
+                   '2017': 'Visitors in 2017'}
+    map_df_export = map_df_export.rename(columns=export_cols)
+    map_df_export.to_excel('nps_parks_sorted_by_visitors.xlsx', index=False)
+    map_df_export.to_html('nps_parks_sorted_by_visitors.html',
+                          justify='left',
+                          classes='table table-blog',
+                          float_format=lambda x: '{:,.2f}'.format(x))
 
     return map
 
@@ -234,48 +268,14 @@ def main():
         park_map = add_park_area_circles_to_map(park_map, map_df)
         park_map.save('nps_parks_map_area.html')
 
-        # Export a sorted list of parks and their size to both an Excel
-        # file and an html file for reference.
-        map_df_export = (map_df[['park_name',
-                                 'gross_area_acres', 'gross_area_square_miles']]
-                         .sort_values(by=['gross_area_acres'], ascending=False)
-                         .reset_index(drop=True))
-        map_df_export.index += 1
-        export_cols = {'park_name': 'Park Name',
-                       'gross_area_acres': 'Size (acres)',
-                       'gross_area_square_miles': 'Size (square miles)'}
-        map_df_export = map_df_export.rename(columns=export_cols)
-        map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
-        map_df_export.to_html('nps_parks_sorted_by_size.html',
-                              justify='left',
-                              bold_rows=True,
-                              float_format=lambda x: '{:,.2f}'.format(x))
-
     elif args.maptype and args.maptype in ['visitor', 'visits']:
         park_map = add_park_visitor_circles_to_map(park_map, map_df)
         park_map.save('nps_parks_map_visitors.html')
 
+    # If no maptype specfified, create a location map.
     else:
         park_map = add_park_locations_to_map(park_map, map_df)
         park_map.save('nps_parks_map_location.html')
-
-        # Export a sorted list of parks and their total visitors to both
-        # an Excel file and an html file for reference.
-        map_df_export = (map_df[['park_name',
-                                 'gross_area_acres', 'gross_area_square_miles']]
-                         .sort_values(by=['gross_area_acres'], ascending=False)
-                         .reset_index(drop=True))
-        map_df_export.index += 1
-        export_cols = {'park_name': 'Park Name',
-                       'gross_area_acres': 'Size (acres)',
-                       'gross_area_square_miles': 'Size (square miles)'}
-        map_df_export = map_df_export.rename(columns=export_cols)
-        map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
-        map_df_export.to_html('nps_parks_sorted_by_size.html',
-                              justify='left',
-                              bold_rows=True,
-                              classes='table table-blog',
-                              float_format=lambda x: '{:,.2f}'.format(x))
 
 if __name__ == '__main__':
     main()
