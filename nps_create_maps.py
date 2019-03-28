@@ -156,14 +156,12 @@ def add_park_area_circles_to_map(map, df):
             fill_color='crimson'
         ).add_to(map)
 
-    # Export a sorted list of parks and their size to both an Excel
-    # file and an html file for reference.
-    map_df_export = (map_df[['park_name',
-                             'gross_area_acres',
-                             'gross_area_square_miles']]
-                             .sort_values(by=['gross_area_acres'],
-                             ascending=False)
-                             .reset_index(drop=True))
+    # Export a sorted list of parks and their size to both an Excel file
+    # and an html file for reference.
+    map_df_export = (df[['park_name', 'gross_area_acres',
+                         'gross_area_square_miles']]
+                     .sort_values(by=['gross_area_acres'], ascending=False)
+                     .reset_index(drop=True))
     map_df_export.index += 1
     export_cols = {'park_name': 'Park Name',
                    'gross_area_acres': 'Size (acres)',
@@ -212,17 +210,16 @@ def add_park_visitor_circles_to_map(map, df):
             fill_color='blue'
         ).add_to(map)
 
-    # Export a sorted list of parks and their total visitors to both
-    # an Excel file and an html file for reference.
-    map_df_export = (map_df[['park_name',
-                             '2017']]
-                             .sort_values(by=['2017'], ascending=False)
-                             .reset_index(drop=True))
+    # Export a sorted list of parks and their total visitors to both an
+    # Excel file and an html file for reference.
+    map_df_export = (df[['park_name', '2017']]
+                     .sort_values(by=['2017'], ascending=False)
+                     .reset_index(drop=True))
     map_df_export.index += 1
     export_cols = {'park_name': 'Park Name',
                    '2017': 'Visitors in 2017'}
     map_df_export = map_df_export.rename(columns=export_cols)
-    map_df_export.to_excel('nps_parks_sorted_by_visitors.xlsx', index=False)
+    map_df_export.to_excel('nps_parks_sorted_by_visitors.xlsx', index=True  )
     map_df_export.to_html('nps_parks_sorted_by_visitors.html',
                           justify='left',
                           classes='table table-blog',
