@@ -45,7 +45,7 @@ def create_map():
     Returns
     -------
     map : Folium map object
-      Folium map ready for park location addition.
+      Empty Folium map.
     '''
 
     center_lower_48 = [39.833333, -98.583333]
@@ -53,6 +53,29 @@ def create_map():
                      zoom_start = 3,
                      control_scale = True,
                      tiles = 'Stamen Terrain')
+
+    return map
+
+def create_chloropleth_map():
+    ''' Create an empty Folium map.
+
+    This function creates a Folium map object, centered on the lat/long
+    center of the lower 48 states.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    map : Folium map object
+      Empty Folium map.
+    '''
+
+    center_lower_48 = [39.833333, -98.583333]
+    map = folium.Map(location = center_lower_48,
+                     zoom_start = 4)
+
     return map
 
 def add_park_locations_to_map(map, df):
@@ -227,6 +250,31 @@ def add_park_visitor_circles_to_map(map, df):
 
     return map
 
+def add_chloropleth_color_to_map(map, df):
+    ''' Add cholorpleth color to map based on number of parks per state
+
+    This function...
+
+    Parameters
+    ----------
+    map : Folium map object
+      Folium map to add chloropleth color to.
+
+    df : Pandas DataFrame
+      DataFrame of all parks to add to the map.
+
+    Returns
+    -------
+    map : Folium map object
+      Folium map with chloropleth color added.
+    '''
+
+    print (df['states'])
+    state_list = df['states'].values
+    print(state_list)
+
+    return map
+
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
@@ -254,23 +302,27 @@ def main():
                   area map; 'visitor' or 'visits' = park visitation map.")
     args = parser.parse_args()
 
-    # Create an empty map
-    park_map = create_map()
-
     if args.parkset:
         map_df = df[df.park_set == args.parkset]
     else: map_df = df
 
     if args.maptype and args.maptype in ['area', 'acreage']:
+        park_map = create_map()
         park_map = add_park_area_circles_to_map(park_map, map_df)
         park_map.save('nps_parks_map_area.html')
 
     elif args.maptype and args.maptype in ['visitor', 'visits']:
+        park_map = create_map()
         park_map = add_park_visitor_circles_to_map(park_map, map_df)
         park_map.save('nps_parks_map_visitors.html')
 
+    elif args.maptype and args.maptype in ['state count', 'state']:
+        park_map = create_chloropleth_map()
+        park_map = add_chloropleth_color_to_map(park_map, map_df)
+
     # If no maptype specfified, create a location map.
     else:
+        park_map = create_map()
         park_map = add_park_locations_to_map(park_map, map_df)
         park_map.save('nps_parks_map_location.html')
 
