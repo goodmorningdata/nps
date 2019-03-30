@@ -8,7 +8,7 @@ General park data, location, acreage, and visitation data are included.
 The script creates an Excel file as output named
 "nps_df_parks_master.xlsx" with column headers. Columns include:
 park_code, park_name, designation, states, lat, long, gross_area_acres,
-gross_area_square_mile, and columns 2008-2017 of total park visitors.
+gross_area_square_mile, and columns 2009-2018 of total park visitors.
 
 This script requires the following libraries: os, pandas, numpy, and
 difflib.
@@ -22,10 +22,10 @@ Dependencies:
       Year Reports, Year = 2018. Place this file in the acreage_data
       directory of this project.
     * Download the most recent visitation report from the nps webiste
-      at: https://irma.nps.gov/Stats/SSRSReports/National%20Reports/
-      Annual%20Visitation%20By%20Park%20(1979%20-%20Last%20Calendar
-      %20Year Place this file in the visitation_data directory of this
-      project.
+      at: https://irma.nps.gov/Stats/Reports/National. Choose the
+      'Annual Visitation By Park (1979 - Last Calendar Year)' Place this
+      file in the visitation_data directory of this project, and name
+      it, 'annual_visitation_by_park_2008_2018.xlsx'
 
 This script contains the following functions:
 
@@ -235,9 +235,9 @@ def read_visitor_data(df_parks_lookup):
     '''
 
     df = pd.read_excel(
-         'visitation_data/annual_visitation_by_park_2008_2017.xlsx',
+         'visitation_data/annual_visitation_by_park_2009_2018.xlsx',
          header=8)
-    df = df[['Park Name', 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]]
+    df = df[['Park Name', 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]]
     df.rename(columns = {'Park Name':'park_name'}, inplace=True)
     df.columns = df.columns.astype(str)
 
