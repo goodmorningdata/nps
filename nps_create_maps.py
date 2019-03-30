@@ -309,21 +309,29 @@ def main():
     else: map_df = df
 
     if args.maptype and args.maptype in ['area', 'acreage', 'size']:
+        print("Creating park size map for the park set, '"
+              + args.parkset + "'.")
         park_map = create_map()
         park_map = add_park_area_circles_to_map(park_map, map_df)
         park_map.save('nps_parks_map_area.html')
 
     elif args.maptype and args.maptype in ['visitor', 'visits']:
+        print("Creating park visitation map for the park set, '"
+              + args.parkset + "'.")
         park_map = create_map()
         park_map = add_park_visitor_circles_to_map(park_map, map_df)
         park_map.save('nps_parks_map_visitors.html')
 
     elif args.maptype and args.maptype in ['state count', 'state']:
+        print("Creating parks per state map for the park set, '"
+              + args.parkset + "'.")
         park_map = create_chloropleth_map()
         park_map = add_chloropleth_color_to_map(park_map, map_df)
 
     # If no maptype specfified, create a location map.
     else:
+        print("Creating park location map for the park set, '"
+              + args.parkset + "'.")
         park_map = create_map()
         park_map = add_park_locations_to_map(park_map, map_df)
         park_map.save('nps_parks_map_location.html')
