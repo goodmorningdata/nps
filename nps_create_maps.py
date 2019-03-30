@@ -193,6 +193,7 @@ def add_park_area_circles_to_map(map, df):
     map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
     map_df_export.to_html('nps_parks_sorted_by_size.html',
                           justify='left',
+                          classes='table-park-list',
                           float_format=lambda x: '{:,.2f}'.format(x))
 
     return map
@@ -245,7 +246,7 @@ def add_park_visitor_circles_to_map(map, df):
     map_df_export.to_excel('nps_parks_sorted_by_visitors.xlsx', index=True  )
     map_df_export.to_html('nps_parks_sorted_by_visitors.html',
                           justify='left',
-                          classes='table table-blog',
+                          classes='table-park-list',
                           float_format=lambda x: '{:,.2f}'.format(x))
 
     return map
@@ -298,15 +299,16 @@ def main():
     # a location map is created.
     parser.add_argument('-m', '--maptype', type=str,
            help = "Type of map to produce. Possible values are: 'loc' or \
-                  location' = park Location map; 'area' or 'acreage' = park \
-                  area map; 'visitor' or 'visits' = park visitation map.")
+                  location' = park Location map; 'area', 'acreage', or 'size'\
+                   = park area map; 'visitor' or 'visits' = park visitation \
+                  map.")
     args = parser.parse_args()
 
     if args.parkset:
         map_df = df[df.park_set == args.parkset]
     else: map_df = df
 
-    if args.maptype and args.maptype in ['area', 'acreage']:
+    if args.maptype and args.maptype in ['area', 'acreage', 'size']:
         park_map = create_map()
         park_map = add_park_area_circles_to_map(park_map, map_df)
         park_map.save('nps_parks_map_area.html')
