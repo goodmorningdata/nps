@@ -253,31 +253,6 @@ def add_park_visitor_circles_to_map(map, df):
 
     return map
 
-def add_chloropleth_color_to_map(map, df):
-    ''' Add cholorpleth color to map based on number of parks per state
-
-    This function...
-
-    Parameters
-    ----------
-    map : Folium map object
-      Folium map to add chloropleth color to.
-
-    df : Pandas DataFrame
-      DataFrame of all parks to add to the map.
-
-    Returns
-    -------
-    map : Folium map object
-      Folium map with chloropleth color added.
-    '''
-
-    print (df['states'])
-    state_list = df['states'].values
-    print(state_list)
-
-    return map
-
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
@@ -310,7 +285,7 @@ def main():
         map_df = df[df.park_set == args.parkset]
     else: map_df = df
 
-    if args.maptype and args.maptype in ['area', 'acreage', 'size']:
+    if args.maptype and args.maptype in ['area', 'acreage', 'size', 'Area']:
         print("Creating park size map for the park set, '"
               + args.parkset + "'.")
         park_map = create_map()
@@ -323,12 +298,6 @@ def main():
         park_map = create_map()
         park_map = add_park_visitor_circles_to_map(park_map, map_df)
         park_map.save('_output/nps_parks_map_visitors.html')
-
-    elif args.maptype and args.maptype in ['state count', 'state']:
-        print("Creating parks per state map for the park set, '"
-              + args.parkset + "'.")
-        park_map = create_chloropleth_map()
-        park_map = add_chloropleth_color_to_map(park_map, map_df)
 
     # If no maptype specfified, create a location map.
     else:
