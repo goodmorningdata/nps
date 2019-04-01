@@ -123,6 +123,34 @@ def plot_visitor_data(df):
     plt.ylabel('Millions of Visitors')
     plt.show()
 
+def plot_average_visitor_data(df):
+    ''' Plot park visitor data.
+
+    This function...
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of all park visitation data to export.
+
+    Returns
+    -------
+    None
+    '''
+
+    fig, ax = plt.subplots()
+
+    ax.plot(df.mean()[6:]/1e6)
+    ax.set_title('Average Park Visitors by Year')
+    ax.set_ylabel('Millions of Visitors')
+
+    #ax.tick_params(labelbottom=False)
+    #ax.set_xticks(ax.get_xticks()[1::5])
+    #ax.legend(loc='best')
+    #plt.xticks(rotation=90)
+
+    plt.show()
+
 def output_visitor_data_to_tables(df):
     ''' Output park visitor data.
 
@@ -186,7 +214,8 @@ def main():
     park_map = add_park_visitor_circles_to_map(park_map, map_df)
     park_map.save('_output/nps_parks_map_visitors.html')
 
-    plot_visitor_data(map_df)
+    #plot_visitor_data(map_df)
+    plot_average_visitor_data(map_df)
 
     output_visitor_data_to_tables(map_df)
 
