@@ -114,13 +114,13 @@ def plot_visitor_data(df):
     fig, ax = plt.subplots()
 
     for _, row in df[~df.lat.isnull()].iterrows():
-        row_plot = row[10:-1]
-        plt.plot(row_plot)
+        ax.plot(row[10:-1]/1e6, label=row.park_name)
 
+    ax.set_title('Park Visitors by Year')
+    ax.set_xticks(ax.get_xticks()[1::5])
+    ax.legend(loc='best')
     plt.xticks(rotation=90)
-    loc = plticker.MultipleLocator(base=1.0)
-    ax.xaxis.set_major_locator(loc)
-    #plt.plot('plt.savefig('books_read.png')
+    plt.ylabel('Millions of Visitors')
     plt.show()
 
 def output_visitor_data_to_tables(df):
