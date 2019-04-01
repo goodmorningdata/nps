@@ -21,11 +21,8 @@ Dependencies:
       https://www.nps.gov/subjects/lwcf/acreagereports.htm Calendar
       Year Reports, Year = 2018. Place this file in the acreage_data
       directory of this project.
-    * Download the most recent visitation report from the nps webiste
-      at: https://irma.nps.gov/Stats/Reports/National. Choose the
-      'Annual Visitation By Park (1979 - Last Calendar Year)' Place this
-      file in the visitation_data directory of this project, and name
-      it, 'annual_visitation_by_park_2008_2018.xlsx'
+    * Run the script, nps_read_visitor_data.py to create the file:
+      annual_visitation_by_park_1979_2018.xlsx.
 
 This script contains the following functions:
 
@@ -213,11 +210,11 @@ def read_visitor_data(df_parks_lookup):
     '''
     Read the park visitation data file.
 
-    This function reads the park visitor data report into a dataframe,
-    removes rows for parks that are not available through the NPS API,
-    and makes some replacements to the park name string so that it can
-    be more easily found in the park lookup table. This function also
-    assigns the correct four-character park code to each row.
+    This function reads the park visitor data Excel file into a
+    dataframe, removes rows for parks that are not available through the
+    NPS API, and makes some replacements to the park name string so that
+    it can be more easily found in the park lookup table. This function
+    also assigns the correct four-character park code to each row.
 
     To-Do:
     - Why are some parks in this list not in the API list? Are they
@@ -234,10 +231,8 @@ def read_visitor_data(df_parks_lookup):
       Park visitation dataframe.
     '''
 
-    df = pd.read_excel(
-         'visitation_data/annual_visitation_by_park_2009_2018.xlsx',
-         header=8)
-    df = df[['Park Name', 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]]
+    infile = 'visitation_data/annual_visitation_by_park_1979_2018.xlsx'
+    df = pd.read_excel(infile, header=0)
     df.rename(columns = {'Park Name':'park_name'}, inplace=True)
     df.columns = df.columns.astype(str)
 
