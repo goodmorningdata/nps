@@ -1,4 +1,4 @@
-'''Create Folium map of National Park Service sites.
+'''Create Folium maps of National Park Service data.
 
 This script allows the user to create a map of the United States with a
   set of park site locations marked by icons.
@@ -30,6 +30,7 @@ This script contains the following functions:
 import math
 import argparse
 import pandas as pd
+import matplotlib.pyplot as plt
 import folium
 
 def create_map():
@@ -53,28 +54,6 @@ def create_map():
                      zoom_start = 3,
                      control_scale = True,
                      tiles = 'Stamen Terrain')
-
-    return map
-
-def create_chloropleth_map():
-    ''' Create an empty Folium map.
-
-    This function creates a Folium map object, centered on the lat/long
-    center of the lower 48 states.
-
-    Parameters
-    ----------
-    None
-
-    Returns
-    -------
-    map : Folium map object
-      Empty Folium map.
-    '''
-
-    center_lower_48 = [39.833333, -98.583333]
-    map = folium.Map(location = center_lower_48,
-                     zoom_start = 4)
 
     return map
 
@@ -250,6 +229,13 @@ def add_park_visitor_circles_to_map(map, df):
                           justify='left',
                           classes='table-park-list',
                           float_format=lambda x: '{:,.2f}'.format(x))
+
+    for _, row in df[~df.lat.isnull()].iterrows():
+        row_plot = row[10:-1]
+        plt.plot(row_plot)
+        #plt.plot('plt.savefig('books_read.png')
+
+    plt.show()
 
     return map
 
