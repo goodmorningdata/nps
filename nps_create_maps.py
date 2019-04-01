@@ -190,8 +190,9 @@ def add_park_area_circles_to_map(map, df):
                    'gross_area_acres': 'Size (acres)',
                    'gross_area_square_miles': 'Size (square miles)'}
     map_df_export = map_df_export.rename(columns=export_cols)
-    map_df_export.to_excel('nps_parks_sorted_by_size.xlsx', index=False)
-    map_df_export.to_html('nps_parks_sorted_by_size.html',
+    map_df_export.to_excel('_output/nps_parks_sorted_by_size.xlsx',
+                           index=False)
+    map_df_export.to_html('_output/nps_parks_sorted_by_size.html',
                           justify='left',
                           classes='table-park-list',
                           float_format=lambda x: '{:,.2f}'.format(x))
@@ -243,8 +244,9 @@ def add_park_visitor_circles_to_map(map, df):
     export_cols = {'park_name': 'Park Name',
                    '2018': 'Visitors in 2018'}
     map_df_export = map_df_export.rename(columns=export_cols)
-    map_df_export.to_excel('nps_parks_sorted_by_visitors.xlsx', index=True  )
-    map_df_export.to_html('nps_parks_sorted_by_visitors.html',
+    map_df_export.to_excel('_output/nps_parks_sorted_by_visitors.xlsx',
+                           index=True)
+    map_df_export.to_html('_output/nps_parks_sorted_by_visitors.html',
                           justify='left',
                           classes='table-park-list',
                           float_format=lambda x: '{:,.2f}'.format(x))
@@ -313,14 +315,14 @@ def main():
               + args.parkset + "'.")
         park_map = create_map()
         park_map = add_park_area_circles_to_map(park_map, map_df)
-        park_map.save('nps_parks_map_area.html')
+        park_map.save('_output/nps_parks_map_area.html')
 
     elif args.maptype and args.maptype in ['visitor', 'visits']:
         print("Creating park visitation map for the park set, '"
               + args.parkset + "'.")
         park_map = create_map()
         park_map = add_park_visitor_circles_to_map(park_map, map_df)
-        park_map.save('nps_parks_map_visitors.html')
+        park_map.save('_output/nps_parks_map_visitors.html')
 
     elif args.maptype and args.maptype in ['state count', 'state']:
         print("Creating parks per state map for the park set, '"
@@ -334,7 +336,7 @@ def main():
               + args.parkset + "'.")
         park_map = create_map()
         park_map = add_park_locations_to_map(park_map, map_df)
-        park_map.save('nps_parks_map_location.html')
+        park_map.save('_output/nps_parks_map_location.html')
 
 if __name__ == '__main__':
     main()
