@@ -1,4 +1,4 @@
-'''Create Folium maps of National Park Service data.
+'''Create Folium map of National Park Service site locations.
 
 This script creates a map of the United States with a set of park site
   locations marked by icons. The command line argument, "parkset", set
@@ -137,8 +137,6 @@ def main():
         map_df = df
         print("Creating park location map for all NPS sites.")
 
-    print("Creating park location map for the park set, '"
-          + args.parkset + "'.")
     park_map = create_map()
     park_map = add_park_locations_to_map(park_map, map_df)
     park_map.save('_output/nps_parks_map_location.html')
