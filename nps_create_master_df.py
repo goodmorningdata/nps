@@ -3,7 +3,7 @@
 This script allows the user to create an excel spreadsheet of all of the
 National Park Service sites with relevant data to be used by reporting
 tools. NPS Sites include National Parks, Monuments, Historic Sites, etc.
-General park data, location, acreage, and visitation data are included.
+General park data, location, acreage, and visitor data are included.
 
 The script creates an Excel file as output named
 "nps_df_parks_master.xlsx" with column headers. Columns include:
@@ -22,7 +22,7 @@ Dependencies:
       Year Reports, Year = 2018. Place this file in the acreage_data
       directory of this project.
     * Run the script, nps_read_visitor_data.py to create the file:
-      annual_visitation_by_park_1979_2018.xlsx.
+      annual_visitors_by_park_1979_2018.xlsx.
 
 This script contains the following functions:
 
@@ -208,7 +208,7 @@ def read_acreage_data(df_parks_lookup):
 
 def read_visitor_data(df_parks_lookup):
     '''
-    Read the park visitation data file.
+    Read the park visitors data file.
 
     This function reads the park visitor data Excel file into a
     dataframe, removes rows for parks that are not available through the
@@ -228,10 +228,10 @@ def read_visitor_data(df_parks_lookup):
     Returns
     -------
     df : Pandas dataframe
-      Park visitation dataframe.
+      Park visitors dataframe.
     '''
 
-    infile = 'visitation_data/annual_visitation_by_park_1979_2018.xlsx'
+    infile = '_visitor_data/annual_visitors_by_park_1979_2018.xlsx'
     df = pd.read_excel(infile, header=0)
     df.rename(columns = {'Park Name':'park_name'}, inplace=True)
     df.columns = df.columns.astype(str)

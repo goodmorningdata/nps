@@ -96,6 +96,12 @@ def add_park_visitor_circles_to_map(map, df):
 
     return map
 
+def get_census_data():
+    pop_df = pd.read_excel(
+             '_census_data/us_est_1970-2017.xlsx',
+              header=0, index=False)
+    print(pop_df)
+
 def plot_visitor_data(df):
     ''' Plot park visitor data.
 
@@ -214,8 +220,10 @@ def main():
     park_map = add_park_visitor_circles_to_map(park_map, map_df)
     park_map.save('_output/nps_parks_map_visitors.html')
 
+    pop_df = get_census_data():
+
     #plot_visitor_data(map_df)
-    plot_average_visitor_data(map_df)
+    #plot_average_visitor_data(map_df)
 
     output_visitor_data_to_tables(map_df)
 

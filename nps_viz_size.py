@@ -1,4 +1,4 @@
-'''Create Folium map of National Park Service sizes.
+'''Create a Folium map of National Park Service site sizes.
 
 This script creates a map of the United States with NPS sites marked
   with a circle corresponding to the site's size. The command line

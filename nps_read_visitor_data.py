@@ -7,7 +7,7 @@ on the NPS website. The dataframe is output to an Excel file for use
 by the nps_create_master_df.py script.
 
 The script creates an Excel file as output named
-"annual_visitation_by_park_1979_2018.xlsx" with column headers.
+"annual_visitors_by_park_1979_2018.xlsx" with column headers.
 Columns include: 'Park Name', and 1979 through 2018.
 
 Dependencies:
@@ -19,11 +19,11 @@ Dependencies:
       at a time:
       1) Use 'Report Year' = 2018, 'Num Years' = 20, 'Select Field
          Name(s)' = 'Recreation Visits'. Save the report as
-         'annual_visitation_by_park_1999_2018.xlsx'.
+         'annual_visitors_by_park_1999_2018.xlsx'.
       2) Use 'Report Year' = 1998, 'Num Years' = 20, 'Select Field
          Name(s)' = 'Recreation Visits'. Save the report as
-         'annual_visitation_by_park_1979_1998.xlsx'.
-      Both files should be put in the 'visitation_data' directory
+         'annual_visitors_by_park_1979_1998.xlsx'.
+      Both files should be put in the '_visitor_data' directory
       of this project.
 '''
 
@@ -31,15 +31,15 @@ import pandas as pd
 
 def main():
     df1 = pd.read_excel(
-          'visitation_data/annual_visitation_by_park_1979_1998.xlsx',
+          '_visitor_data/annual_visitors_by_park_1979_1998.xlsx',
           header=8, index=False, usecols = 'C:L,O:Y')
     df2 = pd.read_excel(
-          'visitation_data/annual_visitation_by_park_1999_2018.xlsx',
+          '_visitor_data/annual_visitors_by_park_1999_2018.xlsx',
           header=8, index=False, usecols='C:L,O:Y')
     df = (df1.merge(df2, how='outer', on='Park Name')
              .sort_values(by=['Park Name']))
     df.fillna(value=0.0, inplace=True)
-    df.to_excel('visitation_data/annual_visitation_by_park_1979_2018.xlsx', index=False)
+    df.to_excel('_visitor_data/annual_visitors_by_park_1979_2018.xlsx', index=False)
 
 if __name__ == '__main__':
     main()

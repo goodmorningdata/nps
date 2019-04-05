@@ -1,4 +1,4 @@
-'''Create Folium map of National Park Service site locations.
+'''Create a Folium map of National Park Service site locations.
 
 This script creates a map of the United States with a set of park site
   locations marked by icons. The command line argument, "parkset", set
