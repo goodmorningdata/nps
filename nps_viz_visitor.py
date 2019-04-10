@@ -265,8 +265,13 @@ def main():
 
     pop_df = read_census_data()
 
-    plot_visits_by_park(map_df)
-    plot_total_park_visits(map_df, pop_df)
+    #plot_visits_by_park(map_df)
+    #plot_total_park_visits(map_df, pop_df)
+
+    # Plot for specific parks.
+    #park_map_df = map_df[map_df['park_code'] == 'grca']
+    #print(park_map_df)
+    plot_visits_by_park(map_df[map_df['park_code'] == 'gaar'])
 
     output_visits_data_to_tables(map_df)
 

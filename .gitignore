@@ -2,11 +2,8 @@
 acreage_data/
 visitation_data/
 
-# Don't track html files.
-*.html
-
-# Don't track .xlsx output files.
-*.xlsx
+# Don't track output files.
+_output/*.*
 
 # Don't track this stuff either.
 .DS_Store
