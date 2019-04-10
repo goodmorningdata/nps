@@ -158,7 +158,7 @@ def read_acreage_data(df_parks_lookup):
       Park acreage dataframe.
     '''
 
-    infile = 'acreage_data/NPS-Acreage-12-31-2018.xlsx'
+    infile = '_acreage_data/NPS-Acreage-12-31-2018.xlsx'
     df = pd.read_excel(infile, skiprows=1)
     df = df[pd.notnull(df['State'])]
     df = df.rename({'Gross Area Acres': 'gross_area_acres'}, axis='columns')

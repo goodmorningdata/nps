@@ -116,7 +116,9 @@ def read_1990_2000_data():
     return df[['year', 'state', 'population']]
 
 def read_2000_2010_data():
-    ['']
+    '''
+    Comments here.
+    '''
     df = pd.read_excel('_census_data/us-est_2000-2010.xls',
                        header=3, nrows=1, usecols='C:L')
     df = df.T.reset_index().rename(columns = {'index':'year', 0:'population'})
