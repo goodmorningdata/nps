@@ -161,7 +161,7 @@ def plot_visits_by_park(df, park_set, title=None):
                             {'National Park':'NP', 'Mountain':'Mtn',
                              '& Preserve':''}, regex=True)
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(8,5))
     ax = plt.subplot(111)
     for _, row in df[~df.lat.isnull()].iterrows():
         ax.plot(row[9:-1]/1e6, label=row.park_name)
@@ -187,7 +187,8 @@ def plot_visits_by_park(df, park_set, title=None):
     # current axis.
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
-    ax.legend(bbox_to_anchor=(1, 0.5), loc='center left')
+    ax.legend(bbox_to_anchor=(1, 0.5), loc='center left',
+              fancybox=True, borderaxespad=2)
 
     # X-axis ticks are every 5th year, displayed vertically.
     ax.set_xticks(ax.get_xticks()[1::5])
