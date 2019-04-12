@@ -40,6 +40,7 @@ This script contains the following functions:
 
 import argparse
 import pandas as pd
+import numpy as np
 import folium
 import matplotlib.pyplot as plt
 import matplotlib.ticker as plticker
@@ -237,7 +238,7 @@ def plot_total_park_visits(visits_df, pop_df, park_set):
     fig, ax = plt.subplots(2, sharex=True)
     ax[0].plot(visit_totals.index, visit_totals.visitors/1e6)
     ax[0].set_title('Total park visits (' + park_set + ')')
-    ax[0].set_ylabel('Millions of people')
+    ax[0].set_ylabel('Millions of visits')
     ax[1].plot(visit_totals.index, pop_df['population'].loc[1979:2018]/1e6)
     ax[1].set_title('U.S. population')
     ax[1].set_ylabel('Millions of people')
@@ -250,6 +251,36 @@ def plot_total_park_visits(visits_df, pop_df, park_set):
     ax.set_title('Park visits per capita (' + park_set + ')')
     plt.show()
     fig.savefig('_output/park_visits_per_capita.png')
+
+def plot_park_visits_hist(df, park_set):
+    '''
+    This function creates a histogram of park visits in bins of 1
+    million visits. The plot image is saved to a .png file.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visitation data to plot.
+
+    park_set : str
+      Set of parks in the dataframe. The dataframe, df, has already
+      been filtered for this park set, but the parameter is necessary
+      for use in the plot title and output filename.
+
+    Returns
+    -------
+    None
+    '''
+
+    fig, ax = plt.subplots()
+    ax.hist(df['2018']/1e6, bins=np.arange(0,13), alpha=0.5)
+    ax.set_xlabel('Millions of visits')
+    ax.set_ylabel('Number of parks in each millions of visits group')
+    ax.set_xticks(np.arange(0,13))
+    ax.set_title('Number of park visits (' + park_set + ')')
+    plt.show()
+
+    fig.savefig('_output/park_visits_histogram.png')
 
 def output_visits_data_to_tables(df):
     '''
@@ -330,6 +361,9 @@ def main():
 
     # Run visits plot for a specific park using park code.
     #plot_visits_by_park(park_df[park_df['park_code'] == 'gaar'])
+
+    # Plot histogram of park visits.
+    plot_park_visits_hist(park_df, park_set)
 
     output_visits_data_to_tables(park_df)
 
