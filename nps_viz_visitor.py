@@ -354,9 +354,9 @@ def main():
     park_df = park_df.sort_values('2018', ascending=False)
 
     # Create the folium circle marker map.
-    #park_map = create_map()
-    #park_map = add_park_visits_circles_to_map(park_map, park_df)
-    #park_map.save('_output/nps_parks_map_visits.html')
+    park_map = create_map()
+    park_map = add_park_visits_circles_to_map(park_map, park_df)
+    park_map.save('_output/nps_parks_map_visits.html')
 
     # Plot park visits by year for the top 10 and bottom 10.
     plot_visits_by_park(park_df.iloc[0:10,:], park_set,
@@ -365,14 +365,14 @@ def main():
         park_set, title = 'Park visits by year, lowest 10 (' + park_set + ')')
 
     # Plot park visits in relation to the U.S. population.
-    #pop_df = read_census_data()
-    #plot_park_visits_vs_us_pop(park_df, pop_df, park_set)
+    pop_df = read_census_data()
+    plot_park_visits_vs_us_pop(park_df, pop_df, park_set)
 
     # Run visits plot for a specific park using park code.
-    #plot_visits_by_park(park_df[park_df['park_code'] == 'acad'], park_set)
+    plot_visits_by_park(park_df[park_df['park_code'] == 'acad'], park_set)
 
     # Plot histogram of park visits.
-    #plot_park_visits_hist(park_df, park_set)
+    plot_park_visits_hist(park_df, park_set)
 
     output_visits_data_to_tables(park_df)
 
