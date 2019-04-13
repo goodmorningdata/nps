@@ -206,7 +206,7 @@ def read_acreage_data(df_parks_lookup):
 
     return df
 
-def read_visits_data(df_parks_lookup):
+def read_visitor_data(df_parks_lookup):
     '''
     Read the park visits data file.
 
@@ -367,7 +367,7 @@ def main():
     df_acre = read_acreage_data(df_master_stripped)
     df_master = pd.merge(df_master, df_acre, how='left', on='park_code')
 
-    df_visits = read_visits_data(df_master_stripped)
+    df_visits = read_visitor_data(df_master_stripped)
     df_master = pd.merge(df_master, df_visits, how='left', on='park_code')
 
     df_master.designation.fillna('Other', inplace=True)
