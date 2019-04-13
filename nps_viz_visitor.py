@@ -275,7 +275,7 @@ def plot_park_visits_hist(df, park_set):
     fig, ax = plt.subplots()
     ax.hist(df['2018']/1e6, bins=np.arange(0,13), alpha=0.5)
     ax.set_xlabel('Millions of visits')
-    ax.set_ylabel('Number of parks in each millions of visits group')
+    ax.set_ylabel('Number of parks in millions of visits group')
     ax.set_xticks(np.arange(0,13))
     ax.set_title('Number of park visits in 2018 (' + park_set + ')')
     plt.show()
