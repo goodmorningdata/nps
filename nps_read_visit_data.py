@@ -12,7 +12,7 @@ Dependencies:
       (1904 - Last Calendar Year)" report from the nps webiste
       at: https://irma.nps.gov/Stats/Reports/National.
       1) Select all years, all field names, and all parks. Choose
-         "False" for "Summary Only?"
+         "False" for "Summary Only?" Run and download.
       2) Move the file to the '_visitor_data' directory of this project.
       3) Open the file in Excel and save as a .xlsx file with name,
          "Annual_Summary_Report_1904_Last_Calendar_Year.xlsx"
@@ -33,7 +33,7 @@ def main():
     # Pivot dataframe so that the years become columns.
     df.RecreationVisitors = df.RecreationVisitors.apply(int)
     df = df.pivot_table('RecreationVisitors', ['ParkName'], 'Year' )
-    df = df.rename(columns={'ParkName': 'park_name'})
+    df.index.rename('park_name', inplace=True)
 
     # Replace NaN with 0.0.
     df.fillna(value=0.0, inplace=True)
