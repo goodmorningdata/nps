@@ -164,13 +164,14 @@ def read_acreage_data(df_parks_lookup):
     df = df.rename({'Gross Area Acres': 'gross_area_acres'}, axis='columns')
 
     # Remove parks not available through the NPS API park list.
-    missing_list = ['R REAGAN BOYHOOD HOME NHS', 'ROSS LAKE NRA',
-                    'FT CAROLINE NMEM', 'WHITE HOUSE', 'WORLD WAR I NMEM',
-                    'LAKE CHELAN NRA', 'JDROCKEFELLER MEM PKWY']
+    missing_list = ['R REAGAN BOYHOOD HOME NHS', 'FT CAROLINE NMEM',
+                    'WHITE HOUSE', 'WORLD WAR I NMEM', 'JDROCKEFELLER MEM PKWY']
     df = df[~df['Area Name'].isin(missing_list)]
 
     # Strip out park designations, and make a few text replacements so
     # that park code lookup will be able to find the matching park.
+    # Ross Lake NRA and Lake Chelan NRA are both considered part of
+    # North Cascades NP for acreage reporting purposes.
     df['area_name_stripped'] = df['Area Name'].replace({'NBP':'', 'NHP':'',
                                'NHS':'', 'NMEM':'', 'NMP':'', 'NRA':'',
                                'NSR':'', 'NST':'', 'NB':'', 'NL':'', 'NM':'',
@@ -183,7 +184,9 @@ def read_acreage_data(df_parks_lookup):
                                'FRED-SPOTS':'FREDERICKSBURG-SPOTSYLVANIA',
                                'WWII':'World War II',
                                'DELAWARE NSR':'LOWER DELAWARE',
-                               'KINGS CANYON':'SEQUOIA & KINGS CANYON'}, regex=True)
+                               'KINGS CANYON':'SEQUOIA & KINGS CANYON',
+                               'ROSS LAKE NRA':'NORTH CASCADES NP',
+                               'LAKE CHELAN NRA':'NORTH CASCADES NP'}, regex=True)
 
     # Call the lookup_park_code function to find the correct four-char
     # park code for each park row.
@@ -236,8 +239,7 @@ def read_visitor_data(df_parks_lookup):
     df.columns = df.columns.astype(str)
 
     # Remove parks not available through the NPS API park list.
-    missing_list = ['Ross Lake NRA', 'Fort Caroline NMEM', 'Lake Chelan NRA',
-                    'John D. Rockefeller, Jr. MEM PKWY']
+    missing_list = ['Fort Caroline NMEM', 'John D. Rockefeller, Jr. MEM PKWY']
     df = df[~df['park_name'].isin(missing_list)]
 
     # Make a few text replacements so that park code lookup will be able
@@ -246,6 +248,13 @@ def read_visitor_data(df_parks_lookup):
         {'National Capital Parks Central':'National Mall and Memorial Parks',
          'Longfellow NHS':"Longfellow House Washington's Headquarters",
          'White House':"President's Park (White House)"},
+         regex=True, inplace=True)
+
+    # Ross Lake NRA and Lake Chelan NRA are considered part of North
+    # Cascades NP for purposes of visit reporting.
+    df.park_name.replace(
+        {'Ross Lake NRA':'North Cascades National Park',
+         'Lake Chelan NRA':'North Cascades National Park'},
          regex=True, inplace=True)
 
     df['park_code'] = df.park_name.apply(
@@ -370,7 +379,7 @@ def main():
     df_visits = read_visitor_data(df_master_stripped)
     df_master = pd.merge(df_master, df_visits, how='left', on='park_code')
 
-    df_master.designation.fillna('Other', inplace=True)
+    df_master['designation'] = df_master['designation'].fillna('Other')
     df_master = add_park_sets(df_master)
 
     df_master.to_excel('nps_parks_master_df.xlsx')
