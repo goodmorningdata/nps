@@ -206,11 +206,11 @@ def read_acreage_data(df_parks_lookup):
 
     return df
 
-def read_visitor_data(df_parks_lookup):
+def read_visits_data(df_parks_lookup):
     '''
-    Read the park visitors data file.
+    Read the park visits data file.
 
-    This function reads the park visitor data Excel file into a
+    This function reads the park visits data Excel file into a
     dataframe, removes rows for parks that are not available through the
     NPS API, and makes some replacements to the park name string so that
     it can be more easily found in the park lookup table. This function
@@ -228,12 +228,11 @@ def read_visitor_data(df_parks_lookup):
     Returns
     -------
     df : Pandas dataframe
-      Park visitors dataframe.
+      Park visits dataframe.
     '''
 
-    infile = '_visitor_data/annual_visitors_by_park_1979_2018.xlsx'
+    infile = '_visitor_data/annual_visitors_by_park_1904_2018.xlsx'
     df = pd.read_excel(infile, header=0)
-    df.rename(columns = {'Park Name':'park_name'}, inplace=True)
     df.columns = df.columns.astype(str)
 
     # Remove parks not available through the NPS API park list.
@@ -368,8 +367,8 @@ def main():
     df_acre = read_acreage_data(df_master_stripped)
     df_master = pd.merge(df_master, df_acre, how='left', on='park_code')
 
-    df_visitor = read_visitor_data(df_master_stripped)
-    df_master = pd.merge(df_master, df_visitor, how='left', on='park_code')
+    df_visits = read_visits_data(df_master_stripped)
+    df_master = pd.merge(df_master, df_visits, how='left', on='park_code')
 
     df_master.designation.fillna('Other', inplace=True)
     df_master = add_park_sets(df_master)
