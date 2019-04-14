@@ -1,7 +1,3 @@
-# Don't track content of the directories containing input files.
-acreage_data/
-visitation_data/
-
 # Don't track output files.
 _output/*.*
 
