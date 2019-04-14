@@ -15,14 +15,16 @@ difflib.
 
 Dependencies:
 
-    * Run the script, nps_create_park_lookup.py, to create the file,
-      'nps_park_lookup.xls'
+    * Run the script, nps_create_park_lookup.py, to create the file:
+      nps_park_lookup.xls.
     * Download the most recent acreage report from the nps website at:
       https://www.nps.gov/subjects/lwcf/acreagereports.htm Calendar
-      Year Reports, Year = 2018. Place this file in the acreage_data
+      Year Reports, Year = 2018. Place this file in the _acreage_data
       directory of this project.
     * Run the script, nps_read_visitor_data.py to create the file:
       annual_visitors_by_park_1979_2018.xlsx.
+    * Run the script, nps_read_wikipedia_data.py to create the file:
+      wikipedia_date_established.xlsx.
 
 This script contains the following functions:
 
@@ -31,6 +33,7 @@ This script contains the following functions:
     * lookup_park_code - lookup park code with park name.
     * read_acreage_data - read park acreage data from file.
     * read_visitor_data - read park visitation data from file.
+    * read_date_established - read the established date from file.
     * add_park_sets - add a parent designation, park set, to dataframe.
 '''
 
@@ -268,6 +271,44 @@ def read_visitor_data(df_parks_lookup):
 
     return df
 
+def read_date_established(df_parks_lookup):
+    '''
+    Read the data established file.
+
+    This function reads the park date established Excel file into a
+    dataframe and assigns the correct four-character park code to
+    each row.
+
+    Parameters
+    ----------
+    df_parks_lookup : Pandas dataframe
+      Park lookup dataframe.
+
+    Returns
+    -------
+    df : Pandas dataframe
+      Park date established dataframe.
+    '''
+
+    infile = '_reference_data/wikipedia_date_established.xlsx'
+    df = pd.read_excel(infile, header=0)
+
+    # Make a few text replacements so that park code lookup will be able
+    # to find the matching park.
+    # df.park_name.replace(
+    #     {'National Capital Parks Central':'National Mall and Memorial Parks',
+    #      'Longfellow NHS':"Longfellow House Washington's Headquarters",
+    #      'White House':"President's Park (White House)"},
+    #      regex=True, inplace=True)
+
+    df['park_code'] = df.park_name.apply(
+                         lambda x: lookup_park_code(x, df_parks_lookup))
+
+    print('Read Date Established')
+    print(df)
+
+    return df
+
 def add_park_sets(df):
     '''
     Assign park set to each NPS site.
@@ -378,6 +419,8 @@ def main():
 
     df_visits = read_visitor_data(df_master_stripped)
     df_master = pd.merge(df_master, df_visits, how='left', on='park_code')
+
+    df_estab = read_date_established(df_master_stripped)
 
     df_master['designation'] = df_master['designation'].fillna('Other')
     df_master = add_park_sets(df_master)
