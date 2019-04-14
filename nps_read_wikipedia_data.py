@@ -34,11 +34,9 @@ def main():
     for row in table_rows[1:]:
         name = str(row.a.string)
         date = str(row.findAll("span", {"data-sort-value" : True})[0].string)
-        date = datetime.strptime(date, '%B %-d, %Y')
+        date = datetime.strptime(date, '%B %d, %Y')
         df = df.append({'park_name': name, 'date_established': date},
                        ignore_index=True)
-
-datetime_object = datetime.strptime('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p')
 
     df.to_excel('_reference_data/wikipedia_date_established.xlsx',
                 index=False)
