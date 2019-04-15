@@ -11,7 +11,7 @@ Read more about project progress on the blog, [Good Morning Data](goodmorningdat
 ##
 
 ## Data Prep
-If you would like to download and process your own files instead of using the ones included in the project, you can do so. The data comes from a number of sources and the steps to get it ready are found below by source.
+If you would like to download and process your own input files instead of using the ones included in the project, you can do so. The data comes from a number of sources and the steps to get it ready are found below by source.
 ### Config File
 Create a file, **_nps_config.py_**, in your home folder. This file will be used to store your personal API keys.
 ### NPS API
@@ -22,7 +22,9 @@ apikey = 'YOUR KEY HERE'
 ```
 3. Run the script, **_nps_create_park_lookup.py_** to pull data from the NPS API and create the park lookup dataframe. This creates the file **_nps_park_lookup.xlxs_** in your NPS project folder.
 ### Established date from Wikipedia
-### 
+1. Save the web page, https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States, as an html file named, **_wikipedia_national_parks.html_** in the _reference_data folder of the project.
+2. Run the script, **_read_wikipedia_data.py_**. The creates the file, 
+###
 
 
 3. Run the script, nps_create_master_df.py to create the master parks dataframe which also includes visitation data and acreage data.
