@@ -11,7 +11,8 @@ This script requires the following libraries: BeautifulSoup, pandas.
 
 Dependencies:
 
-    * Download the Wikipedia page: https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States
+    * Download the Wikipedia page:
+      https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States
       and save the file as "wikipedia_national_parks.html" in the
       "_reference_data" folder of the project.
 '''
