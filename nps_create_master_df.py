@@ -22,7 +22,7 @@ Dependencies:
       Year Reports, Year = 2018. Place this file in the _acreage_data
       directory of this project.
     * Run the script, nps_read_visitor_data.py to create the file:
-      annual_visitors_by_park_1979_2018.xlsx.
+      annual_visitors_by_park_1904_2018.xlsx.
     * Run the script, nps_read_wikipedia_data.py to create the file:
       wikipedia_date_established.xlsx.
 
