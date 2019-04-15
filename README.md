@@ -4,9 +4,28 @@ NPS is a project built in Python to report on and analyze data concerning the Na
 
 ## Description
 
-In an attempt to better understand the National Park System, this project is being developed to find all available NPS data and consolidate it for the creation of useful maps and tables.
+In an attempt to better understand the National Parks System, this project is being developed to find all available NPS data and consolidate it for the creation of useful maps, tables, and plots.
 
 Read more about project progress on the blog, [Good Morning Data](goodmorningdata.com).
+
+##
+
+## Data Prep
+If you would like to download and process your own files instead of using the ones included in the project, you can do so. The data comes from a number of sources and the steps to get it ready are found below by source.
+### Config File
+Create a file, **_nps_config.py_**, in your home folder. This file will be used to store your personal API keys.
+### NPS API
+1. Register for a NPS API key [here](https://www.nps.gov/subjects/developer/get-started.htm).
+2. Add the following line to your **_nps_config.py_** file, replacing YOUR KEY HERE with your NPS API key.
+```
+apikey = 'YOUR KEY HERE'
+```
+3. Run the script, **_nps_create_park_lookup.py_** to pull data from the NPS API and create the park lookup dataframe. This creates the file **_nps_park_lookup.xlxs_** in your NPS project folder.
+### Established date from Wikipedia
+### 
+
+
+3. Run the script, nps_create_master_df.py to create the master parks dataframe which also includes visitation data and acreage data.
 
 ## Usage
 

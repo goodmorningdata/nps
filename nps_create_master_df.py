@@ -403,6 +403,9 @@ def main():
     df_master = read_park_lookup()
     df_master_stripped = strip_park_lookup(df_master)
 
+    df_master['designation'] = df_master['designation'].fillna('Other')
+    df_master = add_park_sets(df_master)
+
     df_estab = read_date_established(df_master_stripped)
     df_master = pd.merge(df_master, df_estab, how='left', on='park_code')
 
@@ -411,9 +414,6 @@ def main():
 
     df_visits = read_visitor_data(df_master_stripped)
     df_master = pd.merge(df_master, df_visits, how='left', on='park_code')
-
-    df_master['designation'] = df_master['designation'].fillna('Other')
-    df_master = add_park_sets(df_master)
 
     df_master.to_excel('nps_parks_master_df.xlsx')
 

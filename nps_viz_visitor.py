@@ -163,15 +163,14 @@ def plot_visits_by_park(df, park_set, title=None):
                              'National Recreation Area':'NRA',
                              'Memorial Parkway':'Mem Pkwy',
                              '& Preserve':''}, regex=True)
-    print(df)
-
+                             
     fig = plt.figure(figsize=(8,5))
     ax = plt.subplot(111)
     for _, row in df[~df.lat.isnull()].iterrows():
         # Only plot years in which the number of visits is > 0.
-        plot_row = row[9:-1]
+        plot_row = row.loc['1904':'2018']
         plot_row = plot_row[plot_row > 0]
-        # Change year to in for plotting.
+        # Change year to int type for plotting.
         plot_row.index = plot_row.index.map(int)
         ax.plot(plot_row/1e6, label=row.park_name)
 
