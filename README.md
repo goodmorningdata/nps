@@ -4,7 +4,7 @@ NPS is a project built in Python to report on and analyze data concerning the Na
 ## Description
 In an attempt to better understand the National Parks System, this project is being developed to find all available NPS data and consolidate it for the creation of useful maps, tables, and plots.
 
-Read more about project progress on the blog, [Good Morning Data](goodmorningdata.com).
+Read more about project progress on the blog, [Good Morning Data](https://goodmorningdata.github.io).
 
 ## Usage
 ### Setup
@@ -15,9 +15,9 @@ All of the visualization scripts take a command line parameter, "parkset", which
 
 #### Example usage:
 To run the location visualization for just the National Parks:
-$ python3 nps_viz_location.py -p "National Park"
+&nbsp;&nbsp;$ python3 nps_viz_location.py -p "National Park"
 To show the command line parameters for a script:
-$ python3 nps_viz_location.py -h
+&nbsp;&nbsp;$ python3 nps_viz_location.py -h
 
 ### Park location visualizations
 Run the script, **<i>nps_viz_location.py</i>**, to create a map showing the locations of all the parks. The park location markers have a popup that gives a clickable park name, which when clicked, takes the user to the NPS web page for the park. Limit the number of parks using the [parkset parameter](#parkset-command-line-parameter) described above.
