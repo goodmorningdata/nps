@@ -14,9 +14,9 @@ The only setup necessary is the cloning of this repository to your computer. You
 All of the visualization scripts take a command line parameter, "parkset", which allows the user to specify a sub-group of parks to add to the visualization. Possible parkset values are: 'National Park', 'National Monument', 'National Preserve or Reserve', 'National Lakeshore or Seashore', 'National River', 'National Trail', 'National Historic Site', 'National Memorial', 'National Recreation Area', 'National Parkway', 'National Heritage Area', 'Affiliated Area', 'Other'.
 
 #### Example usage:
-To run the location visualization for just the National Parks:
+To run the location visualization for just the National Parks:&nbsp;&nbsp;
 &nbsp;&nbsp;$ python3 nps_viz_location.py -p "National Park"
-To show the command line parameters for a script:
+To show the command line parameters for a script:&nbsp;&nbsp;
 &nbsp;&nbsp;$ python3 nps_viz_location.py -h
 
 ### Park location visualizations
