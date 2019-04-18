@@ -7,7 +7,7 @@ This script creates a map of the United States with NPS sites marked
   all NPS site locations are added to the map.
 
 The script creates three output files:
-    1) nps_parks_map_area.html - map with park area circles.
+    1) nps_parks_map_size.html - map with park area circles.
     2) nps_parks_sorted_by_size.xlsx - list of parks and size.
     3) nps_parks_sorted_by_size.html - list of parks and size.
 
@@ -22,7 +22,7 @@ Dependencies:
 This script contains the following functions:
 
     * create_map : creates an empty Folium map.
-    * add_park_area_circles_to_map : Adds circle markers corresponding
+    * add_park_size_circles_to_map : Adds circle markers corresponding
       to park area to map.
 '''
 
@@ -55,8 +55,8 @@ def create_map():
 
     return map
 
-def add_park_area_circles_to_map(map, df):
-    ''' Add park area circle markers to a map.
+def add_park_size_circles_to_map(map, df):
+    ''' Add park size circle markers to a map.
 
     This function adds a circle marker for each park in the parameter
     dataframe to the map. The circle size corresponds to the area of
@@ -65,7 +65,7 @@ def add_park_area_circles_to_map(map, df):
     area of the park in square meters, dividing it by pi and then taking
     the square root.
 
-    These markers provide the park name and park area in square miles
+    These markers provide the park name and park size in square miles
     as a tooltip. A tooltip instead of a popup is used for this map
     because the popup was less sensitive for the circle markers.
 
@@ -145,8 +145,8 @@ def main():
         print("Creating park size map for all NPS sites.")
 
     park_map = create_map()
-    park_map = add_park_area_circles_to_map(park_map, map_df)
-    park_map.save('_output/nps_parks_map_area.html')
+    park_map = add_park_size_circles_to_map(park_map, map_df)
+    park_map.save('_output/nps_parks_map_size.html')
 
 if __name__ == '__main__':
     main()

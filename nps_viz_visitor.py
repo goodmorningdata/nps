@@ -163,7 +163,7 @@ def plot_visits_by_park(df, park_set, title=None):
                              'National Recreation Area':'NRA',
                              'Memorial Parkway':'Mem Pkwy',
                              '& Preserve':''}, regex=True)
-                             
+
     fig = plt.figure(figsize=(8,5))
     ax = plt.subplot(111)
     for _, row in df[~df.lat.isnull()].iterrows():
@@ -251,7 +251,7 @@ def plot_park_visits_vs_us_pop(visits_df, pop_df, park_set):
     ax[1].set_title('U.S. population')
     ax[1].set_ylabel('Millions of people')
     plt.show()
-    fig.savefig('_output/plot_park_visits_vs_us_pop.png')
+    fig.savefig('_output/park_visits_vs_us_pop.png')
 
     # Plot park visits per capita by year.
     fig, ax = plt.subplots()

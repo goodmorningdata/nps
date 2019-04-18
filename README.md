@@ -1,24 +1,41 @@
 # NPS
-
 NPS is a project built in Python to report on and analyze data concerning the National Park Service and its sites.
 
 ## Description
-
 In an attempt to better understand the National Parks System, this project is being developed to find all available NPS data and consolidate it for the creation of useful maps, tables, and plots.
 
 Read more about project progress on the blog, [Good Morning Data](goodmorningdata.com).
 
 ## Usage
 ### Setup
-See below.
+The only setup necessary is the cloning of this repository to your computer. You can then run the below visualizations. All input data files are included in the repository. If you would like to generate your own input files, please see the instructions under the Data Prep section below.
 
-### Maps
-The script, nps_create_maps.py, will generate location or size maps for all park sites or for a subset depending on the command line parameters.
-* Running the script with no command line parameters will generate a location map for all park sites.
-* Use 'nps_create_maps.py -h' to see all the possible values for command line parameters.
-* Use the --parkset (-p) command line parameter to create a map for a specific park set. Ex. -p 'National Parks' will generate a map for National Park sites only.
-* Use the --maptype (-m) command line parameter to generate either a location map, area map, or visitation map. Ex. -m 'area' will genearate an area map.
+### Parkset command line parameter
+All of the visualization scripts take a command line parameter, "parkset", which allows the user to specify a sub-group of parks to add to the visualization. Possible parkset values are: 'National Park', 'National Monument', 'National Preserve or Reserve', 'National Lakeshore or Seashore', 'National River', 'National Trail', 'National Historic Site', 'National Memorial', 'National Recreation Area', 'National Parkway', 'National Heritage Area', 'Affiliated Area', 'Other'.
 
+#### Example usage:
+To run the location visualization for just the National Parks:
+$ python3 nps_viz_location.py -p "National Park"
+To show the command line parameters for a script:
+$ python3 nps_viz_location.py -h
+
+### Park location visualizations
+Run the script, **_nps_viz_location.py_**, to create a map showing the locations of all the parks. The park location markers have a popup that gives a clickable park name, which when clicked, takes the user to the NPS web page for the park. Limit the number of parks using the parkset parameter descrbed above.
+#### Output
+* Map file: nps_parks_map_location.html
+
+### Park size visualizations
+Run the script, **_nps_viz_size.py_**, to create a map showing the locations of all the parks, marked with a circle marker with size corresponding to the park's size. The circle markers have a hoverable tooltip telling the park name and size in square miles. Limit the number of parks using the parkset parameter descrbed above.
+#### Output
+* Map file: nps_parks_map_size.html
+* Table: nps_parks_sorted_by_size.xlsx, nps_parks_sorted_by_size.html
+
+### Park visits visualizations
+Run the script, **_nps_viz_visitor.py_**, to create a map showing the locations of all the parks, marked with a circle marker with size corresponding to the number of visits to the park in the latest year that data is available. The circle markers have a hoverable tooltip telling the park name and number of visits. This script also creates a number of plots to take a closer look at the data. Limit the number of parks using the parkset parameter descrbed above.
+#### Output
+* Map file: nps_parks_map_visits.html
+* Table: nps_parks_sorted_by_visits.xlsx, nps_parks_sorted_by_visits.html
+* Plots: park_visits_by_year_parkset.png, park_visits_by_year_highest_10_parkset.png, park_visits_by_year_lowest_10_parkset.png, park_visits_histogram.png, park_visits_per_capita.png, park_visits_vs_us_pop.png
 
 ## Data Prep - Optional
 If you would like to download and process your own input files instead of using the ones included in the project, you can do so. The data comes from a number of sources and the steps to get it ready are found below by source.
@@ -36,7 +53,7 @@ apikey = 'YOUR KEY HERE'
 
 ### Established date from Wikipedia
 1. Save the web page, https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States, as an html file named, **_wikipedia_national_parks.html_** in the _reference_data folder of the project.
-2. Run the script, **_read_wikipedia_data.py_**. This creates the file, **_wikipedia_date_established.xlsx_** in the _reference_data folder.
+2. Run the script, **_read_wikipedia_data.py_** to create the file, **_wikipedia_date_established.xlsx_** in the _reference_data folder.
 
 ### Park size report from the NPS website
 1. Download the most recent acreage report from the NPS website at: https://www.nps.gov/subjects/lwcf/acreagereports.htm. Calendar Year Reports, Year = 2018. Place this file, named **_NPS-Acreage-12-31-2018.xlsx_** in the _acreage_data directory of this project.
@@ -47,6 +64,9 @@ apikey = 'YOUR KEY HERE'
 3. Run the script, **_nps_read_visitor_data.py_**. This creates the file,
 **_annual_visitors_by_park_1904_2018.xlsx_** in the _visitor_data directory.
 
+### U.S. census data from census.gov
+Instructions coming soon.
+
 ### Create master DataFrame
 Run the script, **_nps_create_master_df.py_** to consolidate all the datafiles into one master dataframe. This script creates the file, **_nps_parks_master_df.xlsx_** which will be used by all the visualization scripts.
 
@@ -56,7 +76,6 @@ Contact [goodmorningdata@gmail.com](mailto:goodmorningdata@gmail.com)
 
 
 ## Roadmap
-* Automate the download of the visitation data and acreage data and remove all hardcoded file references.
-* Add logic to scrape founding date from Wikipedia.
-* Create a bubble map to show park acreage.
-* Create a bubble map to show park visitation.
+Coming soon.
+
+### README updated on April 16, 2019
