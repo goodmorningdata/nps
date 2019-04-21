@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script>L_PREFER_CANVAS=false; L_NO_TOUCH=false; L_DISABLE_3D=false;</script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.2.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://rawgit.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    
+    <style>#map_f3cd198046f24b1e876a5a5dd505c977 {
+        position: relative;
+        width: 100.0%;
+        height: 100.0%;
+        left: 0.0%;
+        top: 0.0%;
+        }
+    </style>
+</head>
+<body>    
+    
+    <div class="folium-map" id="map_f3cd198046f24b1e876a5a5dd505c977" ></div>
+</body>
+<script>    
+    
+    
+        var bounds = null;
+    
+
+    var map_f3cd198046f24b1e876a5a5dd505c977 = L.map(
+        'map_f3cd198046f24b1e876a5a5dd505c977', {
+        center: [39.833333, -98.583333],
+        zoom: 3.5,
+        maxBounds: bounds,
+        layers: [],
+        worldCopyJump: false,
+        crs: L.CRS.EPSG3857,
+        zoomControl: true,
+        });
+L.control.scale().addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+    
+    
+    var tile_layer_94d3ecee0dcd4eea85b32cefff9a3324 = L.tileLayer(
+        'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.jpg',
+        {
+        "attribution": null,
+        "detectRetina": false,
+        "maxNativeZoom": 18,
+        "maxZoom": 18,
+        "minZoom": 0,
+        "noWrap": false,
+        "subdomains": "abc"
+}).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+    
+        var marker_38772217994044a0a089e5c6ea6a3e0e = L.marker(
+            [44.59824417, -110.5471695],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_739551f8fb2745fe8b0eec91d0273925 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_38772217994044a0a089e5c6ea6a3e0e.setIcon(icon_739551f8fb2745fe8b0eec91d0273925);
+            
+    
+            var popup_2318a02475bf4dae885a946290f45348 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_797d29c626ad4b8da46504a78f861c68 = $('<div id="html_797d29c626ad4b8da46504a78f861c68" style="width: 100.0%; height: 100.0%;">Yellowstone National Park, March 01, 1872</div>')[0];
+                popup_2318a02475bf4dae885a946290f45348.setContent(html_797d29c626ad4b8da46504a78f861c68);
+            
+
+            marker_38772217994044a0a089e5c6ea6a3e0e.bindPopup(popup_2318a02475bf4dae885a946290f45348)
+            ;
+
+            
+        
+    
+        var marker_d31a8bfcfbc44638af1a74782fac831d = L.marker(
+            [36.71277299, -118.587429],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_2e5f10546893455ab744a5d9fa24fe6f = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_d31a8bfcfbc44638af1a74782fac831d.setIcon(icon_2e5f10546893455ab744a5d9fa24fe6f);
+            
+    
+            var popup_b6aa7ea8fd144b4ba0923f02278eb38f = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_40d6354c43f343d19cb5be4290d91d57 = $('<div id="html_40d6354c43f343d19cb5be4290d91d57" style="width: 100.0%; height: 100.0%;">Sequoia & Kings Canyon National Parks, September 25, 1890</div>')[0];
+                popup_b6aa7ea8fd144b4ba0923f02278eb38f.setContent(html_40d6354c43f343d19cb5be4290d91d57);
+            
+
+            marker_d31a8bfcfbc44638af1a74782fac831d.bindPopup(popup_b6aa7ea8fd144b4ba0923f02278eb38f)
+            ;
+
+            
+        
+    
+        var marker_cce2a9d816d840f4959a0babaa80d4b8 = L.marker(
+            [37.84883288, -119.5571873],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_fe33c4a3a3ac4165ac7c048d8ee3be6c = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_cce2a9d816d840f4959a0babaa80d4b8.setIcon(icon_fe33c4a3a3ac4165ac7c048d8ee3be6c);
+            
+    
+            var popup_64b855872c694b3a91aea4984d8b6c7f = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_600135d7f8e84a6d80fcccdf13a1dc1b = $('<div id="html_600135d7f8e84a6d80fcccdf13a1dc1b" style="width: 100.0%; height: 100.0%;">Yosemite National Park, October 01, 1890</div>')[0];
+                popup_64b855872c694b3a91aea4984d8b6c7f.setContent(html_600135d7f8e84a6d80fcccdf13a1dc1b);
+            
+
+            marker_cce2a9d816d840f4959a0babaa80d4b8.bindPopup(popup_64b855872c694b3a91aea4984d8b6c7f)
+            ;
+
+            
+        
+    
+        var marker_0310500c6e954272a05071bba432cd76 = L.marker(
+            [46.86075416, -121.7043885],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_e6c70837bb9f4a3ab5def3e14e81b576 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_0310500c6e954272a05071bba432cd76.setIcon(icon_e6c70837bb9f4a3ab5def3e14e81b576);
+            
+    
+            var popup_694b78dbdc624e9ba2e5f4d8c38a3d63 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_875c1a47b19e4961a567615b9577ace5 = $('<div id="html_875c1a47b19e4961a567615b9577ace5" style="width: 100.0%; height: 100.0%;">Mount Rainier National Park, March 02, 1899</div>')[0];
+                popup_694b78dbdc624e9ba2e5f4d8c38a3d63.setContent(html_875c1a47b19e4961a567615b9577ace5);
+            
+
+            marker_0310500c6e954272a05071bba432cd76.bindPopup(popup_694b78dbdc624e9ba2e5f4d8c38a3d63)
+            ;
+
+            
+        
+    
+        var marker_3c3ca093579b4c6c850dce855cbc8a60 = L.marker(
+            [42.94065854, -122.1338414],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_d53283e66d2144cdb4b67e2b3bb9a26e = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_3c3ca093579b4c6c850dce855cbc8a60.setIcon(icon_d53283e66d2144cdb4b67e2b3bb9a26e);
+            
+    
+            var popup_07cbbf5255b64c07ba431ef08a9888a4 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_ae2c440ddceb43e6a663c434d628c218 = $('<div id="html_ae2c440ddceb43e6a663c434d628c218" style="width: 100.0%; height: 100.0%;">Crater Lake National Park, May 22, 1902</div>')[0];
+                popup_07cbbf5255b64c07ba431ef08a9888a4.setContent(html_ae2c440ddceb43e6a663c434d628c218);
+            
+
+            marker_3c3ca093579b4c6c850dce855cbc8a60.bindPopup(popup_07cbbf5255b64c07ba431ef08a9888a4)
+            ;
+
+            
+        
+    
+        var marker_31236cdc08ce4cada8bec56333a30f80 = L.marker(
+            [43.58012365, -103.4394709],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_6b0d0410b432408b820e95e0c8c14d31 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_31236cdc08ce4cada8bec56333a30f80.setIcon(icon_6b0d0410b432408b820e95e0c8c14d31);
+            
+    
+            var popup_660a3214f7de4853b0cd5ff6549afa6a = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_f5ee790fdc2945e597949e9c9a3f1729 = $('<div id="html_f5ee790fdc2945e597949e9c9a3f1729" style="width: 100.0%; height: 100.0%;">Wind Cave National Park, January 09, 1903</div>')[0];
+                popup_660a3214f7de4853b0cd5ff6549afa6a.setContent(html_f5ee790fdc2945e597949e9c9a3f1729);
+            
+
+            marker_31236cdc08ce4cada8bec56333a30f80.bindPopup(popup_660a3214f7de4853b0cd5ff6549afa6a)
+            ;
+
+            
+        
+    
+        var marker_3c99471ff5d44f949a8cee302c80acba = L.marker(
+            [37.23908345, -108.4624032],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_1b02f9f443b94b09850e96b6cd717c95 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_3c99471ff5d44f949a8cee302c80acba.setIcon(icon_1b02f9f443b94b09850e96b6cd717c95);
+            
+    
+            var popup_d6ef51fa87ae4cc689abea688d156297 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_83b1e1bd32c2417b8417cb38c1d93e27 = $('<div id="html_83b1e1bd32c2417b8417cb38c1d93e27" style="width: 100.0%; height: 100.0%;">Mesa Verde National Park, June 29, 1906</div>')[0];
+                popup_d6ef51fa87ae4cc689abea688d156297.setContent(html_83b1e1bd32c2417b8417cb38c1d93e27);
+            
+
+            marker_3c99471ff5d44f949a8cee302c80acba.bindPopup(popup_d6ef51fa87ae4cc689abea688d156297)
+            ;
+
+            
+        
+    
+        var marker_868f58a023e24e109584f45177a90f6d = L.marker(
+            [48.68414678, -113.8009306],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_19717dbfe8cd4987ac45f97327401c64 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_868f58a023e24e109584f45177a90f6d.setIcon(icon_19717dbfe8cd4987ac45f97327401c64);
+            
+    
+            var popup_388003ffff4646bc8277547cdb6e68ac = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_a61c0026a6c146e592e1058ca1253998 = $('<div id="html_a61c0026a6c146e592e1058ca1253998" style="width: 100.0%; height: 100.0%;">Glacier National Park, May 11, 1910</div>')[0];
+                popup_388003ffff4646bc8277547cdb6e68ac.setContent(html_a61c0026a6c146e592e1058ca1253998);
+            
+
+            marker_868f58a023e24e109584f45177a90f6d.bindPopup(popup_388003ffff4646bc8277547cdb6e68ac)
+            ;
+
+            
+        
+    
+        var marker_aa6c2410f4124e338fbf9228e95d4a50 = L.marker(
+            [40.3556924, -105.6972879],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_f3363624e8804021838de9ee6b010b20 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_aa6c2410f4124e338fbf9228e95d4a50.setIcon(icon_f3363624e8804021838de9ee6b010b20);
+            
+    
+            var popup_a49400aca2054a3082f3c1d4585c88b1 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_5b40eb27e49c47188b3f89d3436a3f24 = $('<div id="html_5b40eb27e49c47188b3f89d3436a3f24" style="width: 100.0%; height: 100.0%;">Rocky Mountain National Park, January 26, 1915</div>')[0];
+                popup_a49400aca2054a3082f3c1d4585c88b1.setContent(html_5b40eb27e49c47188b3f89d3436a3f24);
+            
+
+            marker_aa6c2410f4124e338fbf9228e95d4a50.bindPopup(popup_a49400aca2054a3082f3c1d4585c88b1)
+            ;
+
+            
+        
+    
+        var marker_3d2d701986b34826b8e44003e7323df0 = L.marker(
+            [19.3355036, -155.4700257],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_6f95c8b47e9e4fe0ba3e4c0e239ffaad = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_3d2d701986b34826b8e44003e7323df0.setIcon(icon_6f95c8b47e9e4fe0ba3e4c0e239ffaad);
+            
+    
+            var popup_8b9432384f574a9d8208e89f131ba84c = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_975dda35da1a47c4880326e185d78477 = $('<div id="html_975dda35da1a47c4880326e185d78477" style="width: 100.0%; height: 100.0%;">Hawai'i Volcanoes National Park, August 01, 1916</div>')[0];
+                popup_8b9432384f574a9d8208e89f131ba84c.setContent(html_975dda35da1a47c4880326e185d78477);
+            
+
+            marker_3d2d701986b34826b8e44003e7323df0.bindPopup(popup_8b9432384f574a9d8208e89f131ba84c)
+            ;
+
+            
+        
+    
+        var marker_8b9379d986ce49b6990ed570b655beaf = L.marker(
+            [20.70693015, -156.1591775],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_f03209d525714fa09e5db84cd9658a1f = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_8b9379d986ce49b6990ed570b655beaf.setIcon(icon_f03209d525714fa09e5db84cd9658a1f);
+            
+    
+            var popup_b64db2c4f7db48c4931cb90c5bdc6e31 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_221ce92035e54497b0392bfa4e9dd433 = $('<div id="html_221ce92035e54497b0392bfa4e9dd433" style="width: 100.0%; height: 100.0%;">Haleakal&#257; National Park, August 01, 1916</div>')[0];
+                popup_b64db2c4f7db48c4931cb90c5bdc6e31.setContent(html_221ce92035e54497b0392bfa4e9dd433);
+            
+
+            marker_8b9379d986ce49b6990ed570b655beaf.bindPopup(popup_b64db2c4f7db48c4931cb90c5bdc6e31)
+            ;
+
+            
+        
+    
+        var marker_378af6186d8a45ae9bf8e85e24262788 = L.marker(
+            [40.49354575, -121.4075993],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_bd99b8b1b8694fd295445c88d203bf49 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_378af6186d8a45ae9bf8e85e24262788.setIcon(icon_bd99b8b1b8694fd295445c88d203bf49);
+            
+    
+            var popup_dc70aa5add3e4f64a099386d60a6d500 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_8add8cb3af4b414fae68202b5f321e54 = $('<div id="html_8add8cb3af4b414fae68202b5f321e54" style="width: 100.0%; height: 100.0%;">Lassen Volcanic National Park, August 09, 1916</div>')[0];
+                popup_dc70aa5add3e4f64a099386d60a6d500.setContent(html_8add8cb3af4b414fae68202b5f321e54);
+            
+
+            marker_378af6186d8a45ae9bf8e85e24262788.bindPopup(popup_dc70aa5add3e4f64a099386d60a6d500)
+            ;
+
+            
+        
+    
+        var marker_e99aeb43cdba46baa175ab07ed11589c = L.marker(
+            [63.29777484, -151.0526568],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_9010f1bb4a49498db509ec97bd615d6a = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_e99aeb43cdba46baa175ab07ed11589c.setIcon(icon_9010f1bb4a49498db509ec97bd615d6a);
+            
+    
+            var popup_d1a3cfe6d588422b9a17920f877ba7b4 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_959712438ba04fee8df058f76754630b = $('<div id="html_959712438ba04fee8df058f76754630b" style="width: 100.0%; height: 100.0%;">Denali National Park & Preserve, February 26, 1917</div>')[0];
+                popup_d1a3cfe6d588422b9a17920f877ba7b4.setContent(html_959712438ba04fee8df058f76754630b);
+            
+
+            marker_e99aeb43cdba46baa175ab07ed11589c.bindPopup(popup_d1a3cfe6d588422b9a17920f877ba7b4)
+            ;
+
+            
+        
+    
+        var marker_c00ccec99ac84a7698bbe91f1ddf8008 = L.marker(
+            [44.30777545, -68.30063316],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_a86888cc416c4c2895a32eeaeefc6a8c = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_c00ccec99ac84a7698bbe91f1ddf8008.setIcon(icon_a86888cc416c4c2895a32eeaeefc6a8c);
+            
+    
+            var popup_7e7a6087a77942f9836d1224e99c7670 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_6d8bb1bcf5bd44e298a4345199ffaf4a = $('<div id="html_6d8bb1bcf5bd44e298a4345199ffaf4a" style="width: 100.0%; height: 100.0%;">Acadia National Park, February 26, 1919</div>')[0];
+                popup_7e7a6087a77942f9836d1224e99c7670.setContent(html_6d8bb1bcf5bd44e298a4345199ffaf4a);
+            
+
+            marker_c00ccec99ac84a7698bbe91f1ddf8008.bindPopup(popup_7e7a6087a77942f9836d1224e99c7670)
+            ;
+
+            
+        
+    
+        var marker_777ca4c98121426d993bcc3a6dd75b40 = L.marker(
+            [36.17280161, -112.6836024],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_34eec295386244c2971fa50951347339 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_777ca4c98121426d993bcc3a6dd75b40.setIcon(icon_34eec295386244c2971fa50951347339);
+            
+    
+            var popup_f7bdb679534c4c9eabf368d39d5ba2a9 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_f752736e172649df94fdf60329280da8 = $('<div id="html_f752736e172649df94fdf60329280da8" style="width: 100.0%; height: 100.0%;">Grand Canyon National Park, February 26, 1919</div>')[0];
+                popup_f7bdb679534c4c9eabf368d39d5ba2a9.setContent(html_f752736e172649df94fdf60329280da8);
+            
+
+            marker_777ca4c98121426d993bcc3a6dd75b40.bindPopup(popup_f7bdb679534c4c9eabf368d39d5ba2a9)
+            ;
+
+            
+        
+    
+        var marker_2ff9fbb7969f42f899c90fe153788cb6 = L.marker(
+            [37.29839254, -113.0265138],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_571e92a7596e4a04a533e1d86411ac76 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_2ff9fbb7969f42f899c90fe153788cb6.setIcon(icon_571e92a7596e4a04a533e1d86411ac76);
+            
+    
+            var popup_20b56f8de9ff4a718acf096d70373956 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_82ea75be051e40e19332d7a464e35a13 = $('<div id="html_82ea75be051e40e19332d7a464e35a13" style="width: 100.0%; height: 100.0%;">Zion National Park, November 19, 1919</div>')[0];
+                popup_20b56f8de9ff4a718acf096d70373956.setContent(html_82ea75be051e40e19332d7a464e35a13);
+            
+
+            marker_2ff9fbb7969f42f899c90fe153788cb6.bindPopup(popup_20b56f8de9ff4a718acf096d70373956)
+            ;
+
+            
+        
+    
+        var marker_d4ba8ca7f4c74253ad61735c41503cc1 = L.marker(
+            [34.52414366, -93.06332936],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_5ebbf875ad8f473986d12f286f4c8f8c = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_d4ba8ca7f4c74253ad61735c41503cc1.setIcon(icon_5ebbf875ad8f473986d12f286f4c8f8c);
+            
+    
+            var popup_a622515a4721448e801e70be918ab3d5 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_f6c12faae9d042ee82cbdb0b9738c165 = $('<div id="html_f6c12faae9d042ee82cbdb0b9738c165" style="width: 100.0%; height: 100.0%;">Hot Springs National Park, March 04, 1921</div>')[0];
+                popup_a622515a4721448e801e70be918ab3d5.setContent(html_f6c12faae9d042ee82cbdb0b9738c165);
+            
+
+            marker_d4ba8ca7f4c74253ad61735c41503cc1.bindPopup(popup_a622515a4721448e801e70be918ab3d5)
+            ;
+
+            
+        
+    
+        var marker_9ff396168e194305b44cd66f7fd25cec = L.marker(
+            [37.58399144, -112.1826689],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_596bc66e9874483fa71ea7d580b990c2 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_9ff396168e194305b44cd66f7fd25cec.setIcon(icon_596bc66e9874483fa71ea7d580b990c2);
+            
+    
+            var popup_874a7838e72e48cfa82cd582edddcac5 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_86c9919f459242dfa443e97bb7aaba5b = $('<div id="html_86c9919f459242dfa443e97bb7aaba5b" style="width: 100.0%; height: 100.0%;">Bryce Canyon National Park, February 25, 1928</div>')[0];
+                popup_874a7838e72e48cfa82cd582edddcac5.setContent(html_86c9919f459242dfa443e97bb7aaba5b);
+            
+
+            marker_9ff396168e194305b44cd66f7fd25cec.bindPopup(popup_874a7838e72e48cfa82cd582edddcac5)
+            ;
+
+            
+        
+    
+        var marker_ba0be045f52441688c698d1e34d786d4 = L.marker(
+            [43.81853565, -110.7054666],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_3edc73c0f422415c939348f045977015 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_ba0be045f52441688c698d1e34d786d4.setIcon(icon_3edc73c0f422415c939348f045977015);
+            
+    
+            var popup_30e5cd6327a64a09baa676ae0609d45d = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_90999f462c9941679fd0ed9a37fb88dd = $('<div id="html_90999f462c9941679fd0ed9a37fb88dd" style="width: 100.0%; height: 100.0%;">Grand Teton National Park, February 26, 1929</div>')[0];
+                popup_30e5cd6327a64a09baa676ae0609d45d.setContent(html_90999f462c9941679fd0ed9a37fb88dd);
+            
+
+            marker_ba0be045f52441688c698d1e34d786d4.bindPopup(popup_30e5cd6327a64a09baa676ae0609d45d)
+            ;
+
+            
+        
+    
+        var marker_3be511d497b0466c8951c0bc7a4b0b11 = L.marker(
+            [32.14089463, -104.5529688],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_24bd3e680a644b3486294b28282db0cf = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_3be511d497b0466c8951c0bc7a4b0b11.setIcon(icon_24bd3e680a644b3486294b28282db0cf);
+            
+    
+            var popup_3afe857a39c44f5888c5934b4b1bfba1 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_3475e70e358f44938dc078b509bc32ac = $('<div id="html_3475e70e358f44938dc078b509bc32ac" style="width: 100.0%; height: 100.0%;">Carlsbad Caverns National Park, May 14, 1930</div>')[0];
+                popup_3afe857a39c44f5888c5934b4b1bfba1.setContent(html_3475e70e358f44938dc078b509bc32ac);
+            
+
+            marker_3be511d497b0466c8951c0bc7a4b0b11.bindPopup(popup_3afe857a39c44f5888c5934b4b1bfba1)
+            ;
+
+            
+        
+    
+        var marker_791a9fd9bdf34bee930265338168fb2d = L.marker(
+            [25.37294225, -80.88200301],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_aa17d68c226d4fed97825050012ac8da = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_791a9fd9bdf34bee930265338168fb2d.setIcon(icon_aa17d68c226d4fed97825050012ac8da);
+            
+    
+            var popup_c080586ef81d4f01a41c23dacc2c77b1 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_92b6d0af1d90409aacc4a4f63e2af534 = $('<div id="html_92b6d0af1d90409aacc4a4f63e2af534" style="width: 100.0%; height: 100.0%;">Everglades National Park, May 30, 1934</div>')[0];
+                popup_c080586ef81d4f01a41c23dacc2c77b1.setContent(html_92b6d0af1d90409aacc4a4f63e2af534);
+            
+
+            marker_791a9fd9bdf34bee930265338168fb2d.bindPopup(popup_c080586ef81d4f01a41c23dacc2c77b1)
+            ;
+
+            
+        
+    
+        var marker_6d206e622f9f4325a6017499977e285f = L.marker(
+            [35.60116374, -83.50818326],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_996e739a057740f3a88c84391933cad4 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_6d206e622f9f4325a6017499977e285f.setIcon(icon_996e739a057740f3a88c84391933cad4);
+            
+    
+            var popup_a5b9b05780054aedaaedbb14ca21ae54 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_9e4d3f29f32448c181e15d858cef1a38 = $('<div id="html_9e4d3f29f32448c181e15d858cef1a38" style="width: 100.0%; height: 100.0%;">Great Smoky Mountains National Park, June 15, 1934</div>')[0];
+                popup_a5b9b05780054aedaaedbb14ca21ae54.setContent(html_9e4d3f29f32448c181e15d858cef1a38);
+            
+
+            marker_6d206e622f9f4325a6017499977e285f.bindPopup(popup_a5b9b05780054aedaaedbb14ca21ae54)
+            ;
+
+            
+        
+    
+        var marker_423139963e6c4dd88b62567c99ae1762 = L.marker(
+            [38.49236644, -78.46907715],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_1121c59742874a389516cf47f0e76eb0 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_423139963e6c4dd88b62567c99ae1762.setIcon(icon_1121c59742874a389516cf47f0e76eb0);
+            
+    
+            var popup_d8da4ea2210143599bccd4f8e783772b = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_37e2c40b206947dab56d8929b1b74dff = $('<div id="html_37e2c40b206947dab56d8929b1b74dff" style="width: 100.0%; height: 100.0%;">Shenandoah National Park, December 26, 1935</div>')[0];
+                popup_d8da4ea2210143599bccd4f8e783772b.setContent(html_37e2c40b206947dab56d8929b1b74dff);
+            
+
+            marker_423139963e6c4dd88b62567c99ae1762.bindPopup(popup_d8da4ea2210143599bccd4f8e783772b)
+            ;
+
+            
+        
+    
+        var marker_d8188b16ea5849e8adfa97484cadf1bc = L.marker(
+            [47.80392754, -123.6663848],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_bb7b11b4cea149d7b390ee7973bc50bf = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_d8188b16ea5849e8adfa97484cadf1bc.setIcon(icon_bb7b11b4cea149d7b390ee7973bc50bf);
+            
+    
+            var popup_a17dbfede96f4c4a97c386fb65ff8978 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_33ca633d732346e38567f3153fea5e81 = $('<div id="html_33ca633d732346e38567f3153fea5e81" style="width: 100.0%; height: 100.0%;">Olympic National Park, June 29, 1938</div>')[0];
+                popup_a17dbfede96f4c4a97c386fb65ff8978.setContent(html_33ca633d732346e38567f3153fea5e81);
+            
+
+            marker_d8188b16ea5849e8adfa97484cadf1bc.bindPopup(popup_a17dbfede96f4c4a97c386fb65ff8978)
+            ;
+
+            
+        
+    
+        var marker_594593bd5d6f4225b362eb54fb1ee217 = L.marker(
+            [36.71277299, -118.587429],
+            {
+                icon: new L.Icon.Default()
+                }
+            ).addTo(map_f3cd198046f24b1e876a5a5dd505c977);
+        
+    
+
+                var icon_d288b84f84164af98070b84e2572e2a9 = L.AwesomeMarkers.icon({
+                    icon: 'tree',
+                    iconColor: 'white',
+                    markerColor: 'green',
+                    prefix: 'fa',
+                    extraClasses: 'fa-rotate-0'
+                    });
+                marker_594593bd5d6f4225b362eb54fb1ee217.setIcon(icon_d288b84f84164af98070b84e2572e2a9);
+            
+    
+            var popup_47af3bd01d34485c89464de4bddda6c0 = L.popup({maxWidth: '300'
+            
+            });
+
+            
+                var html_c43325794d9349aebe1a1dc29717dbea = $('<div id="html_c43325794d9349aebe1a1dc29717dbea" style="width: 100.0%; height: 100.0%;">Sequoia & Kings Canyon National Parks, March 04, 1940</div>')[0];
+                popup_47af3bd01d34485c89464de4bddda6c0.setContent(html_c43325794d9349aebe1a1dc29717dbea);
+            
+
+            marker_594593bd5d6f4225b362eb54fb1ee217.bindPopup(popup_47af3bd01d34485c89464de4bddda6c0)
+            ;
+
+            
+        
+</script>
