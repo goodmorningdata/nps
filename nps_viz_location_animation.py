@@ -6,11 +6,16 @@ def add_park_location_to_map(map, park):
     map_icon = folium.Icon(color="green",
                            prefix="fa",
                            icon="tree")
-    popup_string = (park.park_name + ", " +
-                   park.date_established.strftime('%B %d, %Y'))
+
+    popup_string = (park.park_name + ", "
+                   + park.date_established.strftime('%B %-d, %Y')
+                   ).replace("'", r"\'")
+    popup_html = folium.Html(popup_string, script=True)
+
     folium.Marker(location = [park.lat, park.long],
                   icon = map_icon,
-                  popup = popup_string).add_to(map)
+                  popup = folium.Popup(popup_html)
+                 ).add_to(map)
 
     return map
 
@@ -46,7 +51,7 @@ def main():
     map_df = map_df.sort_values(by=["date_established"]).reset_index()
 
     center_lower_48 = [39.833333, -98.583333]
-    map = folium.Map(location = center_lower_48, zoom_start = 3.5,
+    map = folium.Map(location = center_lower_48, zoom_start = 3,
                      control_scale = True, tiles = 'Stamen Terrain')
 
     for index, row in map_df.iterrows():
