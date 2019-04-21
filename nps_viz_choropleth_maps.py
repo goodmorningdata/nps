@@ -1,4 +1,4 @@
-'''Create Folium chloropleth maps of National Park Service data.
+'''Create Folium choropleth maps of National Park Service data.
 
 Description.
 
@@ -11,7 +11,7 @@ This script contains the following functions:
     *
 '''
 
-def create_chloropleth_map():
+def create_choropleth_map():
     ''' Create an empty Folium map.
 
     This function creates a Folium map object, centered on the lat/long
@@ -33,7 +33,7 @@ def create_chloropleth_map():
 
     return map
 
-def add_chloropleth_color_to_map(map, df):
+def add_choropleth_color_to_map(map, df):
     ''' Add cholorpleth color to map based on number of parks per state
 
     This function...
@@ -41,7 +41,7 @@ def add_chloropleth_color_to_map(map, df):
     Parameters
     ----------
     map : Folium map object
-      Folium map to add chloropleth color to.
+      Folium map to add choropleth color to.
 
     df : Pandas DataFrame
       DataFrame of all parks to add to the map.
@@ -49,7 +49,7 @@ def add_chloropleth_color_to_map(map, df):
     Returns
     -------
     map : Folium map object
-      Folium map with chloropleth color added.
+      Folium map with choropleth color added.
     '''
 
     print (df['states'])
@@ -82,8 +82,8 @@ def main():
 
     print("Creating parks per state map for the park set, '"
           + args.parkset + "'.")
-    park_map = create_chloropleth_map()
-    park_map = add_chloropleth_color_to_map(park_map, map_df)
+    park_map = create_choropleth_map()
+    park_map = add_choropleth_color_to_map(park_map, map_df)
 
 if __name__ == '__main__':
     main()
