@@ -1,5 +1,5 @@
 # Don't track output files.
-_output/*.*
+_output/*
 
 # Don't track this stuff either.
 .DS_Store
