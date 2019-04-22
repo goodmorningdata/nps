@@ -155,7 +155,6 @@ def plot_total_park_visits(df, park_set):
 
     # Sum park visits for each year over all parks in the dataframe.
     sum_df = df.loc[:, '1904':'2018'].sum()
-
     fig, ax = plt.subplots()
     ax.plot(sum_df.index, sum_df.values/1e6)
 
@@ -241,7 +240,6 @@ def plot_visits_by_park(df, park_set, title=None):
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90)
     plt.ylabel('Millions of Visits')
-    ax.set_title('Park visits per capita (' + park_set + ')')
     plt.show()
 
     fig.savefig('_output/' + filename)
@@ -402,7 +400,8 @@ def main():
     # Plot park visits by year for the top 10 and bottom 10.
     plot_visits_by_park(park_df.iloc[0:10,:], park_set,
         title = 'Park visits by year, highest 10 (' + park_set + ')')
-    plot_visits_by_park(park_df[pd.notnull(park_df['2018']) & park_df['2018'] > 0].iloc[-10:,:],
+    plot_visits_by_park(park_df[pd.notnull(park_df['2018']) &
+        park_df['2018'] > 0].iloc[-10:,:],
         park_set, title = 'Park visits by year, lowest 10 (' + park_set + ')')
 
     # Plot park visits in relation to the U.S. population.
