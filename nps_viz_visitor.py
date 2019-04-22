@@ -132,9 +132,48 @@ def read_census_data():
 
     return pop_df
 
+def plot_total_park_visits(df, park_set):
+    '''
+    Plot total park visits from 1904-2018 for all parks summed in the
+    parameter dataframe. Save the plot image to a .png file.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data to plot filtered by park set
+      parameter.
+
+    park_set : str
+      Set of parks in the dataframe. The dataframe, df, has already
+      been filtered for this park set, but the parameter is necessary
+      to be used in the plot title and output filename.
+
+    Returns
+    -------
+    None
+    '''
+
+    # Sum park visits for each year over all parks in the dataframe.
+    sum_df = df.loc[:, '1904':'2018'].sum()
+
+    fig, ax = plt.subplots()
+    ax.plot(sum_df.index, sum_df.values/1e6)
+
+    # X-axis ticks are every 5th year, displayed vertically.
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
+    plt.xticks(rotation=90)
+    plt.ylabel('Millions of Visits')
+    ax.set_title('Total park visits, 1904-2018 (' + park_set + ')')
+    plt.show()
+
+    filename = ('park_visits_by_year_total_'
+                + park_set.lower().replace(' ','_')
+                + '.png')
+    fig.savefig('_output/' + filename)
+
 def plot_visits_by_park(df, park_set, title=None):
     '''
-    Plot park visits from 1904-2017 for each park in the parameter
+    Plot park visits from 1904-2018 for each park in the parameter
     dataframe. Save the plot image to a .png file. This plot displays
     optimally for ~10 parks maximum.
 
@@ -199,10 +238,10 @@ def plot_visits_by_park(df, park_set, title=None):
               fancybox=True, borderaxespad=2)
 
     # X-axis ticks are every 5th year, displayed vertically.
-    #ax.set_xticks(ax.get_xticks()[1::5])
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90)
     plt.ylabel('Millions of Visits')
+    ax.set_title('Park visits per capita (' + park_set + ')')
     plt.show()
 
     fig.savefig('_output/' + filename)
@@ -356,6 +395,9 @@ def main():
     park_map = create_map()
     park_map = add_park_visits_circles_to_map(park_map, park_df)
     park_map.save('_output/nps_parks_map_visits.html')
+
+    # Plot total park visits over time.
+    plot_total_park_visits(park_df, park_set)
 
     # Plot park visits by year for the top 10 and bottom 10.
     plot_visits_by_park(park_df.iloc[0:10,:], park_set,
