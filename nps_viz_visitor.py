@@ -24,7 +24,7 @@ Dependencies:
     * Run the script, nps_create_master_df.py to create the file,
       nps_parks_master_df.xlsx.
     * Run the script, nps_read_population_data.py to create the file,
-      us_est_1970-2017.xlsx.
+      us_est_1900-2018.xlsx.
 
 This script contains the following functions:
 
@@ -44,6 +44,9 @@ import numpy as np
 import folium
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+
+import warnings
+warnings.filterwarnings(action="ignore", module="scipy", message="^internal gelsd")
 
 def create_map():
     '''
@@ -111,7 +114,7 @@ def add_park_visits_circles_to_map(map, df):
 def read_census_data():
     '''
     Read census population data from the Excel file,
-    us_est_1970-2017.xlsx, created by the script,
+    us_est_1900-2018.xlsx, created by the script,
     nps_read_population_data.py, into a dataframe to be used for
     plotting.
 
@@ -126,7 +129,7 @@ def read_census_data():
     '''
 
     pop_df = pd.read_excel(
-             '_census_data/us_est_1970-2017.xlsx',
+             '_census_data/us_est_1900-2018.xlsx',
               header=0, index=False)
     pop_df = pop_df.groupby('year').sum()
 
@@ -163,6 +166,66 @@ def plot_total_park_visits(df, park_set):
     plt.xticks(rotation=90)
     plt.ylabel('Millions of Visits')
     ax.set_title('Total park visits, 1904-2018 (' + park_set + ')')
+    plt.show()
+
+    filename = ('park_visits_by_year_total_'
+                + park_set.lower().replace(' ','_')
+                + '.png')
+    fig.savefig('_output/' + filename)
+
+def plot_total_park_visits_future(df, park_set):
+    '''
+    Description of method.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data to plot filtered by park set
+      parameter.
+
+    park_set : str
+      Set of parks in the dataframe. The dataframe, df, has already
+      been filtered for this park set, but the parameter is necessary
+      to be used in the plot title and output filename.
+
+    Returns
+    -------
+    None
+    '''
+
+    # Sum park visits for each year over all parks in the dataframe.
+    sum_df = df.loc[:, '1904':'2018'].sum()
+
+    for start in ['1960', '1970', '1980']:
+        sum_df = sum_df.loc[start:]
+        from sklearn.model_selection import train_test_split
+        X = pd.Series(pd.to_numeric(sum_df.index.values)).to_frame()
+        y = pd.Series(sum_df.values)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+
+        from sklearn.linear_model import LinearRegression
+        regressor = LinearRegression()
+        regressor.fit(X_train, y_train)
+        print('Linear Regression Score for start year {}: {}'.format(start, regressor.score(X_test, y_test)))
+
+    # print('Regressor intercept and coef:')
+    # print(regressor.intercept_)
+    # print(regressor.coef_)
+    # print('y_test:')
+    # print(y_test)
+    # #print(y_test.reshape(1, -1))
+    # y_pred = regressor.predict(y_test.reshape(1, -1))
+    # print(y_pred)
+    # print('Score:')
+
+    fig, ax = plt.subplots()
+    ax.scatter(sum_df.index, sum_df.values/1e6)
+
+    # X-axis ticks are every 5th year, displayed vertically.
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
+    plt.xticks(rotation=90)
+    plt.ylabel('Millions of Visits')
+    ax.set_title('Total park visits, future estimate (' + park_set + ')')
     plt.show()
 
     filename = ('park_visits_by_year_total_'
@@ -224,10 +287,10 @@ def plot_visits_by_park(df, park_set, title=None):
                     .replace(')', '')
                     + '.png')
     else:
-        ax.set_title('Visits by year (' + park_set + ')')
-        filename = ('park_visits_by_year_'
+        ax.set_title("Visits by year (" + park_set + ")")
+        filename = ("park_visits_by_year_"
                     + park_set.lower().replace(' ','_')
-                    + '.png')
+                    + ".png")
 
     # Shrink the plot by 30% and put the legend to the right of the
     # current axis.
@@ -273,18 +336,18 @@ def plot_park_visits_vs_us_pop(visits_df, pop_df, park_set):
     # Sum visits for each year over all parks in the dataframe, re-index
     # visits dataframe with numeric years, and calculate the visits
     # per capita.
-    visit_totals = pd.DataFrame(visits_df.sum().loc['1979':'2017'],
+    visit_totals = pd.DataFrame(visits_df.sum().loc['1904':'2018'],
                                 columns=['visitors'])
-    visit_totals.index = range(1979,2018)
+    visit_totals.index = range(1904,2019)
     visit_totals['visits_div_pop'] = (visit_totals['visitors'] /
-                                      pop_df['population'].loc[1979:2018])
+                                      pop_df['population'].loc[1904:2018])
 
     # Plot total park visits and U.S. population by year.
     fig, ax = plt.subplots(2, sharex=True)
     ax[0].plot(visit_totals.index, visit_totals.visitors/1e6)
     ax[0].set_title('Total park visits (' + park_set + ')')
     ax[0].set_ylabel('Millions of visits')
-    ax[1].plot(visit_totals.index, pop_df['population'].loc[1979:2018]/1e6)
+    ax[1].plot(visit_totals.index, pop_df['population'].loc[1904:2018]/1e6)
     ax[1].set_title('U.S. population')
     ax[1].set_ylabel('Millions of people')
     plt.show()
@@ -390,29 +453,32 @@ def main():
     park_df = park_df.sort_values('2018', ascending=False)
 
     # Create the folium circle marker map.
-    park_map = create_map()
-    park_map = add_park_visits_circles_to_map(park_map, park_df)
-    park_map.save('_output/nps_parks_map_visits.html')
+    # park_map = create_map()
+    # park_map = add_park_visits_circles_to_map(park_map, park_df)
+    # park_map.save('_output/nps_parks_map_visits.html')
 
     # Plot total park visits over time.
     plot_total_park_visits(park_df, park_set)
 
+    # Plot estimate of future visits.
+    plot_total_park_visits_future(park_df, park_set)
+
     # Plot park visits by year for the top 10 and bottom 10.
-    plot_visits_by_park(park_df.iloc[0:10,:], park_set,
-        title = 'Park visits by year, highest 10 (' + park_set + ')')
-    plot_visits_by_park(park_df[pd.notnull(park_df['2018']) &
-        park_df['2018'] > 0].iloc[-10:,:],
-        park_set, title = 'Park visits by year, lowest 10 (' + park_set + ')')
+    # plot_visits_by_park(park_df.iloc[0:10,:], park_set,
+    #     title = 'Park visits by year, highest 10 (' + park_set + ')')
+    # plot_visits_by_park(park_df[pd.notnull(park_df['2018']) &
+    #     park_df['2018'] > 0].iloc[-10:,:],
+    #     park_set, title = 'Park visits by year, lowest 10 (' + park_set + ')')
 
     # Plot park visits in relation to the U.S. population.
-    pop_df = read_census_data()
-    plot_park_visits_vs_us_pop(park_df, pop_df, park_set)
+    # pop_df = read_census_data()
+    # plot_park_visits_vs_us_pop(park_df, pop_df, park_set)
 
     # Run visits plot for a specific park using park code.
-    plot_visits_by_park(park_df[park_df['park_code'] == 'acad'], park_set)
+    # plot_visits_by_park(park_df[park_df['park_code'] == 'acad'], park_set)
 
     # Plot histogram of park visits.
-    plot_park_visits_hist(park_df, park_set)
+    # plot_park_visits_hist(park_df, park_set)
 
     output_visits_data_to_tables(park_df)
 
