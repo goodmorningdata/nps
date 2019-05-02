@@ -5,6 +5,8 @@ to the National Park Service.
 1) A choropleth map of the United States with state color corresponding
    to the number of parks in that state.
    - Output file = nps_parks_state_choropleth_map.html
+2) A bar chart of the number of parks in each year since 1904.
+   - Output file = nps_parks_num_parks_per_year.html
 
 This script requires the following libraries: argparse, pandas, folium,
     operator, functools, collections, branca.colormap, geopandas.
@@ -15,8 +17,10 @@ Dependencies:
 
 This script contains the following functions:
     * get_state_color : Determine correct state color based on number
-                        of parks.
+      of parks.
     * create_state_count_choropleth : Create park count choropleth.
+    * plot_num_parks_per_year : Create bar chart of the number of parks
+      in the system in each year.
 '''
 
 import argparse
@@ -29,8 +33,7 @@ from collections import Counter
 from branca.colormap import LinearColormap
 
 def get_state_color(feature, df, color_scale):
-    ''' Find correct choropleth color.
-
+    '''
     This function extracts the state from the GeoJson feature, finds the
     number of parks in that state, and then returns the correct color
     for that state using the color scale. If there are no parks in
@@ -131,6 +134,15 @@ def create_state_count_choropleth(df):
 
     return map
 
+def plot_num_parks_per_year(df):
+    years = [str(i) for i in range(1904, 2019)]
+    #Want count of parks founded in each year (bar) and total number of parks in the system in each year (line)
+    for year in years:
+         print ('****', year)
+         #print(df[df[year] > 0 & pd.notnull(df[year])])
+         print(df[df[year] > 0 & pd.notnull(df[year])].count())
+    #nps_parks_num_parks_per_year.html
+
 def main():
     # Read in the parks master dataframe from Excel.
     df = pd.read_excel("nps_parks_master_df.xlsx", header=0)
@@ -159,8 +171,15 @@ def main():
         print("Creating maps for all NPS sites.")
 
     # Create the state park count choropleth and save to a file.
-    state_map = create_state_count_choropleth(map_df)
-    state_map.save("_output/nps_parks_state_choropleth_map.html")
+    #state_map = create_state_count_choropleth(map_df)
+    #state_map.save("_output/nps_parks_state_choropleth_map.html")
+
+    # Plot the number of parks in the systeam each year.
+    plot_num_parks_per_year(map_df)
+
+    # Plot the total number of parks per year and number
+    # established that year.
+    plot_num_parks_num_established(map_df)
 
 if __name__ == "__main__":
     main()

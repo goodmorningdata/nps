@@ -38,6 +38,8 @@ def main():
     # Replace NaN with 0.0.
     df.fillna(value=0.0, inplace=True)
 
+    print(df)
+
     df.to_excel('_visitor_data/annual_visitors_by_park_1904_2018.xlsx')
 
 if __name__ == '__main__':
