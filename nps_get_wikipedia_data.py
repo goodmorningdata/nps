@@ -3,18 +3,16 @@
 This script scrapes the Wikipedia page, "List of national parks of the
 United States", for the establishment date of each National Park. The
 Python library, BeatutifulSoup, is used to pull the data out of the
-html file. As each park name and established date is found on the page,
-it is appended to a dataframe. The dataframe is output to an Excel
-file, "wikipedia_date_established.xlsx".
+html file. The dataframe is saved as an Excel file,
+"wikipedia_date_established.xlsx".
 
-This script requires the following libraries: BeautifulSoup, pandas.
+Required libraries: BeautifulSoup, pandas, datetime.
 
 Dependencies:
-
-    * Download the Wikipedia page:
+    * Save the webpage:
       https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States
-      and save the file as "wikipedia_national_parks.html" in the
-      "_reference_data" folder of the project.
+      as "wikipedia_national_parks.html" in the "_reference_data"
+      folder of the project.
 '''
 
 from bs4 import BeautifulSoup

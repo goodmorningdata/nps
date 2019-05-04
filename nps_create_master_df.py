@@ -1,5 +1,4 @@
-'''
-Create master dataframe of National Park Service site data.
+''' Create master dataframe of National Park Service site data.
 
 This script creates a dataframe of all data collected by this project
 about the NPS official units.
@@ -67,7 +66,7 @@ def read_park_sites_web():
     df : pandas DataFrame : Dataframe of park site data.
     '''
 
-    df = pd.read_excel('nps_park_sites_web.xlsx', header=0)
+    df = pd.read_excel('_reference_data/nps_park_sites_web.xlsx', header=0)
     df['park_name_stripped'] = df.park_name.apply(
                                lambda x: strip_park_name(x))
 
@@ -89,7 +88,7 @@ def read_park_sites_api():
     df : pandas DataFrame : Dataframe of park site data.
     '''
 
-    df = pd.read_excel('nps_park_sites_api.xlsx', header=0)
+    df = pd.read_excel('_reference_data/nps_park_sites_api.xlsx', header=0)
     df['park_name_stripped'] = df.park_name.apply(
                                lambda x: strip_park_name(x))
 

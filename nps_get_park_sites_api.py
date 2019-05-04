@@ -175,7 +175,7 @@ def clean_parks_df(df):
 def main():
     parks_df = create_parks_df()
     cleaned_parks_df = clean_parks_df(parks_df)
-    cleaned_parks_df.to_excel('nps_park_sites_api.xlsx', index=False)
+    cleaned_parks_df.to_excel('_reference_data/nps_park_sites_api.xlsx', index=False)
 
 if __name__ == '__main__':
     main()

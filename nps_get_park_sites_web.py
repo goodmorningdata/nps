@@ -1,4 +1,4 @@
-'''Scrape list of official NPS park units from nps.gov.
+''' Scrape list of official NPS park units from nps.gov.
 
 This script reads the webpage,
 https://www.nps.gov/aboutus/national-park-system.htm, saved as an html
@@ -65,7 +65,7 @@ def get_park_sites_from_page(filename):
 def main():
     filename = '_reference_data/national_park_system.html'
     df = get_park_sites_from_page(filename)
-    df.to_excel('nps_park_sites_web.xlsx', index=False)
+    df.to_excel('_reference_data/nps_park_sites_web.xlsx', index=False)
 
 if __name__ == '__main__':
     main()
