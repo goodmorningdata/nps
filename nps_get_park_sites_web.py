@@ -29,6 +29,8 @@ def get_park_sites_from_page(filename):
                     df = df.append({'park_name': park.split(',')[0].strip(),
                                     'designation': designation},
                                     ignore_index=True)
+                                    
+    return df
 
 def main():
     filename = '_reference_data/national_park_system.html'

@@ -71,12 +71,27 @@ def test_match(s, correct, incorrect):
     print('** Correct Match: ', correct, ' Correct Match Score: ', correct_match)
     print('** Incorrect Match: ', incorrect, ' Incorrect Match Score: ', incorrect_match)
 
-df_parks = pd.read_excel('park_lookup.xlsx', header=0)
-df = df_parks[['park_name', 'park_code']]
-df['park_name_stripped'] = df['park_name'].apply(lambda x: process_match(x))
+def test_match_2(s, correct, incorrect):
+    to_match = s
+    correct_match = correct
+    incorrect_match = incorrect
+    correct_match = SequenceMatcher(None, correct_match.lower(), to_match.lower()).ratio()
+    incorrect_match = SequenceMatcher(None, incorrect_match.lower(), to_match.lower()).ratio()
+    print('** To Match: ', s)
+    print('** Correct Match: ', correct, ' Correct Match Score: ', correct_match)
+    print('** Incorrect Match: ', incorrect, ' Incorrect Match Score: ', incorrect_match)
 
-to_match = 'White House'
-correct_match = "President's Park (White House)"
-incorrect_match = 'White Sands National Monument'
-find_match(to_match)
-test_match(to_match, correct_match, incorrect_match)
+def main():
+    df_parks = pd.read_excel('../nps_park_sites_api.xlsx', header=0)
+    df = df_parks[['park_name', 'park_code']]
+    #df['park_name_stripped'] = df['park_name'].apply(lambda x: process_match(x))
+
+    to_match = "Aniakchak National Monument"
+    correct_match = "Aniakchak National Monument & Preserve"
+    incorrect_match = "Navajo National Monument"
+    #find_match(to_match)
+    #test_match(to_match, correct_match, incorrect_match)
+    test_match_2(to_match, correct_match, incorrect_match)
+
+if __name__ == '__main__':
+    main()
