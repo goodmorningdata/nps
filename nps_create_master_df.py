@@ -1,10 +1,35 @@
 '''
+Create master dataframe of National Park Service site data.
+
+This script creates a dataframe of all data collected by this project
+about the NPS official units.
+1. Read the data available from the api. This source provides the four
+   character code that uniquely identifies each park, the list of state
+   codes the park is in, and the latitude and longitiude of the park.
+2. Merge the api data with the list of official park units available
+   on nps.gov. This source provides the official list of units, the park
+   name, and park designation.
+
+Required libraries: pandas, SequenceMatcher
+
+Dependencies:
+    * Run the script, nps_get_park_sites_web.py, to create the file,
+      'nps_park_sites_web.xlsx'.
+    * Run the script, nps_get_par_sites_api.py, to create the file,
+      'nps_park_sites_api.xlsx'.
 '''
 
 import pandas as pd
 from difflib import SequenceMatcher
 
 def strip_park_name(park_name):
+    ''' Strip unnecessary text from park name.
+
+    This function strips designation from the park name so that matching
+    names between two different sources will work correctly. There may 
+    small differences in the name of the same park from two differenct
+    sources.
+    '''
     park_name = (park_name.replace('National Monument & Preserve','')
                           .replace('National Park & Preserve','')
                           .replace('National Park and Preserve','')
@@ -55,13 +80,9 @@ def main():
 
     # Read in the list of nps sites from the nps api into a dataframe.
     df_api = read_park_sites_api()
-    #df_api['park_name_stripped'] = df_api.park_name.apply(
-    #                               lambda x: strip_park_name(x))
 
     # Read in the list of nps sites from nps.gov into a dataframe.
     df_master = read_park_sites_web()
-    #df_master['park_name_stripped'] = df_master.park_name.apply(
-    #                                  lambda x: strip_park_name(x))
     df_master['park_code'] = df_master.park_name_stripped.apply(
                              lambda x: lookup_park_code(x, df_api))
 
