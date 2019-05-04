@@ -43,10 +43,10 @@ def get_park_sites_from_page(filename):
     #print(prettyHTML)
 
     # "Related Areas" are also listed on this web page. Ignore these.
-    ignore_list = ['Affiliated Areas', 'Authorized Areas',
-                   'Commemorative Sites', 'National Heritage Areas',
-                   'National Trails System',
-                   'National Wild & Scenic Rivers System']
+    ignore_list = ["Affiliated Areas", "Authorized Areas",
+                   "Commemorative Sites", "National Heritage Areas",
+                   "National Trails System",
+                   "National Wild & Scenic Rivers System"]
 
     # Use BeautifulSoup to parse the html tree and extract the park
     # names and designations.
