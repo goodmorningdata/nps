@@ -16,7 +16,6 @@ Dependencies:
       "api_key = ", followed by the API key in quotations.
 
 This script contains the following functions:
-
     * get_api_data - retrives data from the NPS API.
     * create_parks_df - creates a pandas dataframe from the NPS data.
     * clean_parks_df - performs data cleanup tasks on the dataframe.
