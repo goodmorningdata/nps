@@ -4,8 +4,9 @@
 from bs4 import BeautifulSoup
 import pandas as pd
 
-def main():
-    filename = '_reference_data/national_park_system.html'
+def get_park_sites_from_page(filename):
+    '''
+    '''
     soup = BeautifulSoup(open(filename), 'html.parser')
 
     df = pd.DataFrame(columns=['park_name', 'designation'])
@@ -29,6 +30,9 @@ def main():
                                     'designation': designation},
                                     ignore_index=True)
 
+def main():
+    filename = '_reference_data/national_park_system.html'
+    df = get_park_sites_from_page(filename)
     df.to_excel('nps_park_sites_web.xlsx', index=False)
 
 if __name__ == '__main__':
