@@ -1,5 +1,4 @@
-'''
-Read list of NPS sites from nps.gov.
+'''Scrape list of official NPS park units from nps.gov.
 
 This script reads the webpage,
 https://www.nps.gov/aboutus/national-park-system.htm, saved as an html

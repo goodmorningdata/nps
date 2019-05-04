@@ -1,4 +1,4 @@
-'''Scrape Wikipedia page for National Park establishment dates.
+''' Scrape Wikipedia page for National Park establishment dates.
 
 This script scrapes the Wikipedia page, "List of national parks of the
 United States", for the establishment date of each National Park. The
