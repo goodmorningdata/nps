@@ -114,68 +114,10 @@ def create_parks_df():
     return df[['park_code', 'park_name', 'designation',
                'states', 'lat', 'long']]
 
-def clean_parks_df(df):
-    '''
-    Performs data cleanup tasks on the parks dataframe.
-
-    This function performs data cleanup tasks on the parks dataframe,
-    the bulk of which are assigning park deignations to sites for which
-    the designation is missing. Fill values were found here:
-    # https://www.nps.gov/articles/nps-designations.htm and by looking
-    # up park info on the park's official NPS website.
-
-    Parameters
-    ----------
-    df : pandas DataFrame
-      Dataframe of NPS API parks data.
-
-    Returns
-    -------
-    clean_df : pandas DataFrame
-      Dataframe of NPS API parks data after data cleanup.
-    '''
-
-    # Fill in missing designations.
-    df.loc[df.park_code == 'npsa',
-           'designation'] = 'National Park'
-
-    df.loc[df.park_code.isin(['frde', 'kowa', 'linc', 'lyba', 'this', 'thje',
-                              'vive', 'wamo', 'wwii', 'arho', 'mlkm', 'afam']),
-           'designation'] = 'National Memorial'
-
-    df.loc[df.park_code.isin(['alca']),
-           'designation'] = 'National Recreation Area'
-
-    df.loc[df.park_code.isin(['foth']),
-           'designation'] = 'National Historic Site'
-
-    df.loc[df.park_code.isin(['cahi', 'cogo', 'cwdw', 'fodu', 'haha', 'keaq',
-                              'nace', 'nama', 'npnh', 'oxhi', 'paav', 'whho',
-                              'prwi', 'wotr']),
-           'designation'] = 'Park'
-
-    df.loc[df.park_code.isin(['greg']),
-           'designation'] = 'Scenic & Recreational River'
-
-    df.loc[df.park_code.isin(['grsp']),
-           'designation'] = 'National Historic Landmark District'
-
-    df.loc[df.park_code.isin(['tule']),
-           'designation'] = 'National Monument'
-
-    df.loc[df.park_code.isin(['inup']),
-           'designation'] = 'Heritage Center'
-
-    # Change designation, "National Parks", to the singular.
-    df.designation.replace({'National Parks':'National Park'},
-                           regex=True, inplace=True)
-
-    return df
-
 def main():
     parks_df = create_parks_df()
-    cleaned_parks_df = clean_parks_df(parks_df)
-    cleaned_parks_df.to_excel('_reference_data/nps_park_sites_api.xlsx', index=False)
+    parks_df.to_excel('_reference_data/nps_park_sites_api.xlsx',
+                      index=False)    
 
 if __name__ == '__main__':
     main()
