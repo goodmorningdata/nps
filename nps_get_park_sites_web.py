@@ -33,6 +33,7 @@ def get_park_sites_from_page(filename):
     -------
     df : pandas DataFrame : Dataframe of park names and designations.
     '''
+    
     soup = BeautifulSoup(open(filename), 'html.parser')
 
     df = pd.DataFrame(columns=['park_name', 'designation'])

@@ -1,11 +1,7 @@
-'''Create NPS park lookup table
+''' Pull park data from NPS API.
 
-This script allows the user to create an excel spreadsheet lookup table
-of all of the National Park Service sites. NPS Sites include National
-Parks, Monuments, Historic Sites, etc.
-
-The script creates an Excel file as output named "nps_park_lookup.xlsx"
-with column headers. Columns include: park_code, park_name, designation, states, lat, and long.
+This script pulls park site data from the NPS API into a dataframe and
+saves it as the Excel file, nps_park_sites_api.xlsx.
 
 This script requires the following libraries: os, sys, urllib, json,
 and pandas.
@@ -14,11 +10,6 @@ Dependencies:
     * Create file, nps_config.py file in the root directory to store
       the user's NPS API key. File should contain the line:
       "api_key = ", followed by the API key in quotations.
-
-This script contains the following functions:
-    * get_api_data - retrives data from the NPS API.
-    * create_parks_df - creates a pandas dataframe from the NPS data.
-    * clean_parks_df - performs data cleanup tasks on the dataframe.
 '''
 
 import os
@@ -27,14 +18,13 @@ import urllib.request, urllib.parse
 import json
 import pandas as pd
 
-# Retrieve the nps api key from the config file, nps_config.py, stored.
+# Retrieve the nps api key from the config file, nps_config.py, stored
 # in the root directory.
 sys.path.append(os.path.expanduser('~'))
 from nps_config import *
 
 def get_api_data(url):
-    '''
-    Read data returned by a url rquest.
+    ''' Read data returned by a url rquest.
 
     This function opens the url, reads the data returned by the url,
     and decodes the bytes object to string. It then converts the json
@@ -43,13 +33,11 @@ def get_api_data(url):
 
     Parameters
     ----------
-    url : str
-      The API request url.
+    url : str : The API request url.
 
     Returns
     -------
-    js : dict
-      Json-formatted python dictionary returned by API request.
+    js : dict : Json-formatted python dictionary returned by API request.
     '''
 
     print('')
@@ -70,14 +58,11 @@ def get_api_data(url):
     return js
 
 def create_parks_df():
-    '''
-    Create parks dataframe from data returned by the NPS API.
+    ''' Create parks dataframe from data returned by the NPS API.
 
-    This function creates a dataframe with columns: park_code,
-    'park_name', 'designation', 'states', 'lat', and 'long'. The data
-    is retrieved from the National Parks API parks-related data. The
-    dataframe includes a row for each NPS site - National Parks,
-    National Monuments, Historic Sites, etc.
+    This function calls the get_api_data function to pull park site
+    data from the NPS API using the /parks path. The API data is loaded
+    into a dataframe, and the latLong field is split into two columns.
 
     Parameters
     ----------
@@ -85,8 +70,7 @@ def create_parks_df():
 
     Returns
     -------
-    df : pandas DataFrame
-      National Parks API parks data.
+    df : pandas DataFrame : Dataframe of park sites.
     '''
 
     domain = 'https://developer.nps.gov/api/v1'
@@ -115,9 +99,9 @@ def create_parks_df():
                'states', 'lat', 'long']]
 
 def main():
-    parks_df = create_parks_df()
-    parks_df.to_excel('_reference_data/nps_park_sites_api.xlsx',
-                      index=False)    
+    df_parks = create_parks_df()
+    df_parks.to_excel('_reference_data/nps_park_sites_api.xlsx',
+                      index=False)
 
 if __name__ == '__main__':
     main()
