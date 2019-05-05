@@ -135,7 +135,21 @@ def lookup_park_code(park_name, lookup_df):
     return park_code
 
 def read_wikipedia_data(df_api):
-    '''
+    ''' Read park established date from file.
+
+    This function reads the park name and date established from the
+    Excel file created by the nps_get_wikipedia.py script, looks up
+    the correct park code in the paramter dataframe and returns a
+    dataframe containing the park code and date established. This date
+    established is currently only available for National Parks.
+
+    Parameters
+    ----------
+    df_api : pandas DataFrame : Dataframe for park code lookup.
+
+    Returns
+    -------
+    df : pandas DataFrame : Dataframe of park code and date established.
     '''
 
     filename = '_reference_data/wikipedia_date_established.xlsx'
