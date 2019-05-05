@@ -19,8 +19,22 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
 
-def main():
-    filename = '_reference_data/wikipedia_national_parks.html'
+def get_established_date_from_page(filename):
+    ''' Scrape wikipedia page for park name and date established.
+
+    This function uses the Python library, BeautifulSoup to extract
+    the park name and date established from a Wikipeida page saved as
+    an html file.
+
+    Parameters
+    ----------
+    filename : str : Name of file containing saved Wikipedia page.
+
+    Returns
+    -------
+    df : pandas DataFrame : Dataframe of park name and date established.
+    '''
+
     soup = BeautifulSoup(open(filename), 'html.parser')
 
     df = pd.DataFrame(columns=['park_name', 'date_established'])
@@ -37,6 +51,13 @@ def main():
         df = df.append({'park_name': name, 'date_established': date},
                        ignore_index=True)
 
+    return df
+
+def main():
+    filename = '_reference_data/wikipedia_national_parks.html'
+    df = get_established_date_from_page(filename)
+
+    # Save dataframe to an Excel file.
     df.to_excel('_reference_data/wikipedia_date_established.xlsx',
                 index=False)
 

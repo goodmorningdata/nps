@@ -46,6 +46,7 @@ def strip_park_name(park_name):
                           .replace('National Park','')
                           .replace('National Preserve','')
                           .replace('National Scenic and Recreational River','')
+                          .replace('National and State Parks', '')
                           .replace('&', 'and'))
 
     return park_name.rstrip()
@@ -66,7 +67,9 @@ def read_park_sites_web():
     df : pandas DataFrame : Dataframe of park site data.
     '''
 
-    df = pd.read_excel('_reference_data/nps_park_sites_web.xlsx', header=0)
+    filename = '_reference_data/nps_park_sites_web.xlsx'
+    df = pd.read_excel(filename, header=0)
+
     df['park_name_stripped'] = df.park_name.apply(
                                lambda x: strip_park_name(x))
 
@@ -88,7 +91,9 @@ def read_park_sites_api():
     df : pandas DataFrame : Dataframe of park site data.
     '''
 
-    df = pd.read_excel('_reference_data/nps_park_sites_api.xlsx', header=0)
+    filename = '_reference_data/nps_park_sites_api.xlsx'
+    df = pd.read_excel(filename, header=0)
+
     df['park_name_stripped'] = df.park_name.apply(
                                lambda x: strip_park_name(x))
 
@@ -129,6 +134,18 @@ def lookup_park_code(park_name, lookup_df):
 
     return park_code
 
+def read_wikipedia_data(df_api):
+    '''
+    '''
+
+    filename = '_reference_data/wikipedia_date_established.xlsx'
+    df = pd.read_excel(filename, header=0)
+
+    df['park_code'] = df.park_name.apply(
+                         lambda x: lookup_park_code(x, df_api))
+
+    return df[['park_code', 'date_established']]
+
 def main():
     pd.set_option('display.max_rows', 1000)
 
@@ -148,8 +165,15 @@ def main():
                          df_api[['park_code', 'states', 'lat', 'long']],
                          how='left', on='park_code')
 
+    # Read in the date established data from Wikipedia into a
+    # dataframe. This data is currently only available for National
+    # Parks. Merge this dataframe with the master dataframe.
+    df_estab = read_wikipedia_data(df_api)
+    df_master = pd.merge(df_master, df_estab,
+                         how='left', on='park_code')
+
     df_master = df_master.sort_values(by=['park_name']).reset_index(drop=True)
-    print(df_master)
+    #print(df_master)
 
     # Save the dataframe to an Excel file.
     df_master.to_excel('nps_parks_master_df.xlsx')
