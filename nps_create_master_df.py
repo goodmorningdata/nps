@@ -16,6 +16,8 @@ Dependencies:
       'nps_park_sites_web.xlsx'.
     * Run the script, nps_get_par_sites_api.py, to create the file,
       'nps_park_sites_api.xlsx'.
+    * Run the script, nps_get_wikipedia_data.py, to create the file,
+      'wikipedia_date_established.xlsx'.
 '''
 
 import pandas as pd
@@ -186,10 +188,9 @@ def main():
     df_master = pd.merge(df_master, df_estab,
                          how='left', on='park_code')
 
+    # Sort and save the master dataframe to an Excel file.
     df_master = df_master.sort_values(by=['park_name']).reset_index(drop=True)
     #print(df_master)
-
-    # Save the dataframe to an Excel file.
     df_master.to_excel('nps_parks_master_df.xlsx')
 
 if __name__ == '__main__':

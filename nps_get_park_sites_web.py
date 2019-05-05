@@ -11,8 +11,8 @@ Required libraries: pandas, BeautifulSoup.
 Dependencies:
     * Save the webpage:
       https://www.nps.gov/aboutus/national-park-system.htm, as
-      'national_park_system.html' in the _reference_data folder of this
-      project.
+      'national_park_system.html' in the '_reference_data' folder of
+      this project.
 '''
 
 from bs4 import BeautifulSoup
@@ -33,7 +33,7 @@ def get_park_sites_from_page(filename):
     -------
     df : pandas DataFrame : Dataframe of park names and designations.
     '''
-    
+
     soup = BeautifulSoup(open(filename), 'html.parser')
 
     df = pd.DataFrame(columns=['park_name', 'designation'])

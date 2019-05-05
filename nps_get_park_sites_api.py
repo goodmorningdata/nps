@@ -7,7 +7,7 @@ This script requires the following libraries: os, sys, urllib, json,
 and pandas.
 
 Dependencies:
-    * Create file, nps_config.py file in the root directory to store
+    * Create file, 'nps_config.py' file in the root directory to store
       the user's NPS API key. File should contain the line:
       "api_key = ", followed by the API key in quotations.
 '''
