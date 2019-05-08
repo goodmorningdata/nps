@@ -54,8 +54,8 @@ def get_established_date_from_page(filename):
     return df
 
 def main():
-    filename = '_reference_data/wikipedia_national_parks.html'
-    df = get_established_date_from_page(filename)
+    infile = '_reference_data/wikipedia_national_parks.html'
+    df = get_established_date_from_page(infile)
 
     # Save dataframe to an Excel file.
     df.to_excel('_reference_data/wikipedia_date_established.xlsx',

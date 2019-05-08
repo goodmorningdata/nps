@@ -21,9 +21,8 @@ Dependencies:
 import pandas as pd
 
 def main():
-    df = pd.read_excel(
-         '_visitor_data/Annual_Summary_Report_1904_Last_Calendar_Year.xlsx',
-         header=3, index=False, usecols='A:C')
+    infile = '_visitor_data/Annual_Summary_Report_1904_Last_Calendar_Year.xlsx'
+    df = pd.read_excel(infile, header=3, index=False, usecols='A:C')
 
     # Eliminate the summary rows found at the bottom of the file after
     # the annual park totals.
@@ -37,8 +36,6 @@ def main():
 
     # Replace NaN with 0.0.
     df.fillna(value=0.0, inplace=True)
-
-    print(df)
 
     df.to_excel('_visitor_data/annual_visitors_by_park_1904_2018.xlsx')
 

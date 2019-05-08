@@ -99,9 +99,10 @@ def create_parks_df():
                'states', 'lat', 'long']]
 
 def main():
-    df_parks = create_parks_df()
-    df_parks.to_excel('_reference_data/nps_park_sites_api.xlsx',
-                      index=False)
+    df = create_parks_df()
+
+    # Save dataframe to an Excel file.
+    df.to_excel('_reference_data/nps_park_sites_api.xlsx', index=False)
 
 if __name__ == '__main__':
     main()

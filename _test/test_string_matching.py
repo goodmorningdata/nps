@@ -2,96 +2,97 @@ from Levenshtein import distance
 from difflib import SequenceMatcher
 import pandas as pd
 
-def process_match(s):
-    s = (s.replace('National Historical Park and Ecological Preserve','')
-          .replace('National Park & Preserve','').replace('National Historic','')
-          .replace('National Memorial','').replace('National Heritage','')
-          .replace('National Monument','').replace('National Heritage Corridor','')
-          .replace('National Historical','').replace('National Parks','')
-          .replace('National Park','')
-          .replace('National Battlefield','').replace('National Recreation Area','')
-          .replace('National Preserve','').replace('National Military Park','')
-          .replace('National Seashore','').replace('National Lakeshore','')
-          .replace('National Scenic Riverway','')
-          .replace('National Scenic River','')
-          .replace('National and State Parks','')
-          .replace('National Wild and Scenic River','')
-          .replace('Scenic & Recreational River','')
-          .replace('National River and Recreation Area','')
-          .replace('Ecological & Historic Preserve','')
-          .replace('Recreation Area','')
-          .replace('National Scenic','')
-          .replace('Site','').replace('Park','').replace('Area',''))
-    return s
+def strip_park_name(park_name):
+    designation_start = park_name.lower().find('national')
+    if designation_start > 0:
+        park_name = park_name[:designation_start]
 
-def process_to_match(s):
-    to_match_stripped = s
-    # to_match_stripped = (s.replace('NBP','').replace('NHP','').replace('NHS','')
-    #                       .replace('NMEM','').replace('NMP','').replace('NRA','')
-    #                       .replace('NSR','').replace('NST','').replace('NB','')
-    #                       .replace('NL','').replace('NM','').replace('NP','')
-    #                       .replace('NS','').replace('NB','').replace('N PRESERVE','')
-    #                       .replace('NMP','').replace('NATIONAL PRESERVE','')
-    #                       .replace('N. SCENIC RIVER','')
-    #                       .replace('NATIONAL MEMORIAL','')
-    #                       .replace('FDR','Franklin Delano Roosevelt')
-    #                       .replace('T ROOSEVELT','Theodore Roosevelt')
-    #                       .replace('FRED-SPOTS','FREDERICKSBURG-SPOTSYLVANIA')
-    #                       .replace('WWII','World War II')
-    #                       .replace('DELAWARE NSR','LOWER DELAWARE')
-    #                       .replace('KINGS CANYON','SEQUOIA & KINGS CANYON'))
-    return to_match_stripped
+    designation_start = park_name.lower().find('memorial')
+    if designation_start > 0:
+        park_name = (park_name.replace('Memorial', '')
+                              .replace('MEMORIAL', ''))
 
-def find_match(s):
-    to_match_stripped = process_to_match(s)
-    type = 'D'
-    if type=='L':
-        df['name_match'] = df['park_name_stripped'].apply(lambda x: distance(x.lower(), to_match_stripped.lower()))
-    else:
-        df['name_match'] = df['park_name_stripped'].apply(
-                           lambda x: SequenceMatcher(None, x.lower(),
-                           to_match_stripped.lower()).ratio())
+    park_name = (park_name.replace('N RVR & RA','')
+                          .replace('N REC RIVER','')
+                          .replace('N. SCENIC RIVER','')
+                          .replace('N PRESERVE','')
+                          .replace('NS RIVERWAYS','')
+                          .replace('NM of America','')
+                          .replace('Ecological & Historic Preserve','')
+                          .replace('Ecological and Historic Preserve',''))
 
-    print('Matching: ',s)
-    print('Matching (stripped): ', to_match_stripped)
-    print(df.loc[df['name_match'].idxmax()].park_code)
-    print(df.loc[df['name_match'].idxmax()].park_name)
+    return park_name.rstrip()
 
-def test_match(s, correct, incorrect):
-    to_match = process_to_match(s)
-    print('To match stripped: ',to_match)
-    correct_match = process_match(correct)
-    print('Correct match stripped: ',correct_match)
-    incorrect_match = process_match(incorrect)
-    print('Incorrect match stripped', incorrect_match)
-    correct_match = SequenceMatcher(None, correct_match.lower(), to_match.lower()).ratio()
-    incorrect_match = SequenceMatcher(None, incorrect_match.lower(), to_match.lower()).ratio()
+def read_park_sites_api():
+    filename = '../_reference_data/nps_park_sites_api.xlsx'
+    df = pd.read_excel(filename, header=0)
+    pd.set_option('display.max_rows', 1000)
+    df = df.sort_values(by=['park_name'])
 
-    print('** To Match: ', s)
-    print('** Correct Match: ', correct, ' Correct Match Score: ', correct_match)
-    print('** Incorrect Match: ', incorrect, ' Incorrect Match Score: ', incorrect_match)
+    df['park_name_stripped'] = df.park_name.apply(
+                               lambda x: strip_park_name(x))
 
-def test_match_2(s, correct, incorrect):
-    to_match = s
-    correct_match = correct
-    incorrect_match = incorrect
-    correct_match = SequenceMatcher(None, correct_match.lower(), to_match.lower()).ratio()
-    incorrect_match = SequenceMatcher(None, incorrect_match.lower(), to_match.lower()).ratio()
-    print('** To Match: ', s)
-    print('** Correct Match: ', correct, ' Correct Match Score: ', correct_match)
-    print('** Incorrect Match: ', incorrect, ' Incorrect Match Score: ', incorrect_match)
+    return df[['park_code', 'park_name', 'park_name_stripped']]
+
+def lookup_park_code(park_name, df_lookup):
+    df = df_lookup
+
+    # Use SequenceMatcher to comapre the stripped park names and find
+    # the best match.
+    df['name_match'] = df['park_name_stripped'].apply(
+                       lambda x: SequenceMatcher(None, x.lower(),
+                       park_name.lower()).ratio())
+    park_code = df.loc[df['name_match'].idxmax()].park_code
+    print(df)
+
+    # The park names for the following parks differ so greatly from the
+    # name to match to, that they must be assigned directly.
+    if park_name.lower() == "arlington house": park_code = 'arho'
+    if park_name.lower() in ["kings canyon", "sequoia"]: park_code = 'seki'
+    if park_name.lower() == "white house" : park_code = 'whho'
+    if park_name.lower() == "fdr": park_code = 'frde'
+    if park_name.lower() == "gateway nra": park_code = 'gate'
+    if park_name.lower() == "g w": park_code = 'gwmp'
+    if park_name.lower() == "martin l king, jr, nhp": park_code = 'malu'
+    if park_name.lower() == "martin luther king, jr. nhp": park_code = 'malu'
+    if park_name.lower() == "t roosevelt np": park_code = 'thro'
+    if park_name.lower().startswith("fred-spots"): park_code = 'frsp'
+    if park_name.lower().startswith("lbj"): park_code = 'lyba'
+    if park_name.lower().endswith("wwii"): park_code = 'wwii'
+    if park_name.lower().find("sumter") > -1: park_code = 'fosu'
+    if park_name.lower().find("longfellow") > -1: park_code = 'long'
+
+    # These are the parks with no code found in the API.
+    if park_name.lower().find('caroline') > -1: park_code = 'xxx1'
+    if (park_name.lower().find('john d. rockefeller') > -1 or
+        park_name.lower().find('jdrockefeller') > -1): park_code = 'xxx2'
+    if park_name.lower().find('chelan') > -1: park_code = 'xxx3'
+    if park_name.lower().find('ross lake') > -1: park_code = 'xxx4'
+    if park_name.lower().find('valor') > -1: park_code = 'xxx5'
+    if park_name.lower().find('world war i ') > -1: park_code = 'xxx6'
+    if park_name.lower() == "world war i": park_code = 'xxx6'
+    if park_name.lower() == "john f. kennedy center for pa": park_code = 'xxx7'
+
+    # Stripping park name does not work for all data sets for National
+    # Park of American Samoa, so assign directly.
+    if park_name.lower().find('samoa') > -1: park_code = 'npsa'
+
+    return park_code
 
 def main():
-    df_parks = pd.read_excel('../nps_park_sites_api.xlsx', header=0)
-    df = df_parks[['park_name', 'park_code']]
-    #df['park_name_stripped'] = df['park_name'].apply(lambda x: process_match(x))
+    df_lookup = read_park_sites_api()
+    #print(df_lookup)
+    print('****')
+    to_match = "Timucuan Ecological and Historic Preserve"
+    #to_match = "American Memorial Park"
+    #to_match = "National Mall and Memorial Parks"
+    print('Park Name: ', to_match)
 
-    to_match = "Aniakchak National Monument"
-    correct_match = "Aniakchak National Monument & Preserve"
-    incorrect_match = "Navajo National Monument"
-    #find_match(to_match)
-    #test_match(to_match, correct_match, incorrect_match)
-    test_match_2(to_match, correct_match, incorrect_match)
+    park_name = strip_park_name(to_match)
+    print('Stripped Park Name: ', park_name)
+
+    code = lookup_park_code(park_name, df_lookup)
+    print('Actual Match: {}'.format(code))
 
 if __name__ == '__main__':
     main()

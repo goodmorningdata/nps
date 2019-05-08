@@ -64,8 +64,10 @@ def get_park_sites_from_page(filename):
     return df
 
 def main():
-    filename = '_reference_data/national_park_system.html'
-    df = get_park_sites_from_page(filename)
+    infile = '_reference_data/national_park_system.html'
+    df = get_park_sites_from_page(infile)
+
+    # Save dataframe to an Excel file.
     df.to_excel('_reference_data/nps_park_sites_web.xlsx', index=False)
 
 if __name__ == '__main__':
