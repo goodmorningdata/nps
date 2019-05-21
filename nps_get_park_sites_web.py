@@ -1,37 +1,40 @@
-''' Scrape list of official NPS park units from nps.gov.
-
+'''
 This script reads the webpage,
 https://www.nps.gov/aboutus/national-park-system.htm, saved as an html
 file, and extracts the list of official park units and their
 designations. There are 419 units as of May 1, 2019. This list is saved
 as an Excel file, 'nps_park_sites_web.xlsx'.
 
-Required libraries: pandas, BeautifulSoup.
+Required Libraries
+------------------
+pandas, BeautifulSoup
 
-Dependencies:
-    * Save the webpage:
-      https://www.nps.gov/aboutus/national-park-system.htm, as
-      'national_park_system.html' in the '_reference_data' folder of
-      this project.
+Dependencies
+------------
+1) Save the webpage:
+   https://www.nps.gov/aboutus/national-park-system.htm, as
+   'national_park_system.html' in the '_reference_data' folder of this
+   project.
 '''
 
 from bs4 import BeautifulSoup
 import pandas as pd
 
 def get_park_sites_from_page(filename):
-    ''' Extract park names and designations from page.
-
+    '''
     This function uses the BeautifulSoup library to extract each park
-    name and its designation from the list of official units in the
+    name and its designation from the list of official units on the
     web page.
 
     Parameters
     ----------
-    filename : str : Name of html file to read.
+    filename : str
+        Name of html file to read.
 
     Returns
     -------
-    df : pandas DataFrame : Dataframe of park names and designations.
+    df : pandas DataFrame
+        Dataframe of park names and designations.
     '''
 
     soup = BeautifulSoup(open(filename), 'html.parser')

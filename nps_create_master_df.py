@@ -1,46 +1,47 @@
-''' Create master dataframe of National Park Service site data.
-
+'''
 This script creates a dataframe of all data collected by this project
 about the National Park Service Parks/Units. As of May 1, 2019, the NPS
 manages 419 official units and 170 Related Areas. This project deals
 only with the 419 official units.
 
-1. Read the data available from the api. This source provides the four
+1) Read the data available from the api. This source provides the four
    character code that uniquely identifies each park, the list of state
    codes the park is in, and the latitude and longitiude of the park.
-2. Create the master dataframe by merging the api data with the list of
+2) Create the master dataframe by merging the api data with the list of
    official park units available on nps.gov. This source provides the
    official list of units, the park name, and park designation.
-3. Read the established date for each National Park, available on a
+3) Read the established date for each National Park, available on a
    Wikipedia page, and merge with the master dataframe.
-4. Read the park size data, available from nps.gov as a report, and
+4) Read the park size data, available from nps.gov as a report, and
    merge with the master dataframe.
-5. Read the park visitor use statistics, available from nps.gov as a
+5) Read the park visitor use statistics, available from nps.gov as a
    report, and merge with the master dataframe.
 
-Required libraries: pandas, SequenceMatcher
+Required Libraries
+------------------
+pandas, SequenceMatcher
 
-Dependencies:
-    * Run the script, nps_get_park_sites_web.py, to create the file,
-      'nps_park_sites_web.xlsx'.
-    * Run the script, nps_get_park_sites_api.py, to create the file,
-      'nps_park_sites_api.xlsx'.
-    * Run the script, nps_get_wikipedia_data.py, to create the file,
-      'wikipedia_date_established.csv'.
-    * Download the most recent acreage report from the nps website at:
-      https://www.nps.gov/subjects/lwcf/acreagereports.htm Calendar
-      Year Reports, Year = 2018. Place this file in the '_acreage_data'
-      directory of this project.
-    * Run the script, nps_read_visitor_data.py to create the file:
-      annual_visitors_by_park_1904_2018.xlsx.
+Dependencies
+------------
+1) Run the script, nps_get_park_sites_web.py, to create the file,
+   'nps_park_sites_web.xlsx'.
+2) Run the script, nps_get_park_sites_api.py, to create the file,
+   'nps_park_sites_api.xlsx'.
+3) Run the script, nps_get_wikipedia_data.py, to create the file,
+   'wikipedia_date_established.csv'.
+4) Download the most recent acreage report from the nps website at:
+   https://www.nps.gov/subjects/lwcf/acreagereports.htm Calendar
+   Year Reports, Year = 2018. Place this file in the '_acreage_data'
+   directory of this project.
+5) Run the script, nps_read_visitor_data.py to create the file:
+   annual_visitors_by_park_1904_2018.xlsx.
 '''
 
 import pandas as pd
 from difflib import SequenceMatcher
 
 def strip_park_name(park_name):
-    ''' Strip unnecessary text from park name.
-
+    '''
     Park names for the same park may be slightly different between
     sources, making matching them difficult. This function strips
     some designations from the park name to improve the chance of
@@ -48,11 +49,13 @@ def strip_park_name(park_name):
 
     Parameters
     ----------
-    park_name : str : Park name to strip of designations.
+    park_name : str
+        Park name to strip of designations.
 
     Returns
     -------
-    park_name : str : Stripped park name.
+    park_name : str
+        Stripped park name.
     '''
 
     park_name = (park_name.replace("National Monument & Preserve", "")
@@ -68,8 +71,7 @@ def strip_park_name(park_name):
     return park_name.rstrip()
 
 def read_park_sites_api():
-    ''' Read list of park sites from the NPS API source.
-
+    '''
     Read the list of park sites and associated data pulled from the
     NPS API and saved in an Excel file by the nps_get_park_sites_api.py
     script into a dataframe.
@@ -80,7 +82,8 @@ def read_park_sites_api():
 
     Returns
     -------
-    df : pandas DataFrame : Dataframe of park site data.
+    df : pandas DataFrame
+        Dataframe of park site data.
     '''
 
     filename = '_reference_data/nps_park_sites_api.xlsx'
@@ -128,20 +131,20 @@ def read_park_sites_api():
                'states', 'lat', 'long']]
 
 def read_park_sites_web(df_api):
-    ''' Read list of park sites from the nps.gov web source.
-
+    '''
     Read the list of 419 units/parks managed by the National Park
     Service from nps.gov and saved in an Excel file by the
     nps_get_park_sites_web.py script into a dataframe.
 
     Parameters
     ----------
-    df_api : pandas DataFrame : Dataframe of data from api in which
-             to lookup park code.
+    df_api : pandas DataFrame
+        Dataframe of data from api in which to lookup park code.
 
     Returns
     -------
-    df : pandas DataFrame : Dataframe of park site data.
+    df : pandas DataFrame
+        Dataframe of park site data.
     '''
 
     filename = '_reference_data/nps_park_sites_web.xlsx'
@@ -161,8 +164,7 @@ def read_park_sites_web(df_api):
     return df
 
 def lookup_park_code(park_name, df_lookup):
-    ''' Look up the park code for a park using the park name.
-
+    '''
     Each park is assigned a four character park code that uniquely
     identifies it. The park code for each park is available from the
     NPS API. This function accepts a park name and returns the park code
@@ -170,12 +172,15 @@ def lookup_park_code(park_name, df_lookup):
 
     Parameters
     ----------
-    park_name : str : Park name to lookup the code for.
-    df_lookup : pandas DataFrame : Dataframe of park names and codes.
+    park_name : str
+        Park name to lookup the code for.
+    df_lookup : pandas DataFrame
+        Dataframe of park names and codes.
 
     Returns
     -------
-    park_code : Park code that matches the park name.
+    park_code : str
+        Park code that matches the park name.
     '''
 
     df = df_lookup
@@ -223,8 +228,7 @@ def lookup_park_code(park_name, df_lookup):
     return park_code
 
 def read_wikipedia_data(df_api):
-    ''' Read park established date from file.
-
+    '''
     This function reads the park name and date established from the
     Excel file created by the nps_get_wikipedia.py script, looks up
     the correct park code in the paramter dataframe and returns a
@@ -233,11 +237,13 @@ def read_wikipedia_data(df_api):
 
     Parameters
     ----------
-    df_api : pandas DataFrame : Dataframe for park code lookup.
+    df_api : pandas DataFrame
+        Dataframe for park code lookup.
 
     Returns
     -------
-    df : pandas DataFrame : Dataframe of park code and date established.
+    df : pandas DataFrame
+        Dataframe of park code and date established.
     '''
 
     filename = '_reference_data/wikipedia_date_established.csv'
@@ -260,8 +266,7 @@ def read_wikipedia_data(df_api):
     return df[['park_code', 'date_established']]
 
 def read_acreage_data(df_api):
-    ''' Read park size data from file.
-
+    '''
     This function reads the park size data from a report downloaded from
     nps.gov, looks up the correct park code for each park in the
     parameter dataframe and returns a dataframe containing the park code
@@ -269,11 +274,13 @@ def read_acreage_data(df_api):
 
     Parameters
     ----------
-    df_api : pandas DataFrame : Dataframe for park code lookup.
+    df_api : pandas DataFrame
+        Dataframe for park code lookup.
 
     Returns
     -------
-    df : pandas DataFrame : Dataframe of park code and park size.
+    df : pandas DataFrame
+        Dataframe of park code and park size.
     '''
 
     filename = '_acreage_data/NPS-Acreage-12-31-2018.xlsx'
@@ -321,8 +328,7 @@ def read_acreage_data(df_api):
     return df[['park_code', 'gross_area_acres']]
 
 def read_visitor_data(df_api):
-    ''' Read park visitor data from file.
-
+    '''
     This function reads the park visitor data from a report downloaded
     from nps.gov, and saved in an Excel file by the
     nps_read_visitor_data.py script, into a dataframe. It then looks up
@@ -332,11 +338,13 @@ def read_visitor_data(df_api):
 
     Parameters
     ----------
-    df_api : pandas DataFrame : Dataframe for park code lookup.
+    df_api : pandas DataFrame
+        Dataframe for park code lookup.
 
     Returns
     -------
-    df : pandas DataFrame : Dataframe of park code and visits per year.
+    df : pandas DataFrame
+        Dataframe of park code and visits per year.
     '''
 
     filename = '_visitor_data/annual_visitors_by_park_1904_2018.xlsx'
@@ -382,7 +390,7 @@ def print_debug(df1_name, df1, df2_name, df2):
     '''
     Print some debug information.
     '''
-    
+
     print("**** DEBUG: {} and {} ****".format(df1_name, df2_name))
     print("-- {}: {}".format(df1_name, df1.shape))
     print("-- {}: {}\n".format(df2_name, df2.shape))

@@ -1,21 +1,24 @@
-'''Read visitor data from 1904 to the present (2018).
-
-This script reads an excel file of NPS visitor data into a dataframe,
-reformats it so that the years appear as columns of recreation visits
-for each park, and saves it to an Excel file named
-"annual_visitors_by_park_1904_2018.xlsx" with column headers.
+'''
+This script reads an Excel formatted report of NPS visitor data
+downloaded from nps.gov into a dataframe, reformats it so that the
+years appear as columns of visits for each park, and saves it to an
+Excel file named "annual_visitors_by_park_1904_2018.xlsx".
 Columns include: 'Park Name', and 1979 through 2018.
 
-Dependencies:
+Required Libraries
+------------------
+pandas
 
-    * Download the most recent version of the "Annual Summary Report
-      (1904 - Last Calendar Year)" report from the nps webiste
-      at: https://irma.nps.gov/Stats/Reports/National.
-      1) Select all years, all field names, and all parks. Choose
-         "False" for "Summary Only?" Run and download.
-      2) Move the file to the '_visitor_data' directory of this project.
-      3) Open the file in Excel and save as a .xlsx file with name,
-         "Annual_Summary_Report_1904_Last_Calendar_Year.xlsx"
+Dependencies
+------------
+1) Download the most recent version of the "Annual Summary Report
+   (1904 - Last Calendar Year)" report from the nps webiste
+   at: https://irma.nps.gov/Stats/Reports/National.
+   - Select all years, all field names, and all parks. Choose "False"
+     for "Summary Only?" Run and download.
+   - Move the file to the '_visitor_data' directory of this project.
+   - Open the file in Excel and save as a .xlsx file with name,
+     "Annual_Summary_Report_1904_Last_Calendar_Year.xlsx"
 '''
 
 import pandas as pd

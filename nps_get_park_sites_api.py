@@ -1,15 +1,16 @@
-''' Pull park data from NPS API.
-
+'''
 This script pulls park site data from the NPS API into a dataframe and
 saves it as the Excel file, nps_park_sites_api.xlsx.
 
-This script requires the following libraries: os, sys, urllib, json,
-and pandas.
+Required Libraries
+------------------
+os, sys, urllib, json, pandas
 
-Dependencies:
-    * Create file, 'nps_config.py' file in the root directory to store
-      the user's NPS API key. File should contain the line:
-      "api_key = ", followed by the API key in quotations.
+Dependencies
+------------
+1) Create file, 'nps_config.py' file in the root directory to store the
+   user's NPS API key. File should contain the line: "api_key = ",
+   followed by the API key in quotations.
 '''
 
 import os
@@ -24,8 +25,7 @@ sys.path.append(os.path.expanduser('~'))
 from nps_config import *
 
 def get_api_data(url):
-    ''' Read data returned by a url rquest.
-
+    '''
     This function opens the url, reads the data returned by the url,
     and decodes the bytes object to string. It then converts the json
     document to a python dictionary. The function also prints the api
@@ -33,11 +33,13 @@ def get_api_data(url):
 
     Parameters
     ----------
-    url : str : The API request url.
+    url : str
+        The API request url.
 
     Returns
     -------
-    js : dict : Json-formatted python dictionary returned by API request.
+    js : dict
+        Json-formatted python dictionary returned by API request.
     '''
 
     print('')
@@ -58,8 +60,7 @@ def get_api_data(url):
     return js
 
 def create_parks_df():
-    ''' Create parks dataframe from data returned by the NPS API.
-
+    '''
     This function calls the get_api_data function to pull park site
     data from the NPS API using the /parks path. The API data is loaded
     into a dataframe, and the latLong field is split into two columns.
@@ -70,7 +71,8 @@ def create_parks_df():
 
     Returns
     -------
-    df : pandas DataFrame : Dataframe of park sites.
+    df : pandas DataFrame
+        Dataframe of park sites.
     '''
 
     domain = 'https://developer.nps.gov/api/v1'
@@ -95,8 +97,8 @@ def create_parks_df():
     df.rename(columns={'parkCode':'park_code', 'fullName':'park_name'},
               inplace=True)
 
-    return df[['park_code', 'park_name', 'designation',
-               'states', 'lat', 'long']]
+    return df[['park_code', 'park_name', 'designation', 'states',
+               'lat', 'long']]
 
 def main():
     df = create_parks_df()
