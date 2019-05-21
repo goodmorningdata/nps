@@ -325,7 +325,12 @@ def read_acreage_data(df_api):
     # Sum acreage data for parks with the same park code.
     df = df.groupby(['park_code'], as_index=False).sum()
 
-    return df[['park_code', 'gross_area_acres']]
+    # Add square miles and square meters columns for reporting.
+    df = df[['park_code', 'gross_area_acres']]
+    df['gross_area_square_miles'] = df.gross_area_acres * 0.0015625
+    df['gross_area_square_meters'] = df.gross_area_acres * 4046.86
+
+    return df
 
 def read_visitor_data(df_api):
     '''
@@ -415,7 +420,7 @@ def print_debug(df1_name, df1, df2_name, df2):
 
 def main():
     pd.set_option('display.max_rows', 1000)
-    debug = True
+    debug = False
 
     # Read the NPS API data from file into a dataframe.
     df_api = read_park_sites_api()

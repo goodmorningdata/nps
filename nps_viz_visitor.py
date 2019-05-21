@@ -451,8 +451,8 @@ def main():
                     'Affiliated Area', 'Other'")
     args = parser.parse_args()
 
-    # Filter the dataframe based on park set and print a message to
-    # remind the user what set they are reporting on.
+    # Filter the dataframe based on designation and remind user which
+    # park designations will be in the visualizations.
     if args.parkset:
         park_df = df[df.park_set == args.parkset]
         park_set = args.parkset + 's'
@@ -462,6 +462,11 @@ def main():
         park_df = df
         park_set = 'All Parks'
         print("Creating park visitation map and plots for all NPS sites.")
+
+    # Warning messages
+    print("** Warning -- Park sites with missing lat/long. These park sites "
+          "will not be added to the map.")
+    print(df[df.lat.isnull()].park_name)
 
     park_df = park_df.sort_values('2018', ascending=False)
 
