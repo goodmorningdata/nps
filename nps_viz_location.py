@@ -81,7 +81,7 @@ def add_park_locations_to_map(map, df):
                        'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'tree', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker']
               })
 
-    for _, row in df[~df.lat.isnull()].iterrows():
+    for _, row in df.iterrows():
         # Create popup with link to park website.
         popup_string = ('<a href="'
                         + 'https://www.nps.gov/' + row.park_code
@@ -105,11 +105,10 @@ def add_park_locations_to_map(map, df):
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
-    parser = argparse.ArgumentParser()
-
     # The user can specify the set of parks to map using the command
     # line parameter, 'designation'. If no parameter specified, all
     # park sites are added to the map.
+    parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--designation', type=str,
            help = "Set of parks for which to display locations. If not \
                   specified, all park sites will be mapped.\
@@ -124,26 +123,31 @@ def main():
                   'National Wild and Scenic Rivers and Riverways',\
                   'National Scenic Trails', 'National Seashores',\
                   'Other Designations'")
-
     args = parser.parse_args()
 
     # Filter the dataframe based on designation and remind user which
     # park designations will be in the visualizations.
     if args.designation:
-        map_df = df[df.designation == args.designation]
-        print("Creating park location map for the park designation, '"
-              + args.designation + "'.")
+        park_df = df[df.designation == args.designation]
+        print("\nCreating park location map for the park designation, {}."
+              .format(args.designation))
     else:
-        map_df = df
-        print("Creating park location map for all NPS sites.")
+        park_df = df
+        print("\nCreating park location map for all NPS sites.")
 
-    # Warning messages
-    print("** Warning ** Park sites with missing lat/long from API, so no "
-          "location available. These park sites will not be added to the map.")
-    print(df[df.lat.isnull()].park_name)
+    # Check for parks missing location and remove from dataframe.
+    missing_location = park_df[park_df.lat.isnull()].park_name
+    if missing_location.size:
+        print("** Warning ** ")
+        print("Park sites with missing lat/long from API, so no location "
+              "available. These park sites will not be added to the map.")
+        print(*missing_location, sep=', ')
+        print("Total parks missing location: {}"
+              .format(len(park_df[park_df.lat.isnull()].park_name)))
+        park_df = park_df[~park_df.lat.isnull()]
 
     park_map = create_map()
-    park_map = add_park_locations_to_map(park_map, map_df)
+    park_map = add_park_locations_to_map(park_map, park_df)
     park_map.save('_output/nps_parks_map_location.html')
 
 if __name__ == '__main__':

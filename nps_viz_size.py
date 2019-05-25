@@ -74,8 +74,7 @@ def add_park_size_circles_to_map(map, df):
       Folium map with circle area markers added.
     '''
 
-    mask = (~df.lat.isnull()) & (~df.gross_area_acres.isnull())
-    for _, row in df[mask].iterrows():
+    for _, row in df.iterrows():
         tooltip = (row.park_name.replace("'", r"\'")
                    + ', {:,.0f}'.format(row.gross_area_square_miles)
                    + ' square miles')
@@ -90,32 +89,31 @@ def add_park_size_circles_to_map(map, df):
 
     # Export a sorted list of parks and their size to both an Excel file
     # and an html file for reference and blog posts.
-    map_df_export = (df[['park_name', 'gross_area_acres',
-                         'gross_area_square_miles']]
-                     .sort_values(by=['gross_area_acres'], ascending=False)
-                     .reset_index(drop=True))
-    map_df_export.index += 1
+    park_df_export = (df[['park_name', 'gross_area_acres',
+                          'gross_area_square_miles']]
+                      .sort_values(by=['gross_area_acres'], ascending=False)
+                      .reset_index(drop=True))
+    park_df_export.index += 1
     export_cols = {'park_name': 'Park Name',
                    'gross_area_acres': 'Size (acres)',
                    'gross_area_square_miles': 'Size (square miles)'}
-    map_df_export = map_df_export.rename(columns=export_cols)
-    map_df_export.to_excel('_output/nps_parks_sorted_by_size.xlsx',
-                           index=False)
-    map_df_export.to_html('_output/nps_parks_sorted_by_size.html',
-                          justify='left',
-                          classes='table-park-list',
-                          float_format=lambda x: '{:,.2f}'.format(x))
+    park_df_export = park_df_export.rename(columns=export_cols)
+    park_df_export.to_excel('_output/nps_parks_sorted_by_size.xlsx',
+                            index=False)
+    park_df_export.to_html('_output/nps_parks_sorted_by_size.html',
+                           justify='left',
+                           classes='table-park-list',
+                           float_format=lambda x: '{:,.2f}'.format(x))
 
     return map
 
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
-    parser = argparse.ArgumentParser()
-
     # The user can specify the set of parks to map using the command
     # line parameter, 'designation'. If no parameter specified, all
     # park sites are added to the map.
+    parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--designation', type=str,
            help = "Set of parks for which to display locations. If not \
                   specified, all park sites will be mapped.\
@@ -128,31 +126,40 @@ def main():
                   'National Wild and Scenic Rivers and Riverways',\
                   'National Scenic Trails', 'National Seashores',\
                   'Other Designations'")
-
     args = parser.parse_args()
 
     # Filter the dataframe based on designation and remind user which
     # park designations will be in the visualizations.
     if args.designation:
-        map_df = df[df.designation == args.designation]
-        print("Creating park size map for the park designation, '"
-              + args.designation + "'.")
+        park_df = df[df.designation == args.designation]
+        print("\nCreating park size map for the park designation, {}."
+              .format(args.designation))
     else:
-        map_df = df
-        print("Creating park size map for all NPS sites.")
+        park_df = df
+        print("\nCreating park size map for all NPS sites.")
 
-    # Missing location warning message.
-    print("\n** Warning ** Park sites with missing lat/long from API, so no "
-          "location available. These park sites will not be added to the map.")
-    print(df[df.lat.isnull()].park_name)
+    # Check for parks missing location and remove from dataframe.
+    missing_loc = park_df[park_df.lat.isnull()].park_name
+    if missing_loc.size:
+        print("\n** Warning ** ")
+        print("Park sites with missing lat/long from API, so no location "
+              "available. These park sites will not be added to the map.")
+        print(*missing_loc, sep=', ')
+        print("Total parks missing location: {}".format(len(missing_loc)))
+        park_df = park_df[~park_df.lat.isnull()]
 
-    # Missing size warning message.
-    print("\n** Warning ** Park sites not included in NPS Acreage report, so "
-          "no park size available. These will not be added to the map.")
-    print(df[df.gross_area_acres.isnull()].park_name)
+    # Check for parks missing size and remove from dataframe.
+    missing_size = park_df[park_df.gross_area_acres.isnull()].park_name
+    if missing_size.size:
+        print("\n** Warning **")
+        print("Park sites not included in NPS Acreage report, so no park "
+              "size available. These park sites will not be added to the map.")
+        print(*missing_size, sep=', ')
+        print("** Total parks missing size: {}".format(len(missing_size)))
+        park_df = park_df[~park_df.gross_area_acres.isnull()]
 
     park_map = create_map()
-    park_map = add_park_size_circles_to_map(park_map, map_df)
+    park_map = add_park_size_circles_to_map(park_map, park_df)
     park_map.save('_output/nps_parks_map_size.html')
 
 if __name__ == '__main__':
