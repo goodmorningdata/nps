@@ -21,7 +21,7 @@ The following visualizations are created:
 
 Required Libraries
 ------------------
-argparse, pandas, numpy, folium, matplotlib, sklearn
+argparse, pandas, numpy, folium, matplotlib, seaborn, sklearn
 
 Dependencies
 ------------
@@ -408,13 +408,13 @@ def main():
     sns.set()
     sns.set_palette('Dark2')
 
-    # Plot #1 - total visits for all parks vs. year.
+    # Plot #1 - Total visits for all parks vs. year.
     plot_total_park_visits_vs_year(park_df, designation)
 
-    # Plot #2 - estimated future visits for all parks vs. year.
+    # Plot #2 - Estimated future visits for all parks vs. year.
     plot_total_estimated_park_visits_vs_year(park_df, designation)
 
-    # Plot #3 - individual park visits vs. year for a set of parks.
+    # Plot #3 - Individual park visits vs. year for a set of parks.
     plot_title = "Park visits by year, highest 10 ({})".format(designation)
     plot_park_visits_vs_year(park_df.iloc[0:10,:], designation,
                              title = plot_title)
@@ -425,7 +425,7 @@ def main():
     #plot_park_visits_vs_year(park_df[park_df['park_code'] == 'acad'],
     #                         "Acadia NP")
 
-    # Plot #4 - histogram - visits by park in bins of 1 million visits
+    # Plot #4 - Histogram - visits by park in bins of 1 million visits
     plot_park_visits_histogram(park_df, designation)
 
 if __name__ == '__main__':
