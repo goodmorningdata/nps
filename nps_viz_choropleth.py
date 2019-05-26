@@ -1,13 +1,10 @@
 '''
-This script creates a set of visualizations using NPS data available
-from their website and API, and from Wikipedia. The visualizations are
-intended to provide an introduction to the NPS and its official units.
+This script creates a set of Folium choroplth maps using NPS data
+available from their website and API, and from Wikipedia.
 
 The following visualizations are created:
 1) A Folium choropleth map of the United States with state color
    corresponding to the number of parks in that state.
-2) Plots including:
-   Plot #1 - Number of National Parks established each year.
 
 Required Libraries
 ------------------
@@ -136,15 +133,6 @@ def create_state_count_choropleth(df, designation):
 
     return map
 
-def plot_num_parks_per_year(df):
-    years = [str(i) for i in range(1904, 2019)]
-    #Want count of parks founded in each year (bar) and total number of parks in the system in each year (line)
-    for year in years:
-         print ('****', year)
-         #print(df[df[year] > 0 & pd.notnull(df[year])])
-         print(df[df[year] > 0 & pd.notnull(df[year])].count())
-    #nps_parks_num_parks_per_year.html
-
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
@@ -193,14 +181,7 @@ def main():
 
     # Map #1 - Create the state park count choropleth and save to a file.
     state_map = create_state_count_choropleth(park_df_states, designation)
-    state_map.save("_output/nps_parks_map_state_choropleth.html")
-
-    # Plot #1 - Number of National Parks established each year.
-    #plot_num_parks_per_year(map_df)
-
-    # Plot the total number of parks per year and number
-    # established that year.
-    #plot_num_parks_num_established(map_df)
+    state_map.save("_output/nps_state_count_choropleth.html")
 
 if __name__ == "__main__":
     main()
