@@ -340,6 +340,10 @@ def plot_park_visits_histogram(df, designation):
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0, index_col=0)
 
+    # Use Seaborn formatting for plots and set color palette.
+    sns.set()
+    sns.set_palette('Dark2')
+
     # The user can specify the set of parks to map and plot, using the
     # command line parameter, 'parkset'. If no parameter specified, all
     # park sites are added to the map.
@@ -403,10 +407,6 @@ def main():
 
     # Save park visit data as an Excel spreadsheet and an html table.
     output_visit_data_to_tables(park_df)
-
-    # Use Seaborn formatting for plots and set color palette.
-    sns.set()
-    sns.set_palette('Dark2')
 
     # Plot #1 - Total visits for all parks vs. year.
     plot_total_park_visits_vs_year(park_df, designation)
