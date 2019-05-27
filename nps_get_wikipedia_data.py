@@ -1,9 +1,11 @@
 '''
-This script scrapes the Wikipedia page, "List of national parks of the
-United States", for the establishment date of each National Park. The
-Python library, BeatutifulSoup, is used to pull the data out of the
-html file. The dataframe is saved as an Excel file,
-'wikipedia_date_established.xlsx'.
+This script uses the Python library, BeautifulSoup to scrape data
+from the following Wikipedia pages, and to save the resulting
+dataframes to csv files.
+1) Establishment date of each National Park is retrieved from the
+   page, "List of national parks of the United States".
+2) President name, and start date and end dates of term, are retrieved
+   from the page, "List of Presidents of the United States".
 
 Required Libraries
 ------------------
@@ -14,6 +16,10 @@ Dependencies
 1) Save the webpage:
    https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States
    as 'wikipedia_national_parks.html' in the '_reference_data' folder
+   of the project.
+2) Save the webpage:
+   https://en.wikipedia.org/wiki/List_of_Presidents_of_the_United_States
+   as 'wikipedia_list_of_presidents.html' in the '_reference_data' folder
    of the project.
 '''
 
@@ -56,13 +62,27 @@ def get_established_date_from_page(filename):
 
     return df
 
+def get_list_of_presidents(filename):
+    soup = BeautifulSoup(open(filename), 'html.parser')
+
+    df = pd.DataFrame(columns=['president', 'start_date', 'end_date'])
+
+    # Find the table of National Parks.
+    table_rows = soup.find_all('table')[1].find_all('tr')
+
+    print(table_rows)
+
+    return df
+
 def main():
     infile = '_reference_data/wikipedia_national_parks.html'
-    df = get_established_date_from_page(infile)
-
-    # Save dataframe to a csv file.
+    #df = get_established_date_from_page(infile)
     df.to_csv('_reference_data/wikipedia_date_established.csv',
                 index=False)
+
+    infile = '_reference_data/wikipedia_list_of_presidents.html'
+    df  = get_list_of_presidents(infile)
+    df.to_csv('_reference_data/wikipedia_list_of_presidents.csv')
 
 if __name__ == '__main__':
     main()
