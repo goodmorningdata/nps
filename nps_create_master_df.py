@@ -227,6 +227,29 @@ def lookup_park_code(park_name, df_lookup):
 
     return park_code
 
+def find_president(date, df_pres):
+    '''
+    This function finds the president in office on the parameter date.
+
+    Parameters
+    ----------
+    date : datetime
+        Date for which to find president in office for.
+    df_pres : pandas DataFrame
+        Dataframe of president term start and end dates.
+
+    Returns
+    -------
+    president_name : str
+        President name.
+    '''
+
+    president_row = (df_pres[(df_pres.start_date <= date)
+                     & (df_pres.end_date > date)])
+    president_name = president_row.president.tolist()[0]
+
+    return president_name
+
 def read_wikipedia_data(df_api):
     '''
     This function reads the park name and date established from the
@@ -246,13 +269,14 @@ def read_wikipedia_data(df_api):
         Dataframe of park code and date established.
     '''
 
+    # Read date established from file.
     filename = '_reference_data/wikipedia_date_established.csv'
     df = pd.read_csv(filename, header=0)
-
-    df['park_name_stripped'] = df.park_name.apply(
-                               lambda x: strip_park_name(x))
+    df.date_established = pd.to_datetime(df.date_established)
 
     # Lookup the correct park code for the park name.
+    df['park_name_stripped'] = df.park_name.apply(
+                               lambda x: strip_park_name(x))
     df['park_code'] = df.park_name_stripped.apply(
                       lambda x: lookup_park_code(x, df_api))
 
@@ -261,9 +285,18 @@ def read_wikipedia_data(df_api):
     # be assigned after merge.
     df = df[df.park_code != 'seki']
 
-    df.date_established = pd.to_datetime(df.date_established)
+    # Read presidential terms from file and assign president in
+    # office when park was established.
+    filename = '_reference_data/wikipedia_list_of_presidents.csv'
+    df_pres = pd.read_csv(filename, header=0)
+    df_pres.start_date = pd.to_datetime(df_pres.start_date)
+    df_pres.end_date = pd.to_datetime(df_pres.end_date)
+    df['president'] = df.apply(
+        lambda row: find_president(row.date_established, df_pres),
+        axis=1
+    )
 
-    return df[['park_code', 'date_established']]
+    return df[['park_code', 'date_established', 'president']]
 
 def read_acreage_data(df_api):
     '''
