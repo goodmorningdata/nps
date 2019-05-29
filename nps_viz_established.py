@@ -41,14 +41,6 @@ def plot_parks_per_decade(df):
     plt.ylabel('Number of parks established', fontsize=12)
     plt.show()
 
-    #years = [str(i) for i in range(1904, 2019)]
-    #Want count of parks founded in each year (bar) and total number of parks in the system in each year (line)
-    #for year in years:
-    #     print ('****', year)
-         #print(df[df[year] > 0 & pd.notnull(df[year])])
-    #     print(df[df[year] > 0 & pd.notnull(df[year])].count())
-    #nps_parks_num_parks_per_year.html
-
 def plot_parks_per_year(df):
     '''
     Plot...
@@ -80,6 +72,29 @@ def plot_parks_per_year(df):
     plt.xticks(rotation=90)
     plt.show()
 
+def plot_parks_per_president(df):
+    '''
+    Plot...
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park data.
+
+    Returns
+    -------
+    None
+    '''
+
+    #df['decade'] = df.date_established.dt.year//10*10
+    president_count = df.president.value_counts()
+    print(president_count)
+    # fig, ax = plt.subplots()
+    # sns.barplot(decade_count.index, decade_count.values, alpha=0.8, ax=ax)
+    # plt.title('Number of National Parks established each decade')
+    # plt.ylabel('Number of parks established', fontsize=12)
+    # plt.show()
+
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
     park_df = df.loc[df.designation == "National Parks"].copy()
@@ -89,10 +104,13 @@ def main():
     sns.set_palette('Dark2')
 
     # Plot #1 - Number of National Parks established each decade.
-    plot_parks_per_decade(park_df)
+    #plot_parks_per_decade(park_df)
 
     # Plot #2 - Cummulative park total vs. year.
-    plot_parks_per_year(park_df)
+    #plot_parks_per_year(park_df)
+
+    # Plot #3 - Number of National Parks established by president.
+    plot_parks_per_president(park_df)
 
 if __name__ == "__main__":
     main()

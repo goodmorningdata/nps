@@ -227,33 +227,10 @@ def lookup_park_code(park_name, df_lookup):
 
     return park_code
 
-def find_president(date, df_pres):
-    '''
-    This function finds the president in office on the parameter date.
-
-    Parameters
-    ----------
-    date : datetime
-        Date for which to find president in office for.
-    df_pres : pandas DataFrame
-        Dataframe of president term start and end dates.
-
-    Returns
-    -------
-    president_name : str
-        President name.
-    '''
-
-    president_row = (df_pres[(df_pres.start_date <= date)
-                     & (df_pres.end_date > date)])
-    president_name = president_row.president.tolist()[0]
-
-    return president_name
-
-def read_wikipedia_data(df_api):
+def read_wikipedia_date_established(df_api):
     '''
     This function reads the park name and date established from the
-    Excel file created by the nps_get_wikipedia.py script, looks up
+    Excel file created by the nps_get_wikipedia_data.py script, looks up
     the correct park code in the paramter dataframe and returns a
     dataframe containing the park code and date established. The date
     established is currently only available for National Parks.
@@ -285,18 +262,56 @@ def read_wikipedia_data(df_api):
     # be assigned after merge.
     df = df[df.park_code != 'seki']
 
-    # Read presidential terms from file and assign president in
-    # office when park was established.
+    return df[['park_code', 'date_established']]
+
+def read_wikipedia_list_of_presidents():
+    '''
+    This function reads president name and start and end term dates
+    from the Excel file created by the nps_get_wikipedia_data.py script,
+    and adds them to a dataframe.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    df : pandas DataFrame
+        Dataframe of president name and term dates.
+    '''
+
     filename = '_reference_data/wikipedia_list_of_presidents.csv'
     df_pres = pd.read_csv(filename, header=0)
     df_pres.start_date = pd.to_datetime(df_pres.start_date)
     df_pres.end_date = pd.to_datetime(df_pres.end_date)
-    df['president'] = df.apply(
-        lambda row: find_president(row.date_established, df_pres),
-        axis=1
-    )
 
-    return df[['park_code', 'date_established', 'president']]
+    return df_pres
+
+def assign_president(date, df_pres):
+    '''
+    This function finds the president in office on the parameter date.
+
+    Parameters
+    ----------
+    date : datetime
+        Date for which to find president in office for.
+    df_pres : pandas DataFrame
+        Dataframe of president term start and end dates.
+
+    Returns
+    -------
+    president_name : str
+        President name.
+    '''
+
+    if pd.isnull(date):
+        president_name = ''
+    else:
+        president_row = (df_pres[(df_pres.start_date <= date)
+                         & (df_pres.end_date > date)])
+        president_name = president_row.president.tolist()[0]
+
+    return president_name
 
 def read_acreage_data(df_api):
     '''
@@ -468,13 +483,19 @@ def main():
 
     # Read the Wikipedia national park date established data from file
     # into a dataframe and merge it with the master dataframe.
-    df_estab = read_wikipedia_data(df_api)
+    df_estab = read_wikipedia_date_established(df_api)
     df_master = pd.merge(df_master, df_estab, how='left', on='park_code')
 
     # Kings Canyon and Sequoia National Parks share the same park code
     # but were established on separate dates. Assign these dates.
     df_master.loc[df_master.park_name == "Kings Canyon National Park", 'date_established'] = pd.to_datetime('1940-03-04')
     df_master.loc[df_master.park_name == "Sequoia National Park", 'date_established'] = pd.to_datetime('1890-09-25')
+
+    df_pres = read_wikipedia_list_of_presidents()
+    df_master['president'] = df_master.apply(
+        lambda row: assign_president(row.date_established, df_pres),
+        axis=1
+    )
 
     # Read the NPS Acreage report data from file into a dataframe and
     # merge it with the master dataframe.
