@@ -39,6 +39,8 @@ def plot_parks_per_decade(df):
     sns.barplot(decade_count.index, decade_count.values, alpha=0.8, ax=ax)
     plt.title('Number of National Parks established each decade')
     plt.ylabel('Number of parks established', fontsize=12)
+    plt.xticks(fontsize=9)
+    plt.tight_layout()
     plt.show()
 
 def plot_parks_per_year(df):
@@ -86,13 +88,17 @@ def plot_parks_per_president(df):
     None
     '''
 
-    #df['decade'] = df.date_established.dt.year//10*10
-    president_count = df.president.value_counts()
+    pres_count = (df.groupby(['president', 'president_end_date'])
+                  .count()
+                  .reset_index()
+                  .sort_values(by=['president_end_date'])
+    )
+
     fig, ax = plt.subplots()
-    sns.barplot(president_count.index, president_count.values, alpha=0.8, ax=ax)
+    plt.barh(pres_count.president, pres_count.park_name)
     plt.title('Number of National Parks established by president')
-    plt.ylabel('Number of parks established', fontsize=12)
-    plt.xticks(rotation=90)    
+    plt.xticks(fontsize=9)    
+    plt.tight_layout()
     plt.show()
 
 def main():
@@ -104,13 +110,13 @@ def main():
     sns.set_palette('Dark2')
 
     # Plot #1 - Number of National Parks established each decade.
-    #plot_parks_per_decade(park_df)
+    plot_parks_per_decade(park_df)
 
     # Plot #2 - Cummulative park total vs. year.
-    #plot_parks_per_year(park_df)
+    # plot_parks_per_year(park_df)
 
     # Plot #3 - Number of National Parks established by president.
-    plot_parks_per_president(park_df)
+    plot_parks_per_president(park_df[['park_name','president', 'president_end_date']])
 
 if __name__ == "__main__":
     main()
