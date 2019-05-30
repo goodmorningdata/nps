@@ -303,7 +303,7 @@ def assign_president(date, df_pres):
     president_name : str
         President name.
     president_end_date : datetime
-        End date of preseident's term.
+        End date of president's term.
     '''
 
     if pd.isnull(date):
