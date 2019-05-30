@@ -88,12 +88,12 @@ def plot_parks_per_president(df):
 
     #df['decade'] = df.date_established.dt.year//10*10
     president_count = df.president.value_counts()
-    print(president_count)
-    # fig, ax = plt.subplots()
-    # sns.barplot(decade_count.index, decade_count.values, alpha=0.8, ax=ax)
-    # plt.title('Number of National Parks established each decade')
-    # plt.ylabel('Number of parks established', fontsize=12)
-    # plt.show()
+    fig, ax = plt.subplots()
+    sns.barplot(president_count.index, president_count.values, alpha=0.8, ax=ax)
+    plt.title('Number of National Parks established by president')
+    plt.ylabel('Number of parks established', fontsize=12)
+    plt.xticks(rotation=90)    
+    plt.show()
 
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)

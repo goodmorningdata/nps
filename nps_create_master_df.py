@@ -302,16 +302,22 @@ def assign_president(date, df_pres):
     -------
     president_name : str
         President name.
+    president_end_date : datetime
+        End date of preseident's term.
     '''
 
     if pd.isnull(date):
         president_name = ''
+        president_end_date = ''
     else:
         president_row = (df_pres[(df_pres.start_date <= date)
                          & (df_pres.end_date > date)])
         president_name = president_row.president.tolist()[0]
+        president_end_date = pd.to_datetime(president_row.end_date.tolist()[0])
+        if president_name == 'Grover Cleveland':
+            president_end_date = pd.to_datetime('1889-03-04')
 
-    return president_name
+    return [president_name, president_end_date]
 
 def read_acreage_data(df_api):
     '''
@@ -488,12 +494,14 @@ def main():
 
     # Kings Canyon and Sequoia National Parks share the same park code
     # but were established on separate dates. Assign these dates.
-    df_master.loc[df_master.park_name == "Kings Canyon National Park", 'date_established'] = pd.to_datetime('1940-03-04')
-    df_master.loc[df_master.park_name == "Sequoia National Park", 'date_established'] = pd.to_datetime('1890-09-25')
+    df_master.loc[df_master.park_name == "Kings Canyon National Park",
+                  'date_established'] = pd.to_datetime('1940-03-04')
+    df_master.loc[df_master.park_name == "Sequoia National Park",
+                  'date_established'] = pd.to_datetime('1890-09-25')
 
     df_pres = read_wikipedia_list_of_presidents()
-    df_master['president'] = df_master.apply(
-        lambda row: assign_president(row.date_established, df_pres),
+    df_master[['president', 'president_end_date']] = df_master.apply(
+        lambda row: pd.Series(assign_president(row.date_established, df_pres)),
         axis=1
     )
 
