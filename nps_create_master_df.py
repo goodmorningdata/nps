@@ -222,8 +222,8 @@ def lookup_park_code(park_name, df_lookup):
 
     # The National World War I Memorial is a part of the National Mall
     # and Memorial Parks (DC).
-    if park_name.lower() == "world war i memorial": park_code = 'nama'
-    if park_name.lower().startswith("world war i "): park_code = 'nama'
+    if park_name.lower() == "world war i memorial": park_code = 'xxx2'
+    if park_name.lower().startswith("world war i "): park_code = 'xxx2'
 
     return park_code
 
@@ -264,14 +264,22 @@ def lookup_park_code(park_name, df_lookup):
 #
 #     return df[['park_code', 'date_established']]
 
-def read_park_dates():
+def read_park_dates(df_api):
     filename = '_reference_data/nps_park_start_dates.xlsx'
     df = pd.read_excel(filename, header=1)
     df.entry_date = pd.to_datetime(df.entry_date)
+
+    # Lookup the correct park code for the park name.
+    df['park_name_stripped'] = df.park_name.apply(
+                               lambda x: strip_park_name(x))
+    df['park_code'] = df.park_name_stripped.apply(
+                      lambda x: lookup_park_code(x, df_api))
+
+    # How does to_datetime handle null values?
     #df.nm_date = pd.to_datetime(df.nm_date)
     #df.np_date = pd.to_datetime(df.np_date)
 
-    print(df[['park_name', 'entry_date']])
+    return df[['park_code', 'entry_date', 'nm_date', 'np_date']]
 
 def read_wikipedia_list_of_presidents():
     '''
@@ -346,7 +354,7 @@ def read_acreage_data(df_api):
         Dataframe of park code and park size.
     '''
 
-    filename = '_acreage_data/NPS-Acreage-12-31-2018.xlsx'
+    filename = '_reference_data/NPS-Acreage-12-31-2018.xlsx'
     df = pd.read_excel(filename, skiprows=1)
     df = df[pd.notnull(df['State'])]
     df = df.rename({'Gross Area Acres': 'gross_area_acres',
@@ -483,7 +491,7 @@ def print_debug(df1_name, df1, df2_name, df2):
 
 def main():
     pd.set_option('display.max_rows', 1000)
-    debug = False
+    debug = True
 
     # Read the NPS API data from file into a dataframe.
     df_api = read_park_sites_api()
@@ -502,7 +510,8 @@ def main():
     #df_master = pd.merge(df_master, df_estab, how='left', on='park_code')
 
     # Read manually created Excel file to get park dates.
-    df_dates = read_park_dates()
+    df_dates = read_park_dates(df_api)
+    if debug: print_debug('df_master', df_master, 'df_dates', df_dates)
 
     # Kings Canyon and Sequoia National Parks share the same park code
     # but were established on separate dates. Assign these dates.
