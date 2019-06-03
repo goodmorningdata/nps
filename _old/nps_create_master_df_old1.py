@@ -227,51 +227,42 @@ def lookup_park_code(park_name, df_lookup):
 
     return park_code
 
-# def read_wikipedia_date_established(df_api):
-#     '''
-#     This function reads the park name and date established from the
-#     Excel file created by the nps_get_wikipedia_data.py script, looks up
-#     the correct park code in the paramter dataframe and returns a
-#     dataframe containing the park code and date established. The date
-#     established is currently only available for National Parks.
-#
-#     Parameters
-#     ----------
-#     df_api : pandas DataFrame
-#         Dataframe for park code lookup.
-#
-#     Returns
-#     -------
-#     df : pandas DataFrame
-#         Dataframe of park code and date established.
-#     '''
-#
-#     # Read date established from file.
-#     filename = '_reference_data/wikipedia_date_established.csv'
-#     df = pd.read_csv(filename, header=0)
-#     df.date_established = pd.to_datetime(df.date_established)
-#
-#     # Lookup the correct park code for the park name.
-#     df['park_name_stripped'] = df.park_name.apply(
-#                                lambda x: strip_park_name(x))
-#     df['park_code'] = df.park_name_stripped.apply(
-#                       lambda x: lookup_park_code(x, df_api))
-#
-#     # Remove Seqoia and Kings Canyon NPs from the dataframe. They share
-#     # the same park code but have different established dates which will
-#     # be assigned after merge.
-#     df = df[df.park_code != 'seki']
-#
-#     return df[['park_code', 'date_established']]
+def read_wikipedia_date_established(df_api):
+    '''
+    This function reads the park name and date established from the
+    Excel file created by the nps_get_wikipedia_data.py script, looks up
+    the correct park code in the paramter dataframe and returns a
+    dataframe containing the park code and date established. The date
+    established is currently only available for National Parks.
 
-def read_park_dates():
-    filename = '_reference_data/nps_park_start_dates.xlsx'
-    df = pd.read_excel(filename, header=1)
-    df.entry_date = pd.to_datetime(df.entry_date)
-    #df.nm_date = pd.to_datetime(df.nm_date)
-    #df.np_date = pd.to_datetime(df.np_date)
+    Parameters
+    ----------
+    df_api : pandas DataFrame
+        Dataframe for park code lookup.
 
-    print(df[['park_name', 'entry_date']])
+    Returns
+    -------
+    df : pandas DataFrame
+        Dataframe of park code and date established.
+    '''
+
+    # Read date established from file.
+    filename = '_reference_data/wikipedia_date_established.csv'
+    df = pd.read_csv(filename, header=0)
+    df.date_established = pd.to_datetime(df.date_established)
+
+    # Lookup the correct park code for the park name.
+    df['park_name_stripped'] = df.park_name.apply(
+                               lambda x: strip_park_name(x))
+    df['park_code'] = df.park_name_stripped.apply(
+                      lambda x: lookup_park_code(x, df_api))
+
+    # Remove Seqoia and Kings Canyon NPs from the dataframe. They share
+    # the same park code but have different established dates which will
+    # be assigned after merge.
+    df = df[df.park_code != 'seki']
+
+    return df[['park_code', 'date_established']]
 
 def read_wikipedia_list_of_presidents():
     '''
@@ -502,20 +493,20 @@ def main():
     #df_master = pd.merge(df_master, df_estab, how='left', on='park_code')
 
     # Read manually created Excel file to get park dates.
-    df_dates = read_park_dates()
+    df_dates = get_park_dates()
 
     # Kings Canyon and Sequoia National Parks share the same park code
     # but were established on separate dates. Assign these dates.
-    # df_master.loc[df_master.park_name == "Kings Canyon National Park",
-    #               'date_established'] = pd.to_datetime('1890-10-01')
-    # df_master.loc[df_master.park_name == "Sequoia National Park",
-    #               'date_established'] = pd.to_datetime('1890-09-25')
+    df_master.loc[df_master.park_name == "Kings Canyon National Park",
+                  'date_established'] = pd.to_datetime('1890-10-01')
+    df_master.loc[df_master.park_name == "Sequoia National Park",
+                  'date_established'] = pd.to_datetime('1890-09-25')
 
-    # df_pres = read_wikipedia_list_of_presidents()
-    # df_master[['president', 'president_end_date']] = df_master.apply(
-    #     lambda row: pd.Series(assign_president(row.date_established, df_pres)),
-    #     axis=1
-    # )
+    df_pres = read_wikipedia_list_of_presidents()
+    df_master[['president', 'president_end_date']] = df_master.apply(
+        lambda row: pd.Series(assign_president(row.date_established, df_pres)),
+        axis=1
+    )
 
     # Read the NPS Acreage report data from file into a dataframe and
     # merge it with the master dataframe.
