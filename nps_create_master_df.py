@@ -155,6 +155,11 @@ def read_park_sites_web(df_api):
     df.loc[df.park_name == "Martin Luther King", 'park_name'] = (
         "Martin Luther King National Historic Park")
 
+    # Replace name to provide more information.
+    df['park_name'].replace(
+        {"John D. Rockefeller":"John D. Rockefeller National Parkway"},
+        regex=True, inplace=True)
+
     # Find the park code for each park in the df_master dataframe by
     # matching it to the park in the df_api dataframe.
     df['park_name_stripped'] = df.park_name.apply(
