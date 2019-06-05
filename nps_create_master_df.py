@@ -10,8 +10,8 @@ only with the 419 official units.
 2) Create the master dataframe by merging the api data with the list of
    official park units available on nps.gov. This source provides the
    official list of units, the park name, and park designation.
-3) Read the established date for each National Park, available on a
-   Wikipedia page, and merge with the master dataframe.
+3) Read significant park dates from a manually created file and merge
+   with the master dataframe.
 4) Read the park size data, available from nps.gov as a report, and
    merge with the master dataframe.
 5) Read the park visitor use statistics, available from nps.gov as a
@@ -27,8 +27,8 @@ Dependencies
    'nps_park_sites_web.xlsx'.
 2) Run the script, nps_get_park_sites_api.py, to create the file,
    'nps_park_sites_api.xlsx'.
-3) Run the script, nps_get_wikipedia_data.py, to create the file,
-   'wikipedia_date_established.csv'.
+3) Run the script, nps_get_wikipedia_presidents.py, to create the file,
+   'wikipedia_list_of_presidents.csv'.
 4) Download the most recent acreage report from the nps website at:
    https://www.nps.gov/subjects/lwcf/acreagereports.htm Calendar
    Year Reports, Year = 2018. Place this file in the '_acreage_data'
