@@ -4,9 +4,9 @@ from the following Wikipedia pages, and to save the resulting
 data to a csv file.
 - "List of national lakeshores and seashores of the United States"
 - "List of national memorials of the United States"
-- ""
-- ""
-- ""
+- "List of national monuments of the United States"
+- "List of national parks of the United States"
+- "National Parkway"
 
 Required Libraries
 ------------------
@@ -23,15 +23,15 @@ Dependencies
    as 'wikipedia_national_memorials.html' in the '_reference_data'
    folder of the project.
 3) Save the webpage:
-   XXX
+   https://en.wikipedia.org/wiki/List_of_national_monuments_of_the_United_States
    as 'wikipedia_national_monuments.html' in the '_reference_data'
    folder of the project.
 4) Save the webpage:
-   XXX
+   https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States
    as 'wikipedia_national_parks.html' in the '_reference_data' folder
    of the project.
 5) Save the webpage:
-   XXX
+   https://en.wikipedia.org/wiki/National_Parkway
    as 'wikipedia_national_parkways.html' in the '_reference_data' folder
    of the project.
 '''
