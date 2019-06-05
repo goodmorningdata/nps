@@ -313,28 +313,28 @@ def read_1900_1989_data():
 
 def main():
     #state_fips_dict = get_fips_state_codes()
-    pop_df = pd.DataFrame(columns=['year', 'state', 'population'])
+    df_pop = pd.DataFrame(columns=['year', 'state', 'population'])
 
     # Add 2010-2018 census data to the dataframe.
-    decade_df = read_2010_2018_data()
-    pop_df = pop_df.append(decade_df, ignore_index=True, sort=True)
+    df_decade = read_2010_2018_data()
+    df_pop = df_pop.append(df_decade, ignore_index=True, sort=True)
 
     # Add 2000-2009 census data to the dataframe.
-    decade_df = read_2000_2009_data()
-    pop_df = pop_df.append(decade_df, ignore_index=True, sort=True)
+    df_decade = read_2000_2009_data()
+    df_pop = df_pop.append(df_decade, ignore_index=True, sort=True)
 
     # Add 1990-1999 census data to the dataframe.
-    decade_df = read_1990_1999_data()
-    pop_df = pop_df.append(decade_df, ignore_index=True, sort=True)
+    df_decade = read_1990_1999_data()
+    df_pop = df_pop.append(df_decade, ignore_index=True, sort=True)
 
     # Add 1900-1989 census data to the dataframe.
-    decade_df = read_1900_1989_data()
-    pop_df = pop_df.append(decade_df, ignore_index=True, sort=True)
+    df_decade = read_1900_1989_data()
+    df_pop = df_pop.append(df_decade, ignore_index=True, sort=True)
 
-    #sum_df = pop_df.groupby(['year'])['population'].agg('sum')
-    #sum_df.to_excel('_census_data/us_est_1900-2018_TOTALS.xlsx')
+    #df_sum = df_pop.groupby(['year'])['population'].agg('sum')
+    #df_sum.to_excel('_census_data/us_est_1900-2018_TOTALS.xlsx')
 
-    (pop_df[['year', 'state','population']]
+    (df_pop[['year', 'state','population']]
            .sort_values(by=['year', 'state'])
            .to_excel('_census_data/us_est_1900-2018.xlsx', index=False))
 

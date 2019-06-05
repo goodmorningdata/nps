@@ -97,26 +97,26 @@ def plot_parks_per_president(df):
     fig, ax = plt.subplots()
     plt.barh(pres_count.president, pres_count.park_name)
     plt.title('Number of National Parks established by president')
-    plt.xticks(fontsize=9)    
+    plt.xticks(fontsize=9)
     plt.tight_layout()
     plt.show()
 
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
-    park_df = df.loc[df.designation == "National Parks"].copy()
+    df_park = df.loc[df.designation == "National Parks"].copy()
 
     # Use Seaborn formatting for plots and set color palette.
     sns.set()
     sns.set_palette('Dark2')
 
     # Plot #1 - Number of National Parks established each decade.
-    plot_parks_per_decade(park_df)
+    plot_parks_per_decade(df_park)
 
     # Plot #2 - Cummulative park total vs. year.
-    # plot_parks_per_year(park_df)
+    # plot_parks_per_year(df_park)
 
     # Plot #3 - Number of National Parks established by president.
-    plot_parks_per_president(park_df[['park_name','president', 'president_end_date']])
+    plot_parks_per_president(df_park[['park_name','president', 'president_end_date']])
 
 if __name__ == "__main__":
     main()

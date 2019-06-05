@@ -63,7 +63,7 @@ def add_park_locations_to_map(map, df):
     '''
 
     # Create a dataframe of park sets with assigned icons and colors.
-    icon_df = pd.DataFrame(
+    df_icon = pd.DataFrame(
               {'designation' : ['International Historic Sites',
               'National Battlefields', 'National Battlefield Parks',
               'National Battlefield Sites', 'National Military Parks', 'National Historical Parks', 'National Historic Sites',
@@ -90,10 +90,10 @@ def add_park_locations_to_map(map, df):
         popup_html = folium.Html(popup_string, script=True)
 
         # Assign color and graphic to icon.
-        icon_df_row = icon_df[icon_df.designation == row.designation]
-        map_icon = folium.Icon(color=icon_df_row.values[0][1],
+        df_icon_row = df_icon[df_icon.designation == row.designation]
+        map_icon = folium.Icon(color=df_icon_row.values[0][1],
                                prefix='fa',
-                               icon=icon_df_row.values[0][2])
+                               icon=df_icon_row.values[0][2])
 
         marker = folium.Marker(location = [row.lat, row.long],
                                icon = map_icon,
@@ -128,26 +128,26 @@ def main():
     # Filter the dataframe based on designation and remind user which
     # park designations will be in the visualizations.
     if args.designation:
-        park_df = df[df.designation == args.designation]
+        df_park = df[df.designation == args.designation]
         print("\nCreating park location map for the park designation, {}."
               .format(args.designation))
     else:
-        park_df = df
+        df_park = df
         print("\nCreating park location map for all NPS sites.")
 
     # Check for parks missing location and remove from dataframe.
-    missing_location = park_df[park_df.lat.isnull()].park_name
+    missing_location = df_park[df_park.lat.isnull()].park_name
     if missing_location.size:
         print("** Warning ** ")
         print("Park sites with missing lat/long from API, so no location "
               "available. These park sites will not be added to the map.")
         print(*missing_location, sep=', ')
         print("Total parks missing location: {}"
-              .format(len(park_df[park_df.lat.isnull()].park_name)))
-        park_df = park_df[~park_df.lat.isnull()]
+              .format(len(df_park[df_park.lat.isnull()].park_name)))
+        df_park = df_park[~df_park.lat.isnull()]
 
     park_map = create_map()
-    park_map = add_park_locations_to_map(park_map, park_df)
+    park_map = add_park_locations_to_map(park_map, df_park)
     park_map.save('_output/nps_parks_map_location.html')
 
 if __name__ == '__main__':

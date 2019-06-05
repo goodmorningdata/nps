@@ -40,21 +40,21 @@ def main():
     args = parser.parse_args()
 
     if args.parkset:
-        map_df = df[df.park_set == args.parkset]
+        df_map = df[df.park_set == args.parkset]
         print("Creating park location map for the park set, '"
               + args.parkset + "'.")
     else:
-        map_df = df
+        df_map = df
         print("Creating park location map for all NPS sites.")
 
     # Sort by date established.
-    map_df = map_df.sort_values(by=["date_established"]).reset_index()
+    df_map = df_map.sort_values(by=["date_established"]).reset_index()
 
     center_lower_48 = [39.833333, -98.583333]
     map = folium.Map(location = center_lower_48, zoom_start = 3,
                      control_scale = True, tiles = 'Stamen Terrain')
 
-    for index, row in map_df.iterrows():
+    for index, row in df_map.iterrows():
         map = add_park_location_to_map(map, row)
         map.save('_output/animation/nps_parks_map_animation_' + str(index) + '.html')
 

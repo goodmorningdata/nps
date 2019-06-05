@@ -155,9 +155,9 @@ def plot_total_park_visits_vs_year(df, designation):
 
     # Sum park visits for each year over all parks in the dataframe.
     start_col = df.columns.tolist().index(1904)
-    tot_df = df.iloc[:, start_col:].sum()
+    df_tot = df.iloc[:, start_col:].sum()
     fig, ax = plt.subplots()
-    ax.plot(tot_df.index, tot_df.values/1e6)
+    ax.plot(df_tot.index, df_tot.values/1e6)
 
     # X-axis ticks are every 10th year, displayed vertically.
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
@@ -199,21 +199,21 @@ def plot_total_estimated_park_visits_vs_year(df, designation):
     # dataframe.
     start_year = 2010
     start_col = df.columns.tolist().index(start_year)
-    tot_df = df.iloc[:, start_col:].sum()
+    df_tot = df.iloc[:, start_col:].sum()
 
     # Create a linear regression classifier and fit it to the park
     # visit total data back to the value of start_year. Use the
     # classifier to predict future visit totals.
     regressor = LinearRegression()
-    X = pd.Series(tot_df.index.values).to_frame()
-    y = pd.Series(tot_df.values)
+    X = pd.Series(df_tot.index.values).to_frame()
+    y = pd.Series(df_tot.values)
     regressor.fit(X, y)
     X_estimate = pd.Series(range(start_year, 2041)).to_frame()
 
     # Plot both the actual visit data as a scatter plot and the linear
     # regression line.
     fig, ax = plt.subplots()
-    ax.scatter(tot_df.index, tot_df.values/1e6)
+    ax.scatter(df_tot.index, df_tot.values/1e6)
     plt.plot(X_estimate, regressor.predict(X_estimate)/1e6, color='k')
 
     # X-axis ticks are every 5th year, displayed vertically.
@@ -367,17 +367,17 @@ def main():
     # Filter the dataframe based on designation and remind user which
     # park designations will be in the visualizations.
     if args.designation:
-        park_df = df[df.designation == args.designation]
+        df_park = df[df.designation == args.designation]
         print("\nCreating park visit map for the park designation, {}."
               .format(args.designation))
         designation = args.designation
     else:
-        park_df = df
+        df_park = df
         print("\nCreating park visit map for all NPS sites.")
         designation = "All Parks"
 
     # Check for parks missing location.
-    missing_loc = park_df[park_df.lat.isnull()].park_name
+    missing_loc = df_park[df_park.lat.isnull()].park_name
     if missing_loc.size:
         print("\n** Warning ** ")
         print("Park sites with missing lat/long from API, so no location "
@@ -386,7 +386,7 @@ def main():
         print("Total parks missing location: {}".format(len(missing_loc)))
 
     # Check for parks missing visitor data and remove from dataframe.
-    missing_visit = park_df[park_df[2018].isnull()].park_name
+    missing_visit = df_park[df_park[2018].isnull()].park_name
     if missing_visit.size:
         print("\n** Warning **")
         print("Park sites not included in the NPS Visitor Use Statistics "
@@ -395,38 +395,38 @@ def main():
         print(*missing_visit, sep=', ')
         print("** Total parks missing visit data: {}\n"
               .format(len(missing_visit)))
-        park_df = park_df[~park_df[2018].isnull()]
+        df_park = df_park[~df_park[2018].isnull()]
 
-    park_df = park_df.sort_values(by=2018, ascending=False)
+    df_park = df_park.sort_values(by=2018, ascending=False)
 
     # Map #1 - Plot park locations as a circle with size corresponding
     # to the number of visits in 2018.
     park_map = create_map()
-    park_map = add_park_visit_circles_to_map(park_map, park_df)
+    park_map = add_park_visit_circles_to_map(park_map, df_park)
     park_map.save('_output/nps_parks_map_visits.html')
 
     # Save park visit data as an Excel spreadsheet and an html table.
-    output_visit_data_to_tables(park_df)
+    output_visit_data_to_tables(df_park)
 
     # Plot #1 - Total visits for all parks vs. year.
-    plot_total_park_visits_vs_year(park_df, designation)
+    plot_total_park_visits_vs_year(df_park, designation)
 
     # Plot #2 - Estimated future visits for all parks vs. year.
-    plot_total_estimated_park_visits_vs_year(park_df, designation)
+    plot_total_estimated_park_visits_vs_year(df_park, designation)
 
     # Plot #3 - Individual park visits vs. year for a set of parks.
     plot_title = "Park visits by year, highest 10 ({})".format(designation)
-    plot_park_visits_vs_year(park_df.iloc[0:10,:], designation,
+    plot_park_visits_vs_year(df_park.iloc[0:10,:], designation,
                              title = plot_title)
     plot_title = "Park visits by year, lowest 10 ({})".format(designation)
-    plot_park_visits_vs_year(park_df.iloc[-10:,:], designation,
+    plot_park_visits_vs_year(df_park.iloc[-10:,:], designation,
                              title = plot_title)
     # Plot park visits by year for just one park.
-    #plot_park_visits_vs_year(park_df[park_df['park_code'] == 'acad'],
+    #plot_park_visits_vs_year(df_park[df_park['park_code'] == 'acad'],
     #                         "Acadia NP")
 
     # Plot #4 - Histogram - visits by park in bins of 1 million visits
-    plot_park_visits_histogram(park_df, designation)
+    plot_park_visits_histogram(df_park, designation)
 
 if __name__ == '__main__':
     main()

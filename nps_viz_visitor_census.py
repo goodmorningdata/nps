@@ -11,18 +11,18 @@ def read_census_data():
 
     Returns
     -------
-    pop_df : Pandas DataFrame
+    df_pop : Pandas DataFrame
       DataFrame of U.S. population by year and state (when available)
     '''
 
-    pop_df = pd.read_excel(
+    df_pop = pd.read_excel(
              '_census_data/us_est_1900-2018.xlsx',
               header=0, index=False)
-    pop_df = pop_df.groupby('year').sum()
+    df_pop = df_pop.groupby('year').sum()
 
-    return pop_df
+    return df_pop
 
-def plot_park_visits_vs_us_pop(visits_df, pop_df, park_set):
+def plot_park_visits_vs_us_pop(df_visits, df_pop, park_set):
     '''
     This fuction creates two plots. The first plots total park visits
     per year in one subplot, and U.S. population for the same years in
@@ -31,11 +31,11 @@ def plot_park_visits_vs_us_pop(visits_df, pop_df, park_set):
 
     Parameters
     ----------
-    visits_df : Pandas DataFrame
+    df_visits : Pandas DataFrame
       DataFrame of park visit data to plot filtered by park set
       parameter.
 
-    pop_df : Pandas DataFrame
+    df_pop : Pandas DataFrame
       DataFrame of U.S. population by year.
 
     park_set : str
@@ -51,18 +51,18 @@ def plot_park_visits_vs_us_pop(visits_df, pop_df, park_set):
     # Sum visits for each year over all parks in the dataframe, re-index
     # visits dataframe with numeric years, and calculate the visits
     # per capita.
-    visit_totals = pd.DataFrame(visits_df.sum().loc['1904':'2018'],
+    visit_totals = pd.DataFrame(df_visits.sum().loc['1904':'2018'],
                                 columns=['visitors'])
     visit_totals.index = range(1904,2019)
     visit_totals['visits_div_pop'] = (visit_totals['visitors'] /
-                                      pop_df['population'].loc[1904:2018])
+                                      df_pop['population'].loc[1904:2018])
 
     # Plot total park visits and U.S. population by year.
     fig, ax = plt.subplots(2, sharex=True)
     ax[0].plot(visit_totals.index, visit_totals.visitors/1e6)
     ax[0].set_title("Total park visits ({})".format(park_set))
     ax[0].set_ylabel("Millions of visits")
-    ax[1].plot(visit_totals.index, pop_df['population'].loc[1904:2018]/1e6)
+    ax[1].plot(visit_totals.index, df_pop['population'].loc[1904:2018]/1e6)
     ax[1].set_title("U.S. population")
     ax[1].set_ylabel("Millions of people")
     plt.show()
@@ -81,5 +81,5 @@ def plot_park_visits_vs_us_pop(visits_df, pop_df, park_set):
 
 
         # Plot park visits in relation to the U.S. population.
-        #pop_df = read_census_data()
-        #plot_park_visits_vs_us_pop(park_df, pop_df, park_set)
+        #df_pop = read_census_data()
+        #plot_park_visits_vs_us_pop(df_park, df_pop, park_set)

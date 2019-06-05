@@ -103,18 +103,18 @@ def create_state_count_choropleth(df, designation):
                            .format(designation))
 
     # Create a dataframe from the json file using GeoPandas.
-    geo_df = gpd.read_file('_reference_data/us-states.json')
-    geo_df = geo_df.merge(parks_per_state, left_on='id',
+    df_geo = gpd.read_file('_reference_data/us-states.json')
+    df_geo = df_geo.merge(parks_per_state, left_on='id',
                           right_on='state', how='left').fillna(0)
 
     # Find the center of the data and create an empty map.
-    centroid = geo_df.geometry.centroid
+    centroid = df_geo.geometry.centroid
     map = folium.Map(location = [centroid.y.mean(), centroid.x.mean()],
                      zoom_start = 3)
 
     # Color each state based on the number of parks in it.
     folium.GeoJson(
-        data = geo_df[['geometry', 'name', 'state', 'park_count']],
+        data = df_geo[['geometry', 'name', 'state', 'park_count']],
         name = 'United States of America',
         style_function = lambda x: {
             'fillColor' : get_state_color(x, parks_per_state, color_scale),
@@ -159,28 +159,28 @@ def main():
     # Filter the dataframe based on designation and remind user which
     # park designations will be in the visualizations.
     if args.designation:
-        park_df = df[df.designation == args.designation]
+        df_park = df[df.designation == args.designation]
         print("\nCreating visualizations for the park designation, {}."
               .format(args.designation))
         designation = args.designation
     else:
-        park_df = df
+        df_park = df
         print("\nCreating visualizations for all NPS sites.")
         designation = "All Parks"
 
     # Check for parks missing state and print warning.
-    missing_state = park_df[park_df.states.isnull()].park_name
+    missing_state = df_park[df_park.states.isnull()].park_name
     if missing_state.size:
         print("** Warning ** ")
         print("Park sites with missing state from API. These park sites will "
               "not be counted in the chloropleth maps.")
         print(*missing_state, sep=', ')
         print("Total parks missing state: {}"
-              .format(len(park_df[park_df.states.isnull()].park_name)))
-    park_df_states = park_df[~park_df.states.isnull()]
+              .format(len(df_park[df_park.states.isnull()].park_name)))
+    df_park_states = df_park[~df_park.states.isnull()]
 
     # Map #1 - Create the state park count choropleth and save to a file.
-    state_map = create_state_count_choropleth(park_df_states, designation)
+    state_map = create_state_count_choropleth(df_park_states, designation)
     state_map.save("_output/nps_state_count_choropleth.html")
 
 if __name__ == "__main__":
