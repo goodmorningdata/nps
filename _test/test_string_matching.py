@@ -19,6 +19,8 @@ def read_park_sites_api():
     filename = '../_reference_data/nps_park_sites_api.xlsx'
     df = pd.read_excel(filename, header=0)
 
+    # Exclude park codes that are not in the National Park System list
+    # of 419 Units/Parks.
     exclude_park_codes = ['afam', 'alka', 'anch', 'alca', 'aleu', 'amme',
                           'anac', 'armo', 'attr', 'auca', 'balt', 'bawa',
                           'blrn', 'cali', 'crha', 'came', 'cahi', 'cajo',
@@ -27,16 +29,18 @@ def read_park_sites_api():
                           'erie', 'esse', 'fati', 'fodu', 'fofo', 'glec',
                           'glde', 'grfa', 'grsp', 'guge', 'haha', 'jame',
                           'hurv', 'inup', 'iafl', 'iatr', 'blac', 'jthg',
-                          'juba', 'keaq', 'klse', 'lecl', 'loea', 'maac',
-                          'mide', 'migu', 'mihi', 'mopi', 'auto', 'mush',
-                          'avia', 'npnh', 'neen', 'pine', 'nifa', 'noco',
-                          'oire', 'okci', 'olsp', 'oreg', 'ovvi', 'oxhi',
-                          'para', 'poex', 'prsf', 'rist', 'roca', 'safe',
-                          'scrv', 'semo', 'shvb', 'soca', 'tecw', 'qush',
-                          'thco', 'tosy', 'trte', 'waro', 'whee', 'wing',
-                          'york']
+                          'juba', 'keaq', 'klse', 'lecl', 'loea',
+                          'maac', 'mide', 'migu', 'mihi', 'mopi', 'auto',
+                          'mush', 'avia', 'npnh', 'neen', 'pine', 'nifa',
+                          'noco', 'oire', 'okci', 'olsp', 'oreg', 'ovvi',
+                          'oxhi', 'para', 'poex', 'prsf', 'rist', 'roca',
+                          'safe', 'scrv', 'semo', 'shvb', 'soca', 'stsp',
+                          'tecw', 'qush', 'thco', 'tosy', 'trte', 'waro',
+                          'whee', 'wing', 'york']
     df = df[~(df.park_code.isin(exclude_park_codes))]
 
+    # Replace certain park names so that they will be matched correctly
+    # with the park names in the official list of 419.
     df['park_name'].replace(
         {"Ford's Theatre":"Ford's Theatre National Historic Site",
         "Pennsylvania Avenue":"Pennsylvania Avenue National Historic Site",
@@ -53,14 +57,15 @@ def read_park_sites_api():
 
     df = df.sort_values(by=['park_name'])
 
+    pd.set_option('display.max_rows', 1000)
+    print(df)
+
     return df[['park_code', 'park_name', 'park_name_stripped',
                'states', 'lat', 'long']]
 
 def lookup_park_code(park_name, df_lookup):
-    df = df_lookup
 
-    print("** In lookup_park_code")
-    print("park_name = {}".format(park_name))
+    df = df_lookup
 
     # Use SequenceMatcher to find the best park name match.
     df['name_match'] = df['park_name_stripped'].apply(
@@ -68,21 +73,70 @@ def lookup_park_code(park_name, df_lookup):
                        park_name.lower()).ratio())
     park_code = df.loc[df['name_match'].idxmax()].park_code
 
+    # Although Kings Canyon NP and Sequoia NP are separate parks, they
+    # are managed together and share the same park code.
     if park_name.lower().find('kings canyon') > -1: park_code = 'seki'
     if park_name.lower().find('sequoia') > -1: park_code = 'seki'
 
-    # These are the parks with no code found in the API.
-    if park_name.lower().find('caroline') > -1: park_code = 'xxx1'
-    if park_name.lower().find('john d. rockefeller') > -1: park_code = 'xxx2'
-    if park_name.lower().find('chelan') > -1: park_code = 'xxx3'
-    if park_name.lower().find('ross lake') > -1: park_code = 'xxx4'
-    if park_name.lower().find('valor') > -1: park_code = 'xxx5'
-    if park_name.lower() == "world war i memorial": park_code = 'xxx6'
-    if park_name.lower().startswith("world war i "): park_code = 'xxx6'
+    # Fort Caroline National Memorial is a part of the Timucuan
+    # Ecological and Hitoric Preserve (FL). Vistor date and acreage for
+    # both should be combined.
+    if park_name.lower().find('caroline') > -1: park_code = 'timu'
 
-    print(df.sort_values(by=['name_match']))
+    # Lake Chelan NRA and Ross Lake NRA are both part of the North
+    # Cascades National Park Service Complex. Visitor data and acreage
+    # for all three areas should be combined.
+    if park_name.lower().find('chelan') > -1: park_code = 'noca'
+    if park_name.lower().find('ross lake') > -1: park_code = 'noca'
+
+    # The John D. Rockefeller, Jr. Memorial Parkway is in Grand Teton
+    # National Park (WY) and does not have its own park code. Visitor
+    # data and acreage should not be combined.
+    if park_name.lower().find('john d. rockefeller') > -1: park_code = 'xxx1'
+
+    # World War II Valor in the Pacific National Monument split into
+    # three parks in 3/2019 - Pearl Harbor National Memorial (HI)
+    # (maintains the valr code), Aleutian Islands World War II National
+    # Monument (AK), and Tule Lake National Monument (CA)(tule). Tule
+    # Lake is on the list of official park units, Aleutian Islands is
+    # under 'Related Areas' and not on the official list.
+    if park_name.lower().find('valor') > -1: park_code = 'valr'
+
+    # The National World War I Memorial is a part of the National Mall
+    # and Memorial Parks (DC), but it is listed separately on the web
+    # list.
+    if park_name.lower() == "world war i memorial": park_code = 'xxx2'
+    if park_name.lower().startswith("world war i "): park_code = 'xxx2'
 
     return park_code
+
+# def lookup_park_code(park_name, df_lookup):
+#     df = df_lookup
+#
+#     print("** In lookup_park_code")
+#     print("park_name = {}".format(park_name))
+#
+#     # Use SequenceMatcher to find the best park name match.
+#     df['name_match'] = df['park_name_stripped'].apply(
+#                        lambda x: SequenceMatcher(None, x.lower(),
+#                        park_name.lower()).ratio())
+#     park_code = df.loc[df['name_match'].idxmax()].park_code
+#
+#     if park_name.lower().find('kings canyon') > -1: park_code = 'seki'
+#     if park_name.lower().find('sequoia') > -1: park_code = 'seki'
+#
+#     # These are the parks with no code found in the API.
+#     if park_name.lower().find('caroline') > -1: park_code = 'xxx1'
+#     if park_name.lower().find('john d. rockefeller') > -1: park_code = 'xxx2'
+#     if park_name.lower().find('chelan') > -1: park_code = 'xxx3'
+#     if park_name.lower().find('ross lake') > -1: park_code = 'xxx4'
+#     if park_name.lower().find('valor') > -1: park_code = 'xxx5'
+#     if park_name.lower() == "world war i memorial": park_code = 'xxx6'
+#     if park_name.lower().startswith("world war i "): park_code = 'xxx6'
+#
+#     print(df.sort_values(by=['name_match']))
+#
+#     return park_code
 
 def main():
     df_lookup = read_park_sites_api()
@@ -90,24 +144,24 @@ def main():
     #print(df_lookup)
 
     print('**** Matching')
-    to_match = "Oklahoma City NMEM"
+    to_match = "Delaware National Scenic River"
     print('Park Name: ', to_match)
 
     # Mimics fixes to visitor dataframe.
-    to_match = (
-        to_match.replace("Fort Sumter", "Fort Sumter and Fort Moultrie")
-                .replace("Longfellow",
-                         "Longfellow House Washington's Headquarters")
-                .replace("Ocmulgee", "Ocmulgee Mounds")
-                .replace("President's Park", "President's Park (White House)")
-                .replace(" EHP", "Ecological & Historic Preserve")
-                .replace(" NHP", " National Historical Park")
-                .replace(" NHS", " National Historical Site")
-                .replace(" NMEM", " National Memorial")
-                .replace(" NMP", " National Military Park")
-                .replace(" NRA", " National Recreation Area")
-                .replace(" NSR", " National Scenic River")
-                .replace(" NS", " National Seashore"))
+    # to_match = (
+    #     to_match.replace("Fort Sumter", "Fort Sumter and Fort Moultrie")
+    #             .replace("Longfellow",
+    #                      "Longfellow House Washington's Headquarters")
+    #             .replace("Ocmulgee", "Ocmulgee Mounds")
+    #             .replace("President's Park", "President's Park (White House)")
+    #             .replace(" EHP", "Ecological & Historic Preserve")
+    #             .replace(" NHP", " National Historical Park")
+    #             .replace(" NHS", " National Historical Site")
+    #             .replace(" NMEM", " National Memorial")
+    #             .replace(" NMP", " National Military Park")
+    #             .replace(" NRA", " National Recreation Area")
+    #             .replace(" NSR", " National Scenic River")
+    #             .replace(" NS", " National Seashore"))
 
     # Mimics fixes to acreage dataframe.
     # to_match = (to_match.replace("C & O", "Chesapeake & Ohio")

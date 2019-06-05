@@ -99,7 +99,7 @@ def read_park_sites_api():
                           'erie', 'esse', 'fati', 'fodu', 'fofo', 'glec',
                           'glde', 'grfa', 'grsp', 'guge', 'haha', 'jame',
                           'hurv', 'inup', 'iafl', 'iatr', 'blac', 'jthg',
-                          'juba', 'keaq', 'klse', 'lecl', 'lode', 'loea',
+                          'juba', 'keaq', 'klse', 'lecl', 'loea',
                           'maac', 'mide', 'migu', 'mihi', 'mopi', 'auto',
                           'mush', 'avia', 'npnh', 'neen', 'pine', 'nifa',
                           'noco', 'oire', 'okci', 'olsp', 'oreg', 'ovvi',
@@ -152,7 +152,8 @@ def read_park_sites_web(df_api):
 
     # MLK Historic Park park name is ambiguous and makes park name
     # matching impossible, replace with more specific name.
-    df.loc[df.park_name == "Martin Luther King", 'park_name'] = "Martin Luther King National Historic Park"
+    df.loc[df.park_name == "Martin Luther King", 'park_name'] = (
+        "Martin Luther King National Historic Park")
 
     # Find the park code for each park in the df_master dataframe by
     # matching it to the park in the df_api dataframe.
@@ -221,63 +222,42 @@ def lookup_park_code(park_name, df_lookup):
     if park_name.lower().find('valor') > -1: park_code = 'valr'
 
     # The National World War I Memorial is a part of the National Mall
-    # and Memorial Parks (DC).
+    # and Memorial Parks (DC), but it is listed separately on the web
+    # list.
     if park_name.lower() == "world war i memorial": park_code = 'xxx2'
     if park_name.lower().startswith("world war i "): park_code = 'xxx2'
 
     return park_code
 
-# def read_wikipedia_date_established(df_api):
-#     '''
-#     This function reads the park name and date established from the
-#     Excel file created by the nps_get_wikipedia_data.py script, looks up
-#     the correct park code in the paramter dataframe and returns a
-#     dataframe containing the park code and date established. The date
-#     established is currently only available for National Parks.
-#
-#     Parameters
-#     ----------
-#     df_api : pandas DataFrame
-#         Dataframe for park code lookup.
-#
-#     Returns
-#     -------
-#     df : pandas DataFrame
-#         Dataframe of park code and date established.
-#     '''
-#
-#     # Read date established from file.
-#     filename = '_reference_data/wikipedia_date_established.csv'
-#     df = pd.read_csv(filename, header=0)
-#     df.date_established = pd.to_datetime(df.date_established)
-#
-#     # Lookup the correct park code for the park name.
-#     df['park_name_stripped'] = df.park_name.apply(
-#                                lambda x: strip_park_name(x))
-#     df['park_code'] = df.park_name_stripped.apply(
-#                       lambda x: lookup_park_code(x, df_api))
-#
-#     # Remove Seqoia and Kings Canyon NPs from the dataframe. They share
-#     # the same park code but have different established dates which will
-#     # be assigned after merge.
-#     df = df[df.park_code != 'seki']
-#
-#     return df[['park_code', 'date_established']]
-
 def read_park_dates(df_api):
-    filename = '_reference_data/nps_park_start_dates.xlsx'
+    '''
+    This function reads an Excel file of park dates - date of park
+    creation, date of national monument creation, and date of national
+    park creation into a dataframe and looks up the correct park code
+    for each park.
+
+    Parameters
+    ----------
+    df_api : pandas DataFrame
+        Dataframe of data from api in which to lookup park code.
+
+    Returns
+    -------
+    df : pandas DataFrame
+        Dataframe of park dates.
+    '''
+
+    filename = '_reference_data/nps_park_dates.xlsx'
     df = pd.read_excel(filename, header=1)
-    df.entry_date = pd.to_datetime(df.entry_date)
+    df.entry_date = pd.to_datetime(df.entry_date, errors='coerce')
+    df.nm_date = pd.to_datetime(df.nm_date, errors='coerce')
+    df.np_date = pd.to_datetime(df.np_date, errors='coerce')
 
     # Lookup the correct park code for the park name.
     df['park_name_stripped'] = df.park_name.apply(
                                lambda x: strip_park_name(x))
     df['park_code'] = df.park_name_stripped.apply(
                       lambda x: lookup_park_code(x, df_api))
-
-    # How does to_datetime handle null values?
-    #df.nm_date = pd.to_datetime(df.nm_date)
-    #df.np_date = pd.to_datetime(df.np_date)
 
     return df[['park_code', 'entry_date', 'nm_date', 'np_date']]
 
@@ -496,44 +476,56 @@ def main():
     # Read the NPS API data from file into a dataframe.
     df_api = read_park_sites_api()
 
-    # Read the nps.gov National Park System Unit/Park list data from
-    # file into a dataframe and merge it with the nps api dataframe.
+    # Merge the nps.gov NPS Unit/Park list with the NPS API dataframe.
     df_master = read_park_sites_web(df_api)
     if debug: print_debug('df_master', df_master, 'df_api', df_api)
     df_master = pd.merge(df_master[['park_name', 'park_code', 'designation']],
                          df_api[['park_code', 'states', 'lat', 'long']],
                          how='left', on='park_code')
 
-    # Read the Wikipedia national park date established data from file
-    # into a dataframe and merge it with the master dataframe.
-    #df_estab = read_wikipedia_date_established(df_api)
-    #df_master = pd.merge(df_master, df_estab, how='left', on='park_code')
-
     # Read manually created Excel file to get park dates.
     df_dates = read_park_dates(df_api)
     if debug: print_debug('df_master', df_master, 'df_dates', df_dates)
+    df_master = pd.merge(df_master, df_dates, how='left', on='park_code')
 
     # Kings Canyon and Sequoia National Parks share the same park code
     # but were established on separate dates. Assign these dates.
-    # df_master.loc[df_master.park_name == "Kings Canyon National Park",
-    #               'date_established'] = pd.to_datetime('1890-10-01')
-    # df_master.loc[df_master.park_name == "Sequoia National Park",
-    #               'date_established'] = pd.to_datetime('1890-09-25')
+    df_master.loc[df_master.park_name ==
+        "Kings Canyon National Park", 'date_established'] = (
+        pd.to_datetime('1890-10-01'))
+    df_master.loc[df_master.park_name ==
+        "Sequoia National Park", 'date_established'] = ( pd.to_datetime('1890-09-25'))
 
-    # df_pres = read_wikipedia_list_of_presidents()
-    # df_master[['president', 'president_end_date']] = df_master.apply(
-    #     lambda row: pd.Series(assign_president(row.date_established, df_pres)),
-    #     axis=1
-    # )
+    # Timucuan Ecological and Historic Preserve and Fort Caroline
+    # National Memorial share the same park code but were established
+    # on separate dates. Assign these dates.
+    df_master.loc[df_master.park_name ==
+        "Timucuan Ecological and Historic Preserve", 'date_established'] = (
+        pd.to_datetime('1988-02-16'))
+    df_master.loc[df_master.park_name ==
+        "Fort Caroline National Memorial", 'date_established'] = (
+        pd.to_datetime('1950-09-21'))
 
-    # Read the NPS Acreage report data from file into a dataframe and
-    # merge it with the master dataframe.
+    df_pres = read_wikipedia_list_of_presidents()
+
+    # Assign president at time of National Monument creation.
+    df_master[['president_nm', 'president_nm_end_date']] = df_master.apply(
+        lambda row: pd.Series(assign_president(row.nm_date, df_pres)),
+        axis=1
+    )
+
+    # Assign president at time of National Park creation.
+    df_master[['president_np', 'president_np_end_date']] = df_master.apply(
+        lambda row: pd.Series(assign_president(row.np_date, df_pres)),
+        axis=1
+    )
+
+    # Add the NPS Acreage report data to the master df.
     df_acreage = read_acreage_data(df_api)
     if debug: print_debug('df_master', df_master, 'df_acreage', df_acreage)
     df_master = pd.merge(df_master, df_acreage, how='left', on='park_code')
 
-    # Read the NPS Visitor Use Statistics report from file into a
-    # dataframe and merge it with the master dataframe.
+    # Add the NPS Visitor Use Statistics report data to the master df.
     df_visitor = read_visitor_data(df_api)
     if debug: print_debug('df_master', df_master, 'df_visitor', df_visitor)
     df_master = pd.merge(df_master, df_visitor, how='left', on='park_code')
