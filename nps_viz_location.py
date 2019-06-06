@@ -63,6 +63,11 @@ def add_park_locations_to_map(map, df):
     '''
 
     # Create a dataframe of park sets with assigned icons and colors.
+    colors = ['lightgreen'] * 20
+    colors[10] = 'green'
+    icons = ['map-marker'] * 20
+    icons[10] = 'tree'
+
     df_icon = pd.DataFrame(
               {'designation' : ['International Historic Sites',
               'National Battlefields', 'National Battlefield Parks',
@@ -73,20 +78,19 @@ def add_park_locations_to_map(map, df):
               'National Wild and Scenic Rivers and Riverways',
               'National Scenic Trails', 'National Seashores',
               'Other Designations'],
-              'color' : ['beige', 'black', 'black', 'black', 'black', 'beige',
-                        'beige', 'blue', 'red', 'lightgreen', 'green', 'brown',
-                        'lightgreen','lightgreen', 'lightgreen', 'blue',
-                        'blue', 'beige', 'blue', 'orange'],
-              'icon' : ['map-marker', 'map-marker', 'map-marker', 'map-marker',
-                       'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'tree', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker', 'map-marker']
+              'color' : colors,
+              'icon' : icons
               })
 
     for _, row in df.iterrows():
         # Create popup with link to park website.
-        popup_string = ('<a href="'
-                        + 'https://www.nps.gov/' + row.park_code
-                        + '" target="_blank">'
-                        + row.park_name + '</a>').replace("'", r"\'")
+        if ~(row.park_code[:3] == 'xxx'):
+            popup_string = ('<a href="'
+                           + 'https://www.nps.gov/' + row.park_code
+                           + '" target="_blank">'
+                           + row.park_name + '</a>').replace("'", r"\'")
+        else:
+            popup_string = row.park_name
         popup_html = folium.Html(popup_string, script=True)
 
         # Assign color and graphic to icon.
