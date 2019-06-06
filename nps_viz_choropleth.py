@@ -179,6 +179,8 @@ def main():
               .format(len(df_park[df_park.states.isnull()].park_name)))
     df_park_states = df_park[~df_park.states.isnull()]
 
+    print("")
+
     # Map #1 - Create the state park count choropleth and save to a file.
     state_map = create_state_count_choropleth(df_park_states, designation)
     state_map.save("_output/nps_state_count_choropleth.html")

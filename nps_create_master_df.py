@@ -122,6 +122,7 @@ def read_park_sites_api():
             "Delaware National Scenic River"},
         regex=True, inplace=True)
 
+    # Use the stripped park name column for name matching.
     df['park_name_stripped'] = df.park_name.apply(
                                lambda x: strip_park_name(x))
 
@@ -488,6 +489,12 @@ def main():
                          df_api[['park_code', 'states', 'lat', 'long']],
                          how='left', on='park_code')
 
+    # Assign states to two parks not available through API.
+    df_master.loc[df_master.park_name ==
+        "John D. Rockefeller National Parkway", 'states'] = 'WY'
+    df_master.loc[df_master.park_name ==
+        "World War I Memorial", 'states'] = 'DC'
+
     # Read manually created Excel file to get park dates.
     df_dates = read_park_dates(df_api)
     if debug: print_debug('df_master', df_master, 'df_dates', df_dates)
@@ -496,19 +503,22 @@ def main():
     # Kings Canyon and Sequoia National Parks share the same park code
     # but were established on separate dates. Assign these dates.
     df_master.loc[df_master.park_name ==
-        "Kings Canyon National Park", 'date_established'] = (
-        pd.to_datetime('1890-10-01'))
+        "Kings Canyon National Park", 'entry_date'] = ( pd.to_datetime('1890-10-01'))
     df_master.loc[df_master.park_name ==
-        "Sequoia National Park", 'date_established'] = ( pd.to_datetime('1890-09-25'))
+        "Kings Canyon National Park", 'np_date'] = pd.to_datetime('1890-10-01')
+    df_master.loc[df_master.park_name ==
+        "Sequoia National Park", 'entry_date'] = pd.to_datetime('1890-09-25')
+    df_master.loc[df_master.park_name ==
+        "Sequoia National Park", 'np_date'] = pd.to_datetime('1890-09-25')
 
     # Timucuan Ecological and Historic Preserve and Fort Caroline
     # National Memorial share the same park code but were established
     # on separate dates. Assign these dates.
     df_master.loc[df_master.park_name ==
-        "Timucuan Ecological and Historic Preserve", 'date_established'] = (
+        "Timucuan Ecological and Historic Preserve", 'entry_date'] = (
         pd.to_datetime('1988-02-16'))
     df_master.loc[df_master.park_name ==
-        "Fort Caroline National Memorial", 'date_established'] = (
+        "Fort Caroline National Memorial", 'entry_date'] = (
         pd.to_datetime('1950-09-21'))
 
     df_pres = read_wikipedia_list_of_presidents()
