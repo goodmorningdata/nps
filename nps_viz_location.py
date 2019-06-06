@@ -145,7 +145,8 @@ def main():
         print("Total parks missing location: {}"
               .format(len(df_park[df_park.lat.isnull()].park_name)))
         df_park = df_park[~df_park.lat.isnull()]
-        print("")
+
+    print("")
 
     park_map = create_map()
     park_map = add_park_locations_to_map(park_map, df_park)

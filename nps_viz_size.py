@@ -158,6 +158,8 @@ def main():
         print("** Total parks missing size: {}".format(len(missing_size)))
         df_park = df_park[~df_park.gross_area_acres.isnull()]
 
+    print("")
+
     park_map = create_map()
     park_map = add_park_size_circles_to_map(park_map, df_park)
     park_map.save('_output/nps_parks_map_size.html')
