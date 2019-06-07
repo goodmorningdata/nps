@@ -419,6 +419,8 @@ def main():
     plot_park_visits_vs_year(df_park.iloc[0:10,:], designation,
                              title = plot_title)
     plot_title = "Park visits by year, lowest 10 ({})".format(designation)
+    print('** lowest 10')
+    print(df_park.iloc[-10:,:])
     plot_park_visits_vs_year(df_park.iloc[-10:,:], designation,
                              title = plot_title)
     # Plot park visits by year for just one park.

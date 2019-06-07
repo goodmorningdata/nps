@@ -260,12 +260,13 @@ def read_park_dates(df_api):
     df.np_date = pd.to_datetime(df.np_date, errors='coerce')
 
     # Lookup the correct park code for the park name.
-    df['park_name_stripped'] = df.park_name.apply(
-                               lambda x: strip_park_name(x))
-    df['park_code'] = df.park_name_stripped.apply(
-                      lambda x: lookup_park_code(x, df_api))
+    #df['park_name_stripped'] = df.park_name.apply(
+    #                           lambda x: strip_park_name(x))
+    #df['park_code'] = df.park_name_stripped.apply(
+    #                  lambda x: lookup_park_code(x, df_api))
 
-    return df[['park_code', 'entry_date', 'nm_date', 'np_date']]
+    #return df[['park_name', 'park_code', 'entry_date', 'nm_date', 'np_date']]
+    return df[['park_name', 'entry_date', 'nm_date', 'np_date']]
 
 def read_wikipedia_list_of_presidents():
     '''
@@ -497,29 +498,7 @@ def main():
 
     # Read manually created Excel file to get park dates.
     df_dates = read_park_dates(df_api)
-    if debug: print_debug('df_master', df_master, 'df_dates', df_dates)
-    df_master = pd.merge(df_master, df_dates, how='left', on='park_code')
-
-    # Kings Canyon and Sequoia National Parks share the same park code
-    # but were established on separate dates. Assign these dates.
-    df_master.loc[df_master.park_name ==
-        "Kings Canyon National Park", 'entry_date'] = ( pd.to_datetime('1890-10-01'))
-    df_master.loc[df_master.park_name ==
-        "Kings Canyon National Park", 'np_date'] = pd.to_datetime('1890-10-01')
-    df_master.loc[df_master.park_name ==
-        "Sequoia National Park", 'entry_date'] = pd.to_datetime('1890-09-25')
-    df_master.loc[df_master.park_name ==
-        "Sequoia National Park", 'np_date'] = pd.to_datetime('1890-09-25')
-
-    # Timucuan Ecological and Historic Preserve and Fort Caroline
-    # National Memorial share the same park code but were established
-    # on separate dates. Assign these dates.
-    df_master.loc[df_master.park_name ==
-        "Timucuan Ecological and Historic Preserve", 'entry_date'] = (
-        pd.to_datetime('1988-02-16'))
-    df_master.loc[df_master.park_name ==
-        "Fort Caroline National Memorial", 'entry_date'] = (
-        pd.to_datetime('1950-09-21'))
+    df_master = pd.merge(df_master, df_dates, how='left', on='park_name')
 
     df_pres = read_wikipedia_list_of_presidents()
 
