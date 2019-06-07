@@ -10,19 +10,19 @@ Read more about project progress on the blog, [Good Morning Data](https://goodmo
 ### Setup
 The only setup necessary is the cloning of this repository to your computer. You can then run the below visualizations. All input data files are included in the repository. If you would like to generate your own input files, please see the instructions under the Data Prep section below.
 
-### Parkset command line parameter
-All of the visualization scripts take a command line parameter, "parkset", which allows the user to specify a sub-group of parks to add to the visualization. Possible parkset values are: 'National Park', 'National Monument', 'National Preserve or Reserve', 'National Lakeshore or Seashore', 'National River', 'National Trail', 'National Historic Site', 'National Memorial', 'National Recreation Area', 'National Parkway', 'National Heritage Area', 'Affiliated Area', 'Other'.
+### Designation command line parameter
+All of the visualization scripts take a command line parameter, "designation", which allows the user to specify the park designation to add to the visualizations. Possible designation values are: "National Battlefields", "National Battlefield Parks", "National Battlefield Sites", "National Military Parks", "National Historical Parks", "National Historic Sites", "International Historic Sites", "National Lakeshores", "National Memorials", "National Monuments", "National Parks", "National Parkways", "National Preserves", "National Reserves", "National Recreation Areas", "National Rivers", "National Wild and Scenic Rivers and Riverways", "National Scenic Trails", "National Seashores", "Other Designations".
 
 #### Example usage:
 To run the location visualization for just the National Parks:<br/>
-&nbsp;&nbsp;$ python3 nps_viz_location.py -p "National Park"<br/>
+&nbsp;&nbsp;$ python3 nps_viz_location.py -d "National Parks"<br/>
 To show the command line parameters for a script:<br/>
 &nbsp;&nbsp;$ python3 nps_viz_location.py -h
 
 ### Park location visualizations
-Run the script, **<i>nps_viz_location.py</i>**, to create a map showing the locations of all the parks. The park location markers have a popup that gives a clickable park name, which when clicked, takes the user to the NPS web page for the park. Limit the number of parks using the [parkset parameter](#parkset-command-line-parameter) described above.
+Run the script, **<i>nps_viz_location.py</i>**, to create a map showing the locations of all the parks. The park location markers have a popup that gives a clickable park name, which when clicked, takes the user to the NPS web page for the park. Limit the number of parks using the [designation parameter](#designation-command-line-parameter) described above.
 #### Output
-* Map file: nps_parks_map_location.html
+* Map file: nps_parks_map_location_<i>designation</i>.html
 
 ### Park size visualizations
 Run the script, **<i>nps_viz_size.py</i>**, to create a map showing the locations of all the parks, marked with a circle marker with size corresponding to the park's size. The circle markers have a hoverable tooltip telling the park name and size in square miles. Limit the number of parks using the [parkset parameter](#parkset-command-line-parameter) described above.
