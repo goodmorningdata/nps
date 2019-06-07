@@ -82,7 +82,7 @@ def add_park_locations_to_map(map, df):
               'icon' : icons
               })
 
-    for _, row in df.iterrows():
+    for _, row in df.sort_values(by='designation', ascending=False).iterrows():
         # Create popup with link to park website.
         if ~(row.park_code[:3] == 'xxx'):
             popup_string = ('<a href="'
@@ -133,18 +133,20 @@ def main():
     # park designations will be in the visualizations.
     if args.designation:
         df_park = df[df.designation == args.designation]
-        print("\nCreating park location map for the park designation, {}."
+        print("\nCreating park location map for the park designation, {}.\n"
               .format(args.designation))
+        designation = args.designation
     else:
         df_park = df
-        print("\nCreating park location map for all NPS sites.")
+        print("\nCreating park location map for all NPS sites.\n")
+        designation = "All Parks"
 
     # Check for parks missing location and remove from dataframe.
     missing_location = df_park[df_park.lat.isnull()].park_name
     if missing_location.size:
         print("** Warning ** ")
         print("Park sites with missing lat/long from API, so no location "
-              "available. These park sites will not be added to the map.")
+              "available. These park sites will not be added to the map:")
         print(*missing_location, sep=', ')
         print("Total parks missing location: {}"
               .format(len(df_park[df_park.lat.isnull()].park_name)))
@@ -154,7 +156,12 @@ def main():
 
     park_map = create_map()
     park_map = add_park_locations_to_map(park_map, df_park)
-    park_map.save('_output/nps_parks_map_location.html')
+
+    # Save location map to file.
+    filename = ('nps_parks_map_location_'
+                + designation.lower().replace(' ','_')
+                + '.html')
+    park_map.save('_output/' + filename)
 
 if __name__ == '__main__':
     main()
