@@ -87,25 +87,45 @@ def add_park_size_circles_to_map(map, df):
             fill_color='crimson'
         ).add_to(map)
 
-    # Export a sorted list of parks and their size to both an Excel file
-    # and an html file for reference and blog posts.
-    df_park_export = (df[['park_name', 'gross_area_acres',
-                          'gross_area_square_miles']]
-                      .sort_values(by=['gross_area_acres'], ascending=False)
-                      .reset_index(drop=True))
-    df_park_export.index += 1
+    return map
+
+def output_size_data_to_tables(df, designation):
+    '''
+    This function outputs the park size data as a table to both an
+    Excel spreadsheet and an html file. The data is sorted by size,
+    largest first.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data to export.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
+
+    df_export = (df[['park_name', 'gross_area_acres',
+                     'gross_area_square_miles']]
+                 .sort_values(by=['gross_area_acres'], ascending=False)
+                 .reset_index(drop=True))
+    df_export.index += 1
     export_cols = {'park_name': 'Park Name',
                    'gross_area_acres': 'Size (acres)',
                    'gross_area_square_miles': 'Size (square miles)'}
-    df_park_export = df_park_export.rename(columns=export_cols)
-    df_park_export.to_excel('_output/nps_parks_sorted_by_size.xlsx',
-                            index=False)
-    df_park_export.to_html('_output/nps_parks_sorted_by_size.html',
-                           justify='left',
-                           classes='table-park-list',
-                           float_format=lambda x: '{:,.2f}'.format(x))
+    df_export = df_export.rename(columns=export_cols)
 
-    return map
+    filename = ('nps_parks_sorted_by_size_'
+                + designation.lower().replace(' ','_'))
+
+    df_export.to_excel('_output/' + filename + '.xlsx', index=False)
+    df_export.to_html('_output/' + filename + '.html',
+                      justify='left',
+                      classes='table-park-list',
+                      float_format=lambda x: '{:,.2f}'.format(x))
 
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
@@ -134,18 +154,20 @@ def main():
         df_park = df[df.designation == args.designation]
         print("\nCreating park size map for the park designation, {}."
               .format(args.designation))
+        designation = args.designation
     else:
         df_park = df
         print("\nCreating park size map for all NPS sites.")
+        designation = "All Parks"
 
     # Check for parks missing location and remove from dataframe.
     missing_loc = df_park[df_park.lat.isnull()].park_name
     if missing_loc.size:
         print("\n** Warning ** ")
         print("Park sites with missing lat/long from API, so no location "
-              "available. These park sites will not be added to the map.")
+              "available. These park sites will not be added to the map:")
         print(*missing_loc, sep=', ')
-        print("Total parks missing location: {}".format(len(missing_loc)))
+        print("** Total parks missing location: {}".format(len(missing_loc)))
         df_park = df_park[~df_park.lat.isnull()]
 
     # Check for parks missing size and remove from dataframe.
@@ -153,7 +175,7 @@ def main():
     if missing_size.size:
         print("\n** Warning **")
         print("Park sites not included in NPS Acreage report, so no park "
-              "size available. These park sites will not be added to the map.")
+              "size available. These park sites will not be added to the map:")
         print(*missing_size, sep=', ')
         print("** Total parks missing size: {}".format(len(missing_size)))
         df_park = df_park[~df_park.gross_area_acres.isnull()]
@@ -162,7 +184,15 @@ def main():
 
     park_map = create_map()
     park_map = add_park_size_circles_to_map(park_map, df_park)
-    park_map.save('_output/nps_parks_map_size.html')
+
+    # Save location/size map to file.
+    filename = ('nps_parks_map_size_'
+                + designation.lower().replace(' ','_')
+                + '.html')
+    park_map.save('_output/' + filename)
+
+    # Save park size data as an Excel spreadsheet and an html table.
+    output_size_data_to_tables(df_park, designation)
 
 if __name__ == '__main__':
     main()

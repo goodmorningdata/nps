@@ -148,7 +148,7 @@ def main():
         print("Park sites with missing lat/long from API, so no location "
               "available. These park sites will not be added to the map:")
         print(*missing_location, sep=', ')
-        print("Total parks missing location: {}"
+        print("** Total parks missing location: {}"
               .format(len(df_park[df_park.lat.isnull()].park_name)))
         df_park = df_park[~df_park.lat.isnull()]
 
