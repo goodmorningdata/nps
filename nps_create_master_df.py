@@ -40,36 +40,6 @@ Dependencies
 import pandas as pd
 from difflib import SequenceMatcher
 
-def strip_park_name(park_name):
-    '''
-    Park names for the same park may be slightly different between
-    sources, making matching them difficult. This function strips
-    some designations from the park name to improve the chance of
-    matching.
-
-    Parameters
-    ----------
-    park_name : str
-        Park name to strip of designations.
-
-    Returns
-    -------
-    park_name : str
-        Stripped park name.
-    '''
-
-    park_name = (park_name.replace("National Monument & Preserve", "")
-                          .replace("National Park & Preserve", "")
-                          .replace("National and State Parks", "")
-                          .replace("National Monument", "")
-                          .replace("National Park", "")
-                          .replace("National Preserve", "")
-                          .replace("NATIONAL PRESERVE", ""))
-    if park_name.endswith('NP'):
-        park_name = park_name.replace(" NP", "")
-
-    return park_name.rstrip()
-
 def read_park_sites_api():
     '''
     Read the list of park sites and associated data pulled from the
@@ -122,14 +92,9 @@ def read_park_sites_api():
             "Delaware National Scenic River"},
         regex=True, inplace=True)
 
-    # Use the stripped park name column for name matching.
-    df['park_name_stripped'] = df.park_name.apply(
-                               lambda x: strip_park_name(x))
-
     df = df.sort_values(by=['park_name'])
 
-    return df[['park_code', 'park_name', 'park_name_stripped',
-               'states', 'lat', 'long']]
+    return df[['park_code', 'park_name', 'states', 'lat', 'long']]
 
 def read_park_sites_web(df_api):
     '''
@@ -163,9 +128,7 @@ def read_park_sites_web(df_api):
 
     # Find the park code for each park in the df_master dataframe by
     # matching it to the park in the df_api dataframe.
-    df['park_name_stripped'] = df.park_name.apply(
-                               lambda x: strip_park_name(x))
-    df['park_code'] = df.park_name_stripped.apply(
+    df['park_code'] = df.park_name.apply(
                       lambda x: lookup_park_code(x, df_api))
 
     return df
@@ -193,10 +156,17 @@ def lookup_park_code(park_name, df_lookup):
     df = df_lookup
 
     # Use SequenceMatcher to find the best park name match.
-    df['name_match'] = df['park_name_stripped'].apply(
+    df['name_match'] = df['park_name'].apply(
                        lambda x: SequenceMatcher(None, x.lower(),
                        park_name.lower()).ratio())
+
     park_code = df.loc[df['name_match'].idxmax()].park_code
+
+    # Name matching does not work for these so assign directly.
+    if park_name.lower().find('katmai') > -1: park_code = 'katm'
+    if park_name.lower().find('glacier bay') > -1: park_code = 'glba'
+    if park_name.lower().find('denali') > -1: park_code = 'dena'
+    if park_name.lower().find('aniakchak') > -1: park_code = 'ania'
 
     # Although Kings Canyon NP and Sequoia NP are separate parks, they
     # are managed together and share the same park code.
@@ -259,13 +229,6 @@ def read_park_dates(df_api):
     df.nm_date = pd.to_datetime(df.nm_date, errors='coerce')
     df.np_date = pd.to_datetime(df.np_date, errors='coerce')
 
-    # Lookup the correct park code for the park name.
-    #df['park_name_stripped'] = df.park_name.apply(
-    #                           lambda x: strip_park_name(x))
-    #df['park_code'] = df.park_name_stripped.apply(
-    #                  lambda x: lookup_park_code(x, df_api))
-
-    #return df[['park_name', 'park_code', 'entry_date', 'nm_date', 'np_date']]
     return df[['park_name', 'entry_date', 'nm_date', 'np_date']]
 
 def read_wikipedia_list_of_presidents():
@@ -323,17 +286,44 @@ def assign_president(date, df_pres):
 
     return [president_name, president_end_date]
 
-def read_acreage_data(df_api):
+def lookup_park_name(park_name, df_master):
     '''
-    This function reads the park size data from a report downloaded from
-    nps.gov, looks up the correct park code for each park in the
-    parameter dataframe and returns a dataframe containing the park code
-    and park size in acres.
+    Find the park name in the master dataframe that best matches the
+    parameter park name.
 
     Parameters
     ----------
-    df_api : pandas DataFrame
-        Dataframe for park code lookup.
+    park_name : str
+        Park name to find a match for.
+    df_master : pandas DataFrame
+        Dataframe for park name lookup.
+
+    Returns
+    -------
+    best_match : str
+        Park name that best matches the parameter.
+    '''
+
+    df = df_master
+    df['name_match'] = df['park_name'].apply(
+                       lambda x: SequenceMatcher(None, x.lower(),
+                       park_name.lower()).ratio())
+
+    best_match = df.loc[df['name_match'].idxmax()].park_name
+
+    return best_match
+
+def read_acreage_data(df_master):
+    '''
+    This function reads the park size data from a report downloaded from
+    nps.gov, looks up the matching park name for each park in the
+    master dataframe, and returns a dataframe containing the park name
+    and park size in acres, square miles, and square meters.
+
+    Parameters
+    ----------
+    df_master : pandas DataFrame
+        Dataframe for park name lookup.
 
     Returns
     -------
@@ -347,62 +337,53 @@ def read_acreage_data(df_api):
     df = df.rename({'Gross Area Acres': 'gross_area_acres',
                     'Area Name': 'park_name'}, axis='columns')
 
-    # Make some park name replacements to make matching the park name
-    # to the df_api dataframe to find the park code work correctly.
+    # Updates to make park name matching work correctly.
     df['park_name'].replace(
         {"C & O":"Chesapeake & Ohio",
-         "FDR":"Franklin Delano Roosevelt",
-         "FRED-SPOTS":"Fredericksburg & Spotsylvania",
+         "ARL HOUSE, R E LEE MEM":"Arlington House",
+         "FRED-SPOTS":"Fredericksburg and Spotsylvania",
          "FT SUMTER":"Fort Sumter and Fort Moultrie",
-         "JDROCKEFELLER":"John D. Rockefeller",
+         "SALT RVR BAY NHP":("Salt River Bay National Historical Park and " "Ecological Preserve"),
+         "T ROOSEVELT NP":"Theodore Roosevelt National Park",
+         "RECONSTRUCTION ERA NM":"Reconstruction Era National Historical Park",
          "NATIONAL MALL":"National Mall and Memorial Parks",
-         "OCMULGEE":"Ocmulgee Mounds",
-         "RECONSTRUCTION ERA NM":"RECONSTRUCTION ERA NHP",
-         "SALT RVR BAY NHP":
-             "Salt River Bay National Historical Park and Ecological Preserve",
-         "T ROOSEVELT":"Theodore Roosevelt",
-         "WWII":"World War II",
-         " NHP":" National Historical Park",
-         " NHS":" National Historical Site",
-         " NMP":" National Military Park",
+         "NATIONAL WWII MEMORIAL":"World War II Memorial",
+         "CORAL REEF":"Coral Reef National Monument",
+         "WWII VALOR IN THE PACIFIC NM":"Pearl Harbor National Memorial",
+         "FDR":"Franklin Delano Roosevelt",
          " NRA":" National Recreation Area",
-         " NSR":" National Scenic River",
-         " NS RIVERWAYS":" National Scenic Riverways",
-         " NS TRAIL":" National Scenic Trail",
-         " NS":" National Seashore",
-         " RVR ":" River "},
-        regex=True, inplace=True)
+         " NHS":" National Historic Site",
+         " NHP":" National Historic Park",
+         " NSR":" National Scenic Riverway",
+         " NMP":" National Military Park"},
+        regex=True, inplace=True
+    )
 
-    df['park_name_stripped'] = df.park_name.apply(
-                                   lambda x: strip_park_name(x))
-
-    # Lookup the correct park code for the park name.
-    df['park_code'] = df.park_name_stripped.apply(
-                      lambda x: lookup_park_code(x, df_api))
-
-    # Sum acreage data for parks with the same park code.
-    df = df.groupby(['park_code'], as_index=False).sum()
+    # Look up the matching park name in the master dataframe.
+    df['park_name'] = df.park_name.apply(
+                      lambda x: lookup_park_name(x, df_master))
 
     # Add square miles and square meters columns for reporting.
-    df = df[['park_code', 'gross_area_acres']]
+    df = df[['park_name', 'gross_area_acres']]
     df['gross_area_square_miles'] = df.gross_area_acres * 0.0015625
     df['gross_area_square_meters'] = df.gross_area_acres * 4046.86
 
+    # Sum acreage data for parks with the same park name.
+    df = df.groupby(['park_name'], as_index=False).sum()
+
     return df
 
-def read_visitor_data(df_api):
+def read_visitor_data(df_master):
     '''
     This function reads the park visitor data from a report downloaded
-    from nps.gov, and saved in an Excel file by the
-    nps_read_visitor_data.py script, into a dataframe. It then looks up
-    the correct park code for each park in the parameter dataframe and
-    returns a dataframe containing the park code and park visits per
-    year for the years 1904 - 2018.
+    from nps.gov, looks up the matching park name for each park in the
+    master dataframe, and returns a dataframe containing the park name
+    and park visits per year for the years 1904 - 2018.
 
     Parameters
     ----------
-    df_api : pandas DataFrame
-        Dataframe for park code lookup.
+    df_master : pandas DataFrame
+        Dataframe for park name lookup.
 
     Returns
     -------
@@ -421,35 +402,30 @@ def read_visitor_data(df_api):
     # Make some park name replacements to make matching the park name
     # to the df_api dataframe to find the park code work correctly.
     df['park_name'].replace(
-        {"Fort Sumter":"Fort Sumter and Fort Moultrie",
-         "Longfellow":"Longfellow House Washington's Headquarters",
-         "Ocmulgee":"Ocmulgee Mounds",
-         "President's Park":"President's Park (White House)",
-         " EHP":"Ecological & Historic Preserve",
+        {"NP & PRES":"National Park",
+         "Fort Sumter":"Fort Sumter and Fort Moultrie",
+         "Longfellow":"Longfellow House - Washington's Headquarters",
+         "President's Park":"White House",
+         "Theodore Roosevelt NP":"Theodore Roosevelt National Park",
+         "World War II Valor in the Pacific":"Pearl Harbor",
+         "Whiskeytown":"Whiskeytown-Shasta-Trinity",
          " NHP":" National Historical Park",
          " NHS":" National Historical Site",
-         " NMEM":" National Memorial",
          " NMP":" National Military Park",
-         " NRA":" National Recreation Area",
-         " NSR":" National Scenic River",
-         " NS":" National Seashore"},
-        regex=True, inplace=True)
+         " NRA":" National Recreation Area"},
+        regex=True, inplace=True
+    )
 
-    df['park_name_stripped'] = df.park_name.apply(
-                               lambda x: strip_park_name(x))
+    # Look up the matching park name in the master dataframe.
+    df['park_name'] = df.park_name.apply(
+                      lambda x: lookup_park_name(x, df_master))
 
-    # Lookup the correct park code for the park name.
-    df['park_code'] = df.park_name_stripped.apply(
-                      lambda x: lookup_park_code(x, df_api))
-
-    df.drop(columns=['park_name', 'park_name_stripped'], inplace=True)
-
-    # Sum visitor data for parks with the same park code.
-    df = df.groupby(['park_code'], as_index=False).sum()
+    # Sum visitor data for parks with the same park name.
+    df = df.groupby(['park_name'], as_index=False).sum()
 
     return df
 
-def print_debug(df1_name, df1, df2_name, df2):
+def print_debug(df1_name, df1, df2_name, df2, join_type):
     '''
     Print some debug information.
     '''
@@ -457,22 +433,41 @@ def print_debug(df1_name, df1, df2_name, df2):
     print("**** DEBUG: {} and {} ****".format(df1_name, df2_name))
     print("-- {}: {}".format(df1_name, df1.shape))
     print("-- {}: {}\n".format(df2_name, df2.shape))
-    print("-- {} dupes: ".format(df1_name))
-    df1_dupes = (df1[df1.duplicated(['park_code'], keep=False)]
-                .sort_values(by=['park_code']))
+    print("-- {} dupes, join type: {}: ".format(df1_name, join_type))
+    if join_type == 'park_code':
+        df1_dupes = (df1[df1.duplicated(['park_code'], keep=False)]
+                    .sort_values(by=['park_code']))
+    else:
+        df1_dupes = (df1[df1.duplicated(['park_name'], keep=False)]
+                    .sort_values(by=['park_name']))
     print(df1_dupes,"\n")
-    print("-- {} dupes: ".format(df2_name))
-    df2_dupes = (df2[df2.duplicated(['park_code'], keep=False)]
-                .sort_values(by=['park_code']))
+
+    print("-- {} dupes, join_type: {}: ".format(df2_name, join_type))
+    if join_type == 'park_code':
+        df2_dupes = (df2[df2.duplicated(['park_code'], keep=False)]
+                    .sort_values(by=['park_code']))
+    else:
+        df2_dupes = (df2[df2.duplicated(['park_name'], keep=False)]
+                    .sort_values(by=['park_name']))
     print(df2_dupes,"\n")
-    print("-- Park codes in {}, but not in {}:".format(df1_name, df2_name))
-    df1_not_in_df2 = set(sorted((x for x in list(df1.park_code)
-                     if x not in list(df2.park_code))))
+
+    print("-- Parks in {}, but not in {}:".format(df1_name, df2_name))
+    if join_type == 'park_code':
+        df1_not_in_df2 = set(sorted((x for x in list(df1.park_code)
+                         if x not in list(df2.park_code))))
+    else:
+        df1_not_in_df2 = set(sorted((x for x in list(df1.park_name)
+                         if x not in list(df2.park_name))))
     print(df1_not_in_df2)
     print("Length: {}\n".format(len(df1_not_in_df2)))
-    print("-- Park codes in {}, not in {}:".format(df2_name, df1_name))
-    df2_not_in_df1 = set(sorted((x for x in list(df2.park_code)
-                     if x not in list(df1.park_code))))
+
+    print("-- Parks in {}, not in {}:".format(df2_name, df1_name))
+    if join_type == 'park_code':
+        df2_not_in_df1 = set(sorted((x for x in list(df2.park_code)
+                         if x not in list(df1.park_code))))
+    else:
+        df2_not_in_df1 = set(sorted((x for x in list(df2.park_name)
+                         if x not in list(df1.park_name))))
     print(df2_not_in_df1)
     print("Length: {}\n".format(len(df2_not_in_df1)))
 
@@ -485,7 +480,7 @@ def main():
 
     # Merge the nps.gov NPS Unit/Park list with the NPS API dataframe.
     df_master = read_park_sites_web(df_api)
-    if debug: print_debug('df_master', df_master, 'df_api', df_api)
+    if debug: print_debug('df_master', df_master, 'df_api', df_api, 'park_code')
     df_master = pd.merge(df_master[['park_name', 'park_code', 'designation']],
                          df_api[['park_code', 'states', 'lat', 'long']],
                          how='left', on='park_code')
@@ -500,6 +495,7 @@ def main():
     df_dates = read_park_dates(df_api)
     df_master = pd.merge(df_master, df_dates, how='left', on='park_name')
 
+    # Read list of presidents and term start and end dates.
     df_pres = read_wikipedia_list_of_presidents()
 
     # Assign president at time of National Monument creation.
@@ -515,14 +511,14 @@ def main():
     )
 
     # Add the NPS Acreage report data to the master df.
-    df_acreage = read_acreage_data(df_api)
-    if debug: print_debug('df_master', df_master, 'df_acreage', df_acreage)
-    df_master = pd.merge(df_master, df_acreage, how='left', on='park_code')
+    df_acreage = read_acreage_data(df_master)
+    if debug: print_debug('df_master', df_master, 'df_acreage', df_acreage, 'park_name')
+    df_master = pd.merge(df_master, df_acreage, how='left', on='park_name')
 
     # Add the NPS Visitor Use Statistics report data to the master df.
-    df_visitor = read_visitor_data(df_api)
-    if debug: print_debug('df_master', df_master, 'df_visitor', df_visitor)
-    df_master = pd.merge(df_master, df_visitor, how='left', on='park_code')
+    df_visitor = read_visitor_data(df_master)
+    if debug: print_debug('df_master', df_master, 'df_visitor', df_visitor, 'park_name')
+    df_master = pd.merge(df_master, df_visitor, how='left', on='park_name')
 
     # Sort and save the master dataframe to an Excel file.
     df_master = df_master.sort_values(by=['park_name']).reset_index(drop=True)
