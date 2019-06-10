@@ -16,7 +16,7 @@ Dependencies
    at: https://irma.nps.gov/Stats/Reports/National.
    - Select all years, all field names, and all parks. Choose "False"
      for "Summary Only?" Run and download.
-   - Move the file to the '_visitor_data' directory of this project.
+   - Move the file to the '_reference_data' directory of this project.
    - Open the file in Excel and save as a .xlsx file with name,
      "Annual_Summary_Report_1904_Last_Calendar_Year.xlsx"
 '''
@@ -24,7 +24,7 @@ Dependencies
 import pandas as pd
 
 def main():
-    infile = '_visitor_data/Annual_Summary_Report_1904_Last_Calendar_Year.xlsx'
+    infile = '_reference_data/Annual_Summary_Report_1904_Last_Calendar_Year.xlsx'
     df = pd.read_excel(infile, header=3, index=False, usecols='A:C')
 
     # Eliminate the summary rows found at the bottom of the file after
@@ -40,7 +40,7 @@ def main():
     # Replace NaN with 0.0.
     df.fillna(value=0.0, inplace=True)
 
-    df.to_excel('_visitor_data/annual_visitors_by_park_1904_2018.xlsx')
+    df.to_excel('_reference_data/annual_visitors_by_park_1904_2018.xlsx')
 
 if __name__ == '__main__':
     main()

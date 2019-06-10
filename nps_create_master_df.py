@@ -391,7 +391,7 @@ def read_visitor_data(df_master):
         Dataframe of park code and visits per year.
     '''
 
-    filename = '_visitor_data/annual_visitors_by_park_1904_2018.xlsx'
+    filename = '_reference_data/annual_visitors_by_park_1904_2018.xlsx'
     df = pd.read_excel(filename)
 
     # Exclude certain parks not in the list of 419.
