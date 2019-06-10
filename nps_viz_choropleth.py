@@ -183,7 +183,12 @@ def main():
 
     # Map #1 - Create the state park count choropleth and save to a file.
     state_map = create_state_count_choropleth(df_park_states, designation)
-    state_map.save("_output/nps_state_count_choropleth.html")
+
+    # Save choropleth to file.
+    filename = ('nps_state_count_choropleth_'
+                + designation.lower().replace(' ','_')
+                + '.html')
+    state_map.save('_output/' + filename)
 
 if __name__ == "__main__":
     main()

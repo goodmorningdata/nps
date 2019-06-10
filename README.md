@@ -25,17 +25,22 @@ Run the script, **<i>nps_viz_location.py</i>**, to create a map showing the loca
 * Map file: nps_parks_map_location_<i>designation</i>.html
 
 ### Park size visualizations
-Run the script, **<i>nps_viz_size.py</i>**, to create a map showing the locations of all the parks, marked with a circle marker with size corresponding to the park's size. The circle markers have a hoverable tooltip telling the park name and size in square miles. Limit the number of parks using the [parkset parameter](#parkset-command-line-parameter) described above.
+Run the script, **<i>nps_viz_size.py</i>**, to create a map showing the locations of all the parks, marked with a circle marker with size corresponding to the park's size. The circle markers have a hoverable tooltip telling the park name and size in square miles. Limit the number of parks using the [designation parameter](#designation-command-line-parameter) described above.
 #### Output
-* Map file: nps_parks_map_size.html
-* Table: nps_parks_sorted_by_size.xlsx, nps_parks_sorted_by_size.html
+* Map file: nps_parks_map_size_<i>designation</i>.html
+* Table: nps_parks_sorted_by_size_<i>designation</i>.xlsx, nps_parks_sorted_by_size_<i>designation</i>.html
 
 ### Park visits visualizations
-Run the script, **<i>nps_viz_visitor.py</i>**, to create a map showing the locations of all the parks, marked with a circle marker with size corresponding to the number of visits to the park in the latest year that data is available. The circle markers have a hoverable tooltip telling the park name and number of visits. This script also creates a number of plots to take a closer look at the data. Limit the number of parks using the [parkset parameter](#parkset-command-line-parameter) described above.
+Run the script, **<i>nps_viz_visitor.py</i>**, to create a map showing the locations of all the parks, marked with a circle marker with size corresponding to the number of visits to the park in the latest year that data is available. The circle markers have a hoverable tooltip telling the park name and number of visits. This script also creates a number of plots to take a closer look at the data. Limit the number of parks using the [designation parameter](#designation-command-line-parameter) described above.
 #### Output
-* Map file: nps_parks_map_visits.html
-* Table: nps_parks_sorted_by_visits.xlsx, nps_parks_sorted_by_visits.html
-* Plots: park_visits_by_year_<i>parkset</i>.png, park_visits_by_year_highest_10_<i>parkset</i>.png, park_visits_by_year_lowest_10_<i>parkset</i>.png, park_visits_histogram.png, park_visits_per_capita.png, park_visits_vs_us_pop.png
+* Map file: nps_parks_map_visits_<i>designation</i>.html
+* Table: nps_parks_sorted_by_visits_<i>designation</i>.xlsx, nps_parks_sorted_by_visits_<i>designation</i>.html
+* Plots: park_visits_by_year_highest_10_<i>designation</i>.png, park_visits_by_year_lowest_10_<i>designation</i>.png, park_visits_histogram_<i>designation</i>.png, total_park_visits_vs_year_<i>designation</i>.png, total_estimated_park_visits_vs_year_<i>designation</i>.png
+
+### Choropleths
+Run the script, **<i>nps_viz_choropleth.py</i>**, to create a cholopleth of the United States with state color representing the number of parks in that state. Limit the number of parks using the [designation parameter](#designation-command-line-parameter) described above.
+#### Output
+* nps_state_count_choropleth_<i>designation</i>.html
 
 ## Data Prep - Optional
 If you would like to download and process your own input files instead of using the ones included in the project, you can do so. The data comes from a number of sources and the steps to get it ready are found below by source.
@@ -49,7 +54,11 @@ Create a file, **<i>nps_config.py</i>**, in your home folder. This file will be 
 ```
 apikey = 'YOUR KEY HERE'
 ```
-3. Run the script, **<i>nps_create_park_lookup.py</i>** to pull data from the NPS API and create the park lookup dataframe. This creates the file **<i>nps_park_lookup.xlxs</i>** in your NPS project folder.
+3. Run the script, **<i>nps_get_park_sites_api.py</i>**, to pull data from the NPS API. This creates the file, **<i>nps_park_sites_api.xlxs</i>**, in the _reference_data folder.
+
+### Official Park Units
+1. https://www.nps.gov/aboutus/national-park-system.htm, as 'national_park_system.html' in the '_reference_data' folder.
+2. Run the script, **<i>nps_get_park_sites_web.py</i>**, to read the html file and create the file, **<i>nps_park_sites_web.xlxs</i>**, in the _reference_data folder.
 
 ### Established date from Wikipedia
 1. Save the web page, https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States, as an html file named, **<i>wikipedia_national_parks.html</i>** in the _reference_data folder of the project.
@@ -76,5 +85,5 @@ Contact [goodmorningdata@gmail.com](mailto:goodmorningdata@gmail.com)
 ## Roadmap
 Coming soon.
 ___
-_README updated on April 16, 2019_
+_README updated on June 10, 2019_
 ___

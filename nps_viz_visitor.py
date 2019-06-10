@@ -292,7 +292,7 @@ def plot_park_visits_vs_year(df, designation, title=None):
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
     ax.legend(bbox_to_anchor=(1, 0.5), loc='center left',
-              fancybox=True, borderaxespad=2)
+              fancybox=True, borderaxespad=2, fontsize='small')
 
     # X-axis ticks are every 10th year, displayed vertically.
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
@@ -325,7 +325,7 @@ def plot_park_visits_histogram(df, designation):
 
     x_list = (df[2018].values/1e6).tolist()
     fig, ax = plt.subplots()
-    ax = sns.distplot(x_list, bins=12, rug=True, kde=False)
+    ax = sns.distplot(x_list, bins=12, rug=False, kde=False)
     ax.set_xlabel("Millions of visits")
     ax.set_ylabel("Number of parks")
     ax.set_title("Number of park visits in 2018 ({})".format(designation))
@@ -342,7 +342,7 @@ def main():
 
     # Use Seaborn formatting for plots and set color palette.
     sns.set()
-    sns.set_palette('Dark2')
+    sns.set_palette('Paired')
 
     # The user can specify the set of parks to map and plot, using the
     # command line parameter, 'parkset'. If no parameter specified, all
