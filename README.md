@@ -54,30 +54,29 @@ Create a file, **<i>nps_config.py</i>**, in your home folder. This file will be 
 ```
 apikey = 'YOUR KEY HERE'
 ```
-3. Run the script, **<i>nps_get_park_sites_api.py</i>**, to pull data from the NPS API. This creates the file, **<i>nps_park_sites_api.xlxs</i>**, in the _reference_data folder.
+3. Run the script, **<i>nps_get_park_sites_api.py</i>**, to pull data from the NPS API. This creates the file, nps_park_sites_api.xlxs, in the _reference_data folder.
 
 ### Official Park Units
 1. https://www.nps.gov/aboutus/national-park-system.htm, as 'national_park_system.html' in the '_reference_data' folder.
-2. Run the script, **<i>nps_get_park_sites_web.py</i>**, to read the html file and create the file, **<i>nps_park_sites_web.xlxs</i>**, in the _reference_data folder.
+2. Run the script, **<i>nps_get_park_sites_web.py</i>**, to read the html file and create the file, nps_park_sites_web.xlxs, in the _reference_data folder.
 
-### Established date from Wikipedia
-1. Save the web page, https://en.wikipedia.org/wiki/List_of_national_parks_of_the_United_States, as an html file named, **<i>wikipedia_national_parks.html</i>** in the _reference_data folder of the project.
-2. Run the script, **<i>read_wikipedia_data.py</i>** to create the file, **<i>wikipedia_date_established.xlsx</i>** in the _reference_data folder.
+### Presidential terms
+1. Save the web page, https://en.wikipedia.org/wiki/List_of_Presidents_of_the_United_States, as 'wikipedia_list_of_presidents.html' in the _reference_data folder.
+2. Run the script, **<i>nps_get_wikipedia_presidents.py</i>**, to read the html file and create the file, wikipedia_list_of_presidents.csv, in the _reference_data folder.
 
 ### Park size report from the NPS website
-1. Download the most recent acreage report from the NPS website at: https://www.nps.gov/subjects/lwcf/acreagereports.htm. Calendar Year Reports, Year = 2018. Place this file, named **_NPS-Acreage-12-31-2018.xlsx_** in the _acreage_data directory of this project.
+1. Download the most recent acreage report from the NPS website at: https://www.nps.gov/subjects/lwcf/acreagereports.htm. Calendar Year Reports, Year = 2018. Place this file, **<i>NPS-Acreage-12-31-2018.xlsx</i>**, in the _reference_data folder.
 
 ### Visitation report from the NPS website
 1. Download the most recent version of the "Annual Summary Report (1904 - Last Calendar Year)" report from the NPS website at https://irma.nps.gov/Stats/Reports/National. Select all years, all field names, and all parks. Choose "False" for "Summary Only?" Run and download.
-2. Open the downloaded file in Excel and save as a .xlsx file with name **<i>Annual_Summary_Report_1904_Last_Calendar_Year.xlsx</i>** in the _visitor_data directory of this project.
-3. Run the script, **<i>nps_read_visitor_data.py</i>**. This creates the file,
-**<i>annual_visitors_by_park_1904_2018.xlsx</i>** in the _visitor_data directory.
+2. Open the downloaded file in Excel and save as a .xlsx file with name, Annual_Summary_Report_1904_Last_Calendar_Year.xlsx, in the _reference_data folder.
+3. Run the script, **<i>nps_read_visitor_data.py</i>**. This creates the file, annual_visitors_by_park_1904_2018.xlsx in the _reference_data folder.
 
 ### U.S. census data from census.gov
 Coming soon.
 
 ### Create master DataFrame
-Run the script, **<i>nps_create_master_df.py</i>** to consolidate all the datafiles into one master dataframe. This script creates the file, **<i>nps_parks_master_df.xlsx</i>** which will be used by all the visualization scripts.
+Run the script, **<i>nps_create_master_df.py</i>** to consolidate all the datafiles into one master dataframe. This script creates the file, nps_parks_master_df.xlsx, which will be used by all the visualization scripts.
 
 ## Support
 Contact [goodmorningdata@gmail.com](mailto:goodmorningdata@gmail.com)
