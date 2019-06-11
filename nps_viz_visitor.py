@@ -144,9 +144,7 @@ def plot_total_park_visits_vs_year(df, designation):
       DataFrame of park visit data.
 
     designation : str
-      Designation of parks in the dataframe. The dataframe, df, has
-      already been filtered for this park set, but the parameter is
-      necessary for the plot title and output filename.
+      Designation of parks in the dataframe.
 
     Returns
     -------
@@ -185,9 +183,7 @@ def plot_total_estimated_park_visits_vs_year(df, designation):
       parameter.
 
     designation : str
-      Designation of parks in the dataframe. The dataframe, df, has
-      already been filtered for this park set, but the parameter is
-      necessary for the plot title and output filename.
+      Designation of parks in the dataframe.
 
     Returns
     -------
@@ -245,9 +241,7 @@ def plot_park_visits_vs_year(df, designation, title=None):
       parameter.
 
     designation : str
-      Designation of parks in the dataframe. The dataframe, df, has
-      already been filtered for this park set, but the parameter is
-      necessary for the plot title and output filename.
+      Designation of parks in the dataframe.
 
     title : str (optional)
       Override plot title. If not sent, standard title is used.
@@ -314,9 +308,7 @@ def plot_park_visits_histogram(df, designation):
       DataFrame of park visitation data to plot.
 
     designation : str
-      Designation of parks in the dataframe. The dataframe, df, has
-      already been filtered for this park set, but the parameter is
-      necessary for the plot title and output filename.
+      Designation of parks in the dataframe.
 
     Returns
     -------
