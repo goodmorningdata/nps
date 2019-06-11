@@ -20,14 +20,17 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-def plot_parks_per_decade(df):
+def plot_parks_per_decade(df, designation):
     '''
-    Plot...
+    Plot parks established per decade as a bar chart.
 
     Parameters
     ----------
     df : Pandas DataFrame
       DataFrame of park data.
+
+    designation : str
+      Designation of parks in the dataframe.
 
     Returns
     -------
@@ -36,38 +39,53 @@ def plot_parks_per_decade(df):
 
     df['decade'] = df.entry_date.dt.year//10*10
     decade_count = df.decade.value_counts()
+
+    title = "Number of parks established each decade ({})".format(designation)
+    filename = ('parks_per_decade_' + designation.lower()
+                .replace(' ','_') + '.png')
+
     fig, ax = plt.subplots()
     sns.barplot(decade_count.index, decade_count.values, alpha=0.8, ax=ax)
-    plt.title('Number of Parks established each decade')
+    ax.set_title(title)
     plt.ylabel('Number of parks established', fontsize=12)
     plt.xticks(fontsize=9)
     plt.tight_layout()
     plt.show()
 
-def plot_parks_per_year(df):
+    # Save plot to file.
+    fig.savefig('_output/' + filename)
+
+def plot_parks_per_year(df, designation):
     '''
-    Plot...
+    Plot parks established per year as a bar plot.
 
     Parameters
     ----------
     df : Pandas DataFrame
       DataFrame of park data.
 
+    designation : str
+      Designation of parks in the dataframe.
+
     Returns
     -------
     None
     '''
 
-    df['year'] = df.date_established.dt.year
+    df['year'] = df.entry_date.dt.year
     parks_per_year = df.year.value_counts().sort_index()
     year_count = (pd.Series(0, index=range(1870, 2019))
                   .to_frame()
                   .join(parks_per_year)
                   .fillna(0))
 
+    title = "Number of Parks established each year ({})".format(designation)
+    filename = ('park_per_year_' + designation.lower()
+                .replace(' ','_') + '.png')
+
     fig, ax = plt.subplots()
     sns.barplot(year_count.index, year_count.year, alpha=0.8, ax=ax)
-    plt.title('Number of National Parks established each year')
+    plt.title(title)
     plt.ylabel('Number of parks', fontsize=12)
     # X-axis ticks are every 10th year, displayed vertically.
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
@@ -75,14 +93,20 @@ def plot_parks_per_year(df):
     plt.xticks(rotation=90)
     plt.show()
 
+    # Save plot to file.
+    fig.savefig('_output/' + filename)
+
 def plot_parks_per_president(df):
     '''
-    Plot...
+    Plot parks established per presdient as a bar plot.
 
     Parameters
     ----------
     df : Pandas DataFrame
       DataFrame of park data.
+
+    designation : str
+      Designation of parks in the dataframe.
 
     Returns
     -------
@@ -95,15 +119,26 @@ def plot_parks_per_president(df):
                   .sort_values(by=['president_end_date'])
     )
 
+    title = "Parks established by president ({})".format(designation)
+    filename = ('parks_per_president_' + designation.lower()
+                .replace(' ','_') + '.png')
+
     fig, ax = plt.subplots()
     plt.barh(pres_count.president, pres_count.park_name)
-    plt.title('Number of National Parks established by president')
+    plt.title(title)
     plt.xticks(fontsize=9)
     plt.tight_layout()
     plt.show()
 
+    # Save plot to file.
+    fig.savefig('_output/' + filename)
+
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
+
+    # Use Seaborn formatting for plots and set color palette.
+    sns.set()
+    sns.set_palette('Paired')
 
     # The user can specify the set of parks to map using the command
     # line parameter, 'designation'. If no parameter specified, all
@@ -131,26 +166,23 @@ def main():
         df_park = df[df.designation == args.designation]
         print("\nCreating park dates plots for the park designation, {}."
               .format(args.designation))
+        designation = args.designation
     else:
         df_park = df
         print("\nCreating park dates plots for all NPS sites.")
-
+        designation = "All Parks"
     print("")
 
     df_park = df.loc[df.designation == "National Parks"].copy()
 
-    # Use Seaborn formatting for plots and set color palette.
-    sns.set()
-    sns.set_palette('Dark2')
-
     # Plot #1 - Number of parks established each decade.
-    plot_parks_per_decade(df_park)
+    plot_parks_per_decade(df_park, designation)
 
     # Plot #2 - Cummulative park total vs. year.
-    # plot_parks_per_year(df_park)
+    plot_parks_per_year(df_park, designation)
 
     # Plot #3 - Number of parks established by president.
-    #plot_parks_per_president(df_park[['park_name','president', 'president_end_date']])
+    plot_parks_per_president(df_park[['park_name','president', 'president_end_date']], designation)
 
 if __name__ == "__main__":
     main()
