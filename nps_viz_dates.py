@@ -113,11 +113,18 @@ def plot_parks_per_president(df):
     None
     '''
 
-    pres_count = (df.groupby(['president', 'president_end_date'])
-                  .count()
-                  .reset_index()
-                  .sort_values(by=['president_end_date'])
-    )
+    if designation == "National Monuments":
+        pres_count = df.groupby(['president_nm', 'president_nm_end_date'])
+                     .count().reset_index()
+                     .sort_values(by=['president_nm_end_date'])
+    elif designation == "National Parks":
+        pres_count =  df.groupby(['president_np', 'president_np_end_date'])
+                     .count().reset_index()
+                     .sort_values(by=['president_nm_end_date'])
+    else:
+        pres_count =  df.groupby(['president', 'president_end_date'])
+                     .count().reset_index()
+                     .sort_values(by=['president_nm_end_date'])
 
     title = "Parks established by president ({})".format(designation)
     filename = ('parks_per_president_' + designation.lower()
