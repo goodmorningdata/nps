@@ -19,6 +19,11 @@ Dependencies
 import argparse
 import pandas as pd
 import folium
+import operator
+import seaborn as sns
+import matplotlib.pyplot as plt
+from functools import reduce
+from collections import Counter
 
 def create_map():
     '''
@@ -106,8 +111,33 @@ def add_park_locations_to_map(map, df):
 
     return map
 
+def plot_parks_per_state(df, designation):
+    # Dataframe of state and number of parks in that state.
+    state_list = df['states'].apply(lambda x: x.split(','))
+    state_list = reduce(operator.add, state_list)
+    parks_per_state = (pd.DataFrame
+        .from_dict(Counter(state_list), orient='index')
+        .reset_index()
+    )
+    parks_per_state = (parks_per_state
+        .rename(columns={'index':'state', 0:'park_count'})
+        .sort_values(by='park_count', ascending=False)
+    )
+
+    fig, ax = plt.subplots(figsize=(8,6))
+    plt.barh(parks_per_state.state, parks_per_state.park_count, alpha=0.8)
+    plt.title('Number of Parks per state')
+    # plt.ylabel('Number of parks established', fontsize=12)
+    plt.yticks(fontsize=7)
+    plt.tight_layout()
+    plt.show()
+
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
+
+    # Use Seaborn formatting for plots and set color palette.
+    sns.set()
+    sns.set_palette('Paired')
 
     # The user can specify the set of parks to map using the command
     # line parameter, 'designation'. If no parameter specified, all
@@ -162,6 +192,8 @@ def main():
                 + designation.lower().replace(' ','_')
                 + '.html')
     park_map.save('_output/' + filename)
+
+    plot_parks_per_state(df_park, designation)
 
 if __name__ == '__main__':
     main()
