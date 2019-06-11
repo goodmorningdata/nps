@@ -112,6 +112,24 @@ def add_park_locations_to_map(map, df):
     return map
 
 def plot_parks_per_state(df, designation):
+    '''
+    This function plots the number of parks per state in the parameter
+    dataframe as a bar plot.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of all park locations to plot.
+
+    designtation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    map : Folium map object
+      Folium map with location markers added.
+    '''
+
     # Dataframe of state and number of parks in that state.
     state_list = df['states'].apply(lambda x: x.split(','))
     state_list = reduce(operator.add, state_list)
