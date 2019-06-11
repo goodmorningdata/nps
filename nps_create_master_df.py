@@ -498,6 +498,12 @@ def main():
     # Read list of presidents and term start and end dates.
     df_pres = read_wikipedia_list_of_presidents()
 
+    # Assign president at time of park creation.
+    df_master[['president', 'president_end_date']] = df_master.apply(
+        lambda row: pd.Series(assign_president(row.entry_date, df_pres)),
+        axis=1
+    )
+
     # Assign president at time of National Monument creation.
     df_master[['president_nm', 'president_nm_end_date']] = df_master.apply(
         lambda row: pd.Series(assign_president(row.nm_date, df_pres)),
