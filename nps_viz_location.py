@@ -24,7 +24,7 @@ Dependencies
    nps_parks_master_df.xlsx.
 '''
 
-import argparse
+import nps_shared as nps
 import pandas as pd
 import folium
 import operator
@@ -95,7 +95,8 @@ def add_park_locations_to_map(map, df):
               'icon' : icons
               })
 
-    for _, row in df.sort_values(by='designation', ascending=False).iterrows():
+    for _, row in (df[~df.lat.isnull()]
+        .sort_values(by='designation', ascending=False).iterrows()):
         # Create popup with link to park website.
         if ~(row.park_code[:3] == 'xxx'):
             popup_string = ('<a href="'
@@ -104,6 +105,7 @@ def add_park_locations_to_map(map, df):
                            + row.park_name + '</a>').replace("'", r"\'")
         else:
             popup_string = row.park_name
+
         popup_html = folium.Html(popup_string, script=True)
 
         # Assign color and graphic to icon.
@@ -138,7 +140,7 @@ def plot_parks_per_state(df, designation):
       Folium map with location markers added.
     '''
 
-    # Dataframe of state and number of parks in that state.
+    # Create dataframe of state and count of park in each state.
     state_list = df['states'].apply(lambda x: x.split(','))
     state_list = reduce(operator.add, state_list)
     parks_per_state = (pd.DataFrame
@@ -150,69 +152,21 @@ def plot_parks_per_state(df, designation):
         .sort_values(by='park_count', ascending=False)
     )
 
+    # Horizontal bar plot of number of parks in each state.
     fig, ax = plt.subplots(figsize=(8,6))
     plt.barh(parks_per_state.state, parks_per_state.park_count, alpha=0.8)
-    plt.title('Number of Parks per state')
-    # plt.ylabel('Number of parks established', fontsize=12)
+    ax.set_title("Number of Parks per state ({})".format(designation))
     plt.yticks(fontsize=7)
     plt.tight_layout()
     plt.show()
 
 def main():
-    df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
-
-    # Use Seaborn formatting for plots and set color palette.
-    sns.set()
-    sns.set_palette('Paired')
-
-    # The user can specify the set of parks to map using the command
-    # line parameter, 'designation'. If no parameter specified, all
-    # park sites are added to the map.
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--designation', type=str,
-           help = "Set of parks for which to display locations. If not \
-                  specified, all park sites will be mapped.\
-                  Possible values are: 'International Historic Sites',\
-                  'National Battlefields', 'National Battlefield Parks',\
-                  'National Battlefield Sites', 'National Military Parks',\
-                  'National Historical Parks', 'National Historic Sites',\
-                  'National Lakeshores', 'National Memorials',\
-                  'National Monuments', 'National Parks', 'National Parkways',\
-                  'National Preserves', 'National Reserves',\
-                  'National Recreation Areas', 'National Rivers',\
-                  'National Wild and Scenic Rivers and Riverways',\
-                  'National Scenic Trails', 'National Seashores',\
-                  'Other Designations'")
-    args = parser.parse_args()
-
-    # Filter the dataframe based on designation and remind user which
-    # park designations will be in the visualizations.
-    if args.designation:
-        df_park = df[df.designation == args.designation]
-        print("\nCreating park location map for the park designation, {}.\n"
-              .format(args.designation))
-        designation = args.designation
-    else:
-        df_park = df
-        print("\nCreating park location map for all NPS sites.\n")
-        designation = "All Parks"
-
-    # Check for parks missing location and remove from dataframe.
-    missing_location = df_park[df_park.lat.isnull()].park_name
-    if missing_location.size:
-        print("** Warning ** ")
-        print("Park sites with missing lat/long from API, so no location "
-              "available. These park sites will not be added to the map:")
-        print(*missing_location, sep=', ')
-        print("** Total parks missing location: {}"
-             .format(len(df_park[df_park.lat.isnull()].park_name)))
-        df_park = df_park[~df_park.lat.isnull()]
-
-    print("")
+    df_park, designation = nps.get_parks_df(warning=['location'])
 
     # Map #1 - Plot park locations.
     park_map = create_map()
     park_map = add_park_locations_to_map(park_map, df_park)
+    # Save map to html file.
     filename = ('_output/nps_parks_map_location_'
                + designation.lower().replace(' ','_') + '.html')
     park_map.save(filename)
