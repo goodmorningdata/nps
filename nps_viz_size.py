@@ -5,10 +5,15 @@ argument, "designation", set by the flag, "-d", allows the user to
 specify the set of park sites to add to the map. If no parameter is
 specified, all NPS site locations are added to the map.
 
-The script creates three output files:
-  1) nps_parks_map_size.html - map with park area circles.
-  2) nps_parks_sorted_by_size.xlsx - list of parks and size.
-  3) nps_parks_sorted_by_size.html - list of parks and size.
+The following visualizations are created:
+1) A Folium map with park location mapped as an icon. Each icon has as
+   a clickable pop that tells the park name and links to the nps.gov
+   page for the park.
+   - Output file = nps_parks_map_location_{designation}.html
+
+2) A table of park size in order of size in descending order. first.
+   - Output files = nps_parks_sorted_by_visits_{designation}.xlsx,
+                    nps_parks_sorted_by_visits_{designation}.html.
 
 Required Libraries
 ------------------
@@ -130,6 +135,10 @@ def output_size_data_to_tables(df, designation):
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
+    # Use Seaborn formatting for plots and set color palette.
+    sns.set()
+    sns.set_palette('Paired')
+
     # The user can specify the set of parks to map using the command
     # line parameter, 'designation'. If no parameter specified, all
     # park sites are added to the map.
@@ -184,8 +193,6 @@ def main():
 
     park_map = create_map()
     park_map = add_park_size_circles_to_map(park_map, df_park)
-
-    # Save location/size map to file.
     filename = ('nps_parks_map_size_'
                 + designation.lower().replace(' ','_')
                 + '.html')

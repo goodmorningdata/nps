@@ -75,9 +75,7 @@ def create_state_count_choropleth(df, designation):
       DataFrame of all parks to add to the map.
 
     designation : str
-      Designation of parks in the dataframe. The dataframe, df, has
-      already been filtered for this park set, but the parameter is
-      necessary for the plot title and output filename.
+      Designation of parks in the dataframe.
 
     Returns
     -------

@@ -1,10 +1,18 @@
 '''
-This script creates a map of the United States with a set of park site
-locations marked by icons. The map is created using the Python library,
-Folium. The command line argument, "designation", set by the flag, "-d",
-allows the user to specify the set of park designations to add to the
-map. If no parameter specified, all NPS  site locations are added to
-the map. The map is saved to the html file, nps_parks_map_location.html
+This script creates a set of visualizations using the location data
+(lat, long, state) available for each park from the NPS API. The command
+line argument, "designation", set by the flag, "-d", allows the user to
+specify the set of park designations to add to the map. If no parameter
+specified, all NPS  site locations are added to the visualizations.
+
+The following visualizations are created:
+1) A Folium map with park location mapped as an icon. Each icon has as
+   a clickable popup that tells the park name and links to the nps.gov
+   page for the park.
+   - Output file = nps_parks_map_location_{designation}.html
+
+2) Plots including:
+   Plot #1 - Parks per state bar chart.
 
 Required Libraries
 ------------------
@@ -197,20 +205,19 @@ def main():
               "available. These park sites will not be added to the map:")
         print(*missing_location, sep=', ')
         print("** Total parks missing location: {}"
-              .format(len(df_park[df_park.lat.isnull()].park_name)))
+             .format(len(df_park[df_park.lat.isnull()].park_name)))
         df_park = df_park[~df_park.lat.isnull()]
 
     print("")
 
+    # Map #1 - Plot park locations.
     park_map = create_map()
     park_map = add_park_locations_to_map(park_map, df_park)
+    filename = ('_output/nps_parks_map_location_'
+               + designation.lower().replace(' ','_') + '.html')
+    park_map.save(filename)
 
-    # Save location map to file.
-    filename = ('nps_parks_map_location_'
-                + designation.lower().replace(' ','_')
-                + '.html')
-    park_map.save('_output/' + filename)
-
+    # Plot #1 - Parks per state bar chart.
     plot_parks_per_state(df_park, designation)
 
 if __name__ == '__main__':

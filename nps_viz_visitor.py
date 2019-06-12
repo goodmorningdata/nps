@@ -8,11 +8,12 @@ The following visualizations are created:
    dependent on the number of park visits in 2018. Hovering over a
    circle displays a tooltip telling the user the park name and the
    number of visits in 2018.
-   - Output file = nps_parks_map_visits.html
+   - Output file = nps_parks_map_visits_{designation}.html
+
 2) A table of park visits in order of total visits, greatest number of
    visits to smallest.
-   - Output files = nps_parks_sorted_by_visits.xlsx,
-                    nps_parks_sorted_by_visits.html.
+   - Output files = nps_parks_sorted_by_visits_{designation}.xlsx,
+                    nps_parks_sorted_by_visits_{designation}.html.
 3) Plots including:
    Plot #1 - Total visits for all parks vs. year.
    Plot #2 - Estimated total visits for all parks vs. year.
@@ -102,7 +103,7 @@ def add_park_visit_circles_to_map(map, df):
 
     return map
 
-def output_visit_data_to_tables(df):
+def output_visit_data_to_tables(df, designation):
     '''
     This function outputs the park visit data as a table to both an
     Excel spreadsheet and an html file. The data is sorted by number of
@@ -119,19 +120,19 @@ def output_visit_data_to_tables(df):
     '''
 
     df_export = (df[['park_name', 2018]]
-                 .sort_values(by=[2018], ascending=False)
-                 .reset_index(drop=True))
+                .sort_values(by=[2018], ascending=False)
+                .reset_index(drop=True))
     df_export = df_export[~df_export[2018].isnull()]
     df_export.index += 1
-    export_cols = {'park_name': 'Park Name',
-                   '2018': 'Visits in 2018'}
+    export_cols = {'park_name': 'Park Name', '2018': 'Visits in 2018'}
     df_export = df_export.rename(columns=export_cols)
-    df_export.to_excel('_output/nps_parks_sorted_by_visits.xlsx',
-                       index=True)
-    df_export.to_html('_output/nps_parks_sorted_by_visits.html',
-                      justify='left',
-                      classes='table-park-list',
-                      float_format=lambda x: '{:,.2f}'.format(x))
+
+    filename = ('_output/nps_parks_sorted_by_visits_'
+               + designation.lower().replace(' ','_'))
+
+    df_export.to_excel(filename + '.xlsx', index=True)
+    df_export.to_html(filename + '.html', justify='left',
+        classes='table-park-list', float_format=lambda x: '{:,.2f}'.format(x))
 
 def plot_total_park_visits_vs_year(df, designation):
     '''
@@ -165,10 +166,9 @@ def plot_total_park_visits_vs_year(df, designation):
     plt.show()
 
     # Save plot to file.
-    filename = ('total_park_visits_vs_year_'
-                + designation.lower().replace(' ','_')
-                + '.png')
-    fig.savefig('_output/' + filename)
+    filename = ('_output/total_park_visits_vs_year_'
+               + designation.lower().replace(' ','_') + '.png')
+    fig.savefig(filename)
 
 def plot_total_estimated_park_visits_vs_year(df, designation):
     '''
@@ -395,10 +395,13 @@ def main():
     # to the number of visits in 2018.
     park_map = create_map()
     park_map = add_park_visit_circles_to_map(park_map, df_park)
-    park_map.save('_output/nps_parks_map_visits.html')
+    filename = ('nps_parks_map_visits_'
+                + designation.lower().replace(' ','_')
+                + '.html')
+    park_map.save('_output/' + filename)
 
     # Save park visit data as an Excel spreadsheet and an html table.
-    output_visit_data_to_tables(df_park)
+    output_visit_data_to_tables(df_park, designation)
 
     # Plot #1 - Total visits for all parks vs. year.
     plot_total_park_visits_vs_year(df_park, designation)
@@ -411,8 +414,6 @@ def main():
     plot_park_visits_vs_year(df_park.iloc[0:10,:], designation,
                              title = plot_title)
     plot_title = "Park visits by year, lowest 10 ({})".format(designation)
-    print('** lowest 10')
-    print(df_park.iloc[-10:,:])
     plot_park_visits_vs_year(df_park.iloc[-10:,:], designation,
                              title = plot_title)
     # Plot park visits by year for just one park.

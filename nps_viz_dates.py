@@ -1,19 +1,27 @@
 '''
-This script creates a set of plots to further examine the established
-date of national park units. Currently, established date is only
-available for park units with the designation, "National Park".
+This script creates a set of plots to further examine the dates that
+NPS units were established. Each park is assigned an entry date which is
+the date that they were established as federal parkland. Some parks
+began as national monuments and these parks have a national monument
+date. National parks are assigned a date when they were established as a
+national park.
 
 The following visualizations are created:
-1)
+1) Plots including:
+   Plot #1 - Number of parks established each decade.
+   Plot #2 - Number of parks established each year.
+   Plot #3 - Number of parks established by president.
 
 Required Libraries
 ------------------
+pandas, argparse, seaborn, matplotlib.
 
 Dependencies
 ------------
 1) Run the script, nps_create_master_df.py to create the file,
    nps_parks_master_df.xlsx.
 '''
+
 import pandas as pd
 import argparse
 import seaborn as sns
@@ -37,6 +45,7 @@ def plot_parks_per_decade(df, designation):
     None
     '''
 
+    # Create dataframe of count of parks established each decade.
     df['decade'] = df.entry_date.dt.year//10*10
     decade_count = df.decade.value_counts()
 
@@ -52,7 +61,6 @@ def plot_parks_per_decade(df, designation):
     plt.tight_layout()
     plt.show()
 
-    # Save plot to file.
     fig.savefig('_output/' + filename)
 
 def plot_parks_per_year(df, designation):
@@ -93,12 +101,13 @@ def plot_parks_per_year(df, designation):
     plt.xticks(rotation=90)
     plt.show()
 
-    # Save plot to file.
     fig.savefig('_output/' + filename)
 
 def plot_parks_per_president(df, designation):
     '''
-    Plot parks established per presdient as a bar plot.
+    Plot parks established per presdient as a bar plot. Park
+    designations that this is possible for are: National Monuments,
+    National Parks, and All Parks.
 
     Parameters
     ----------
@@ -145,7 +154,6 @@ def plot_parks_per_president(df, designation):
         plt.tight_layout()
         plt.show()
 
-        # Save plot to file.
         fig.savefig('_output/' + filename)
 
     else:
@@ -194,16 +202,13 @@ def main():
         designation = "All Parks"
     print("")
 
-    #df_park = df.loc[df.designation == "National Parks"].copy()
-
     # Plot #1 - Number of parks established each decade.
     plot_parks_per_decade(df_park, designation)
 
-    # Plot #2 - Cummulative park total vs. year.
+    # Plot #2 - Number of parks established each year.
     plot_parks_per_year(df_park, designation)
 
     # Plot #3 - Number of parks established by president.
-#    plot_parks_per_president(df_park[['park_name','president', 'president_end_date']], designation)
     plot_parks_per_president(df_park, designation)
 
 if __name__ == "__main__":
