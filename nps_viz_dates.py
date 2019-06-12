@@ -48,7 +48,7 @@ def plot_parks_per_decade(df, designation):
     sns.barplot(decade_count.index, decade_count.values, alpha=0.8, ax=ax)
     ax.set_title(title)
     plt.ylabel('Number of parks established', fontsize=12)
-    plt.xticks(fontsize=9)
+    plt.xticks(fontsize=9, rotation=90)
     plt.tight_layout()
     plt.show()
 
@@ -96,7 +96,7 @@ def plot_parks_per_year(df, designation):
     # Save plot to file.
     fig.savefig('_output/' + filename)
 
-def plot_parks_per_president(df):
+def plot_parks_per_president(df, designation):
     '''
     Plot parks established per presdient as a bar plot.
 
@@ -113,32 +113,46 @@ def plot_parks_per_president(df):
     None
     '''
 
-    if designation == "National Monuments":
-        pres_count = df.groupby(['president_nm', 'president_nm_end_date'])
-                     .count().reset_index()
-                     .sort_values(by=['president_nm_end_date'])
-    elif designation == "National Parks":
-        pres_count =  df.groupby(['president_np', 'president_np_end_date'])
-                     .count().reset_index()
-                     .sort_values(by=['president_nm_end_date'])
+    if designation in ["National Monuments", "National Parks", "All Parks"]:
+
+        fig, ax = plt.subplots()
+
+        if designation == "National Monuments":
+            print("National Monuments per president")
+            pres_count = (df.groupby(['president_nm', 'president_nm_end_date'])
+                          .count().reset_index()
+                          .sort_values(by=['president_nm_end_date']))
+            plt.barh(pres_count.president_nm, pres_count.park_name)
+        if designation == "National Parks":
+            print("National Parks per president")
+            pres_count = (df.groupby(['president_np', 'president_np_end_date'])
+                          .count().reset_index()
+                          .sort_values(by=['president_np_end_date']))
+            plt.barh(pres_count.president_np, pres_count.park_name)
+        if designation == "All Parks":
+            print("All Parks per president")
+            pres_count = (df.groupby(['president', 'president_end_date'])
+                          .count().reset_index()
+                          .sort_values(by=['president_end_date']))
+            plt.barh(pres_count.president, pres_count.park_name)
+
+        title = "Parks established by president ({})".format(designation)
+        filename = ('parks_per_president_' + designation.lower()
+                    .replace(' ','_') + '.png')
+
+        plt.title(title)
+        plt.xticks(fontsize=9)
+        plt.tight_layout()
+        plt.show()
+
+        # Save plot to file.
+        fig.savefig('_output/' + filename)
+
     else:
-        pres_count =  df.groupby(['president', 'president_end_date'])
-                     .count().reset_index()
-                     .sort_values(by=['president_nm_end_date'])
-
-    title = "Parks established by president ({})".format(designation)
-    filename = ('parks_per_president_' + designation.lower()
-                .replace(' ','_') + '.png')
-
-    fig, ax = plt.subplots()
-    plt.barh(pres_count.president, pres_count.park_name)
-    plt.title(title)
-    plt.xticks(fontsize=9)
-    plt.tight_layout()
-    plt.show()
-
-    # Save plot to file.
-    fig.savefig('_output/' + filename)
+        print("\n** Error **")
+        print("Parks per president plot only available for National Parks, "
+              "National Monuments, and All Parks designations. Plot will "
+              "not be created for the {} designation\n".format(designation))
 
 def main():
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
@@ -170,17 +184,17 @@ def main():
     # Filter the dataframe based on designation and remind user which
     # park designations will be in the visualizations.
     if args.designation:
-        df_park = df[df.designation == args.designation]
+        df_park = df[df.designation == args.designation].copy()
         print("\nCreating park dates plots for the park designation, {}."
               .format(args.designation))
         designation = args.designation
     else:
-        df_park = df
-        print("\nCreating park dates plots for all NPS sites.")
+        df_park = df.copy()
+        print("\nCreating park date plots for all NPS sites.")
         designation = "All Parks"
     print("")
 
-    df_park = df.loc[df.designation == "National Parks"].copy()
+    #df_park = df.loc[df.designation == "National Parks"].copy()
 
     # Plot #1 - Number of parks established each decade.
     plot_parks_per_decade(df_park, designation)
@@ -189,7 +203,8 @@ def main():
     plot_parks_per_year(df_park, designation)
 
     # Plot #3 - Number of parks established by president.
-    plot_parks_per_president(df_park[['park_name','president', 'president_end_date']], designation)
+#    plot_parks_per_president(df_park[['park_name','president', 'president_end_date']], designation)
+    plot_parks_per_president(df_park, designation)
 
 if __name__ == "__main__":
     main()
