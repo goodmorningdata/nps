@@ -163,44 +163,7 @@ def plot_parks_per_president(df, designation):
               "not be created for the {} designation\n".format(designation))
 
 def main():
-    df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
-
-    # Use Seaborn formatting for plots and set color palette.
-    sns.set()
-    sns.set_palette('Paired')
-
-    # The user can specify the set of parks to map using the command
-    # line parameter, 'designation'. If no parameter specified, all
-    # park sites are added to the map.
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--designation', type=str,
-           help = "Set of parks for which to display locations. If not \
-                  specified, all park sites will be mapped.\
-                  Possible values are: 'International Historic Sites',\
-                  'National Battlefields', 'National Battlefield Parks',\
-                  'National Battlefield Sites', 'National Military Parks',\
-                  'National Historical Parks', 'National Historic Sites',\
-                  'National Lakeshores', 'National Memorials',\
-                  'National Monuments', 'National Parks', 'National Parkways',\
-                  'National Preserves', 'National Reserves',\
-                  'National Recreation Areas', 'National Rivers',\
-                  'National Wild and Scenic Rivers and Riverways',\
-                  'National Scenic Trails', 'National Seashores',\
-                  'Other Designations'")
-    args = parser.parse_args()
-
-    # Filter the dataframe based on designation and remind user which
-    # park designations will be in the visualizations.
-    if args.designation:
-        df_park = df[df.designation == args.designation].copy()
-        print("\nCreating park dates plots for the park designation, {}."
-              .format(args.designation))
-        designation = args.designation
-    else:
-        df_park = df.copy()
-        print("\nCreating park date plots for all NPS sites.")
-        designation = "All Parks"
-    print("")
+    df_park, designation = nps.get_parks_df(warning=['location'])
 
     # Plot #1 - Number of parks established each decade.
     plot_parks_per_decade(df_park, designation)

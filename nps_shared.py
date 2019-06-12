@@ -7,6 +7,24 @@ sns.set()
 sns.set_palette('Paired')
 
 def get_parks_df(warning=None):
+    '''
+    This function is used by all the visualization scripts to read in
+    the master dataframe, read the command line designation parameter,
+    filter the dataframe by designation, and print warning messages.
+
+    Parameters
+    ----------
+    warning : list
+      List of warnings to check dataframe for.
+
+    Returns
+    -------
+    df_park : Pandas dataframe
+      Master dataframe filtered by designation.
+
+    designation : str
+      Designation command line parameter.
+    '''
 
     df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
 
@@ -42,8 +60,8 @@ def get_parks_df(warning=None):
         print("\nCreating visualizations for all NPS sites.\n")
         designation = "All Parks"
 
+    # Check for missing location data.
     if 'location' in warning:
-        # Check for parks missing location and remove from dataframe.
         missing_location = df_park[df_park.lat.isnull()].park_name
         if missing_location.size:
             print("** Warning ** ")
@@ -52,7 +70,19 @@ def get_parks_df(warning=None):
                   "map visualizations:")
             print(*missing_location, sep=', ')
             print("** Total parks missing location: {}"
-                .format(len(df_park[df_park.lat.isnull()].park_name)))
+                 .format(len(df_park[df_park.lat.isnull()].park_name)))
+
+    # Check for missing park size data.
+    if 'size' in warning:
+        missing_loc = df_park[df_park.lat.isnull()].park_name
+        if missing_loc.size:
+            print("\n** Warning ** ")
+            print("Park sites with missing lat/long from API, so no location "
+                  "available. These park sites will not be added to the map:")
+            print(*missing_loc, sep=', ')
+            print("** Total parks missing location: {}"
+                 .format(len(missing_loc)))
+            df_park = df_park[~df_park.lat.isnull()]
 
     print("")
 
