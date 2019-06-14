@@ -14,7 +14,7 @@ The following visualizations are created:
 
 Required Libraries
 ------------------
-pandas, argparse, seaborn, matplotlib.
+pandas, seaborn, matplotlib.
 
 Dependencies
 ------------
@@ -49,19 +49,20 @@ def plot_parks_per_decade(df, designation):
     df['decade'] = df.entry_date.dt.year//10*10
     decade_count = df.decade.value_counts()
 
-    title = "Number of parks established each decade ({})".format(designation)
-    filename = ('parks_per_decade_' + designation.lower()
-                .replace(' ','_') + '.png')
-
+    # Create bar plot of parks established per decade.
     fig, ax = plt.subplots()
     sns.barplot(decade_count.index, decade_count.values, alpha=0.8, ax=ax)
-    ax.set_title(title)
+    plt.title("Number of parks established each decade ({})"
+             .format(designation))
     plt.ylabel('Number of parks established', fontsize=12)
     plt.xticks(fontsize=9, rotation=90)
     plt.tight_layout()
     plt.show()
 
-    fig.savefig('_output/' + filename)
+    # Save plot to file.
+    filename = ('_output/parks_per_decade_' + designation.lower()
+                .replace(' ','_') + '.png')
+    fig.savefig(filename)
 
 def plot_parks_per_year(df, designation):
     '''
@@ -88,21 +89,20 @@ def plot_parks_per_year(df, designation):
                   .join(parks_per_year)
                   .fillna(0))
 
-    title = "Number of Parks established each year ({})".format(designation)
-    filename = ('park_per_year_' + designation.lower()
-                .replace(' ','_') + '.png')
-
+    # Create bar plot of parks established per year.
     fig, ax = plt.subplots()
     sns.barplot(year_count.index, year_count.year, alpha=0.8, ax=ax)
-    plt.title(title)
+    plt.title("Number of Parks established each year ({})".format(designation))
     plt.ylabel('Number of parks', fontsize=12)
-    # X-axis ticks are every 10th year, displayed vertically.
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     ax.xaxis.set_major_formatter(ticker.ScalarFormatter(useOffset=-1870))
     plt.xticks(rotation=90)
     plt.show()
 
-    fig.savefig('_output/' + filename)
+    # Save plot to file.
+    filename = ('_output/park_per_year_' + designation.lower()
+               .replace(' ','_') + '.png')
+    fig.savefig(filename)
 
 def plot_parks_per_president(df, designation):
     '''
@@ -124,24 +124,30 @@ def plot_parks_per_president(df, designation):
     '''
 
     if designation in ["National Monuments", "National Parks", "All Parks"]:
-        title = "Parks established by president ({})".format(designation)
-        filename = ('parks_per_president_' + designation.lower()
-                    .replace(' ','_') + '.png')
 
+        # Create bar plot of parks established per president.
         fig, ax = plt.subplots()
 
+        # If designation is National Monument, use president in office
+        # when the monument was established.
         if designation == "National Monuments":
             print("National Monuments per president")
             pres_count = (df.groupby(['president_nm', 'president_nm_end_date'])
                           .count().reset_index()
                           .sort_values(by=['president_nm_end_date']))
             plt.barh(pres_count.president_nm, pres_count.park_name)
+
+        # If designation is National Park, use president in office when
+        # the national park was established.
         if designation == "National Parks":
             print("National Parks per president")
             pres_count = (df.groupby(['president_np', 'president_np_end_date'])
                           .count().reset_index()
                           .sort_values(by=['president_np_end_date']))
             plt.barh(pres_count.president_np, pres_count.park_name)
+            
+        # Otherwise, use president in office when the park was
+        # originally established.
         if designation == "All Parks":
             print("All Parks per president")
             pres_count = (df.groupby(['president', 'president_end_date'])
@@ -149,13 +155,15 @@ def plot_parks_per_president(df, designation):
                           .sort_values(by=['president_end_date']))
             plt.barh(pres_count.president, pres_count.park_name)
 
-        plt.title(title)
+        plt.title("Parks established by president ({})".format(designation))
         plt.xticks(fontsize=9)
         plt.tight_layout()
         plt.show()
 
         # Save plot to file.
-        fig.savefig('_output/' + filename)
+        filename = ('_output/parks_per_president_' + designation.lower()
+                    .replace(' ','_') + '.png')
+        fig.savefig(filename)
 
     else:
         print("\n** Error **")

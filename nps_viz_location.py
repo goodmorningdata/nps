@@ -33,30 +33,7 @@ import matplotlib.pyplot as plt
 from functools import reduce
 from collections import Counter
 
-def create_map():
-    '''
-    This function creates a Folium map object, centered on the lat/long
-    center of the lower 48 states.
-
-    Parameters
-    ----------
-    None
-
-    Returns
-    -------
-    map : Folium map object
-      Empty Folium map.
-    '''
-
-    center_lower_48 = [39.833333, -98.583333]
-    map = folium.Map(location = center_lower_48,
-                     zoom_start = 3,
-                     control_scale = True,
-                     tiles = 'Stamen Terrain')
-
-    return map
-
-def add_park_locations_to_map(map, df):
+def create_location_map(map, df):
     '''
     This function adds all locations in the dataframe to the map. Icon
     type and color is dependent on park set assigned to each site.
@@ -71,9 +48,15 @@ def add_park_locations_to_map(map, df):
 
     Returns
     -------
-    map : Folium map object
-      Folium map with location markers added.
+    None
     '''
+
+    # Create blank map.
+    center_lower_48 = [39.833333, -98.583333]
+    map = folium.Map(location = center_lower_48,
+                     zoom_start = 3,
+                     control_scale = True,
+                     tiles = 'Stamen Terrain')
 
     # Create a dataframe of park sets with assigned icons and colors.
     colors = ['lightgreen'] * 20
@@ -82,21 +65,25 @@ def add_park_locations_to_map(map, df):
     icons[10] = 'tree'
 
     df_icon = pd.DataFrame(
-              {'designation' : ['International Historic Sites',
-              'National Battlefields', 'National Battlefield Parks',
-              'National Battlefield Sites', 'National Military Parks', 'National Historical Parks', 'National Historic Sites',
-              'National Lakeshores', 'National Memorials',
-              'National Monuments', 'National Parks', 'National Parkways', 'National Preserves', 'National Reserves',
-              'National Recreation Areas', 'National Rivers',
-              'National Wild and Scenic Rivers and Riverways',
-              'National Scenic Trails', 'National Seashores',
-              'Other Designations'],
-              'color' : colors,
-              'icon' : icons
-              })
+        {'designation' : ['International Historic Sites',
+             'National Battlefields', 'National Battlefield Parks',
+             'National Battlefield Sites', 'National Military Parks',
+             'National Historical Parks', 'National Historic Sites',
+             'National Lakeshores', 'National Memorials', 'National Monuments',
+             'National Parks', 'National Parkways', 'National Preserves',
+             'National Reserves', 'National Recreation Areas',
+             'National Rivers',
+             'National Wild and Scenic Rivers and Riverways',
+             'National Scenic Trails', 'National Seashores',
+             'Other Designations'],
+         'color' : colors,
+         'icon' : icons
+        })
 
+    # Add park locations to map.
     for _, row in (df[~df.lat.isnull()]
         .sort_values(by='designation', ascending=False).iterrows()):
+
         # Create popup with link to park website.
         if ~(row.park_code[:3] == 'xxx'):
             popup_string = ('<a href="'
@@ -105,7 +92,6 @@ def add_park_locations_to_map(map, df):
                            + row.park_name + '</a>').replace("'", r"\'")
         else:
             popup_string = row.park_name
-
         popup_html = folium.Html(popup_string, script=True)
 
         # Assign color and graphic to icon.
@@ -114,12 +100,15 @@ def add_park_locations_to_map(map, df):
                                prefix='fa',
                                icon=df_icon_row.values[0][2])
 
+        # Add marker to map.
         marker = folium.Marker(location = [row.lat, row.long],
-                               icon = map_icon,
-                               popup = folium.Popup(popup_html)
-                              ).add_to(map)
+                               popup = folium.Popup(popup_html),
+                               icon = map_icon).add_to(map)
 
-    return map
+    # Save map to file.
+    filename = ('_output/nps_parks_map_location_'
+               + designation.lower().replace(' ','_') + '.html')
+    map.save(filename)
 
 def plot_parks_per_state(df, designation):
     '''
@@ -144,8 +133,7 @@ def plot_parks_per_state(df, designation):
     state_list = df['states'].apply(lambda x: x.split(','))
     state_list = reduce(operator.add, state_list)
     parks_per_state = (pd.DataFrame
-        .from_dict(Counter(state_list), orient='index')
-        .reset_index())
+        .from_dict(Counter(state_list), orient='index').reset_index())
     parks_per_state = (parks_per_state
         .rename(columns={'index':'state', 0:'park_count'}))
     parks_per_state['state_name'] = (
@@ -153,29 +141,23 @@ def plot_parks_per_state(df, designation):
     parks_per_state.sort_values(by='state_name', ascending=False, inplace=True)
 
     # Horizontal bar plot of number of parks in each state.
-    title = "Number of parks per state ({})".format(designation)
-    filename = ('parks_per_state_' + designation.lower()
-               .replace(' ','_') + '.png')
-
     fig, ax = plt.subplots(figsize=(8,6))
     plt.barh(parks_per_state.state_name, parks_per_state.park_count, alpha=0.8)
-    ax.set_title("Number of Parks per state ({})".format(designation))
+    plt.title("Number of Parks per state ({})".format(designation))
     plt.yticks(fontsize=8)
     plt.tight_layout()
     plt.show()
 
     # Save plot to file.
-    fig.savefig('_output/' + filename)
+    filename = ('_output/parks_per_state_' + designation.lower()
+               .replace(' ','_') + '.png')
+    fig.savefig(filename)
 
 def main():
     df_park, designation = get_parks_df(warning=['location'])
 
     # Map #1 - Plot park locations and save map to html file.
-    park_map = create_map()
-    park_map = add_park_locations_to_map(park_map, df_park)
-    filename = ('_output/nps_parks_map_location_'
-               + designation.lower().replace(' ','_') + '.html')
-    park_map.save(filename)
+    create_location_map(park_map, df_park, designation)
 
     # Plot #1 - Parks per state bar chart.
     plot_parks_per_state(df_park, designation)

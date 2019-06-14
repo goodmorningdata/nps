@@ -31,30 +31,7 @@ import pandas as pd
 import folium
 import matplotlib.pyplot as plt
 
-def create_map():
-    '''
-    This function creates a Folium map object, centered on the lat/long
-    center of the lower 48 states.
-
-    Parameters
-    ----------
-    None
-
-    Returns
-    -------
-    map : Folium map object
-      Empty Folium map.
-    '''
-
-    center_lower_48 = [39.833333, -98.583333]
-    map = folium.Map(location = center_lower_48,
-                     zoom_start = 3,
-                     control_scale = True,
-                     tiles = 'Stamen Terrain')
-
-    return map
-
-def add_park_size_circles_to_map(map, df):
+def create_size_map(df, designation):
     '''
     This function adds a circle marker for each park in the parameter
     dataframe to the map. The circle size corresponds to the area of
@@ -76,16 +53,26 @@ def add_park_size_circles_to_map(map, df):
 
     Returns
     -------
-    map : Folium map object
-      Folium map with circle area markers added.
+    None
     '''
 
+    # Create blank map.
+    center_lower_48 = [39.833333, -98.583333]
+    map = folium.Map(location = center_lower_48,
+                     zoom_start = 3,
+                     control_scale = True,
+                     tiles = 'Stamen Terrain')
+
+    # Add park size circles to map.
     for _, row in (df[~df.lat.isnull()]
         .sort_values(by='designation', ascending=False).iterrows()):
 
+        # Create tooltip with park size.
         tooltip = (row.park_name.replace("'", r"\'")
-                   + ', {:,.0f}'.format(row.gross_area_square_miles)
-                   + ' square miles')
+                  + ', {:,.0f}'.format(row.gross_area_square_miles)
+                  + ' square miles')
+
+        # Add marker to map.
         folium.Circle(
             radius=math.sqrt(row.gross_area_square_meters/math.pi),
             location=[row.lat, row.long],
@@ -95,7 +82,10 @@ def add_park_size_circles_to_map(map, df):
             fill_color='crimson'
         ).add_to(map)
 
-    return map
+    # Save map to file.
+    filename = ('_output/nps_parks_map_size_'
+               + designation.lower().replace(' ','_') + '.html')
+    map.save(filename)
 
 def plot_park_size_histogram(df, designation):
     '''
@@ -114,21 +104,19 @@ def plot_park_size_histogram(df, designation):
     None
     '''
 
+    # Create park size histogram.
     x_list = (df.gross_area_acres.values/1e6).tolist()
-
-    title = "Park size in acres in 2018 ({})".format(designation)
-    filename = ('park_size_histogram_' + designation.lower()
-               .replace(' ','_') + '.png')
-
     fig, ax = plt.subplots()
     ax = sns.distplot(x_list, kde=False)
     ax.set_xlabel("Millions of acres")
     ax.set_ylabel("Number of parks")
-    ax.set_title(title)
+    plt.title("Park size in acres in 2018 ({})".format(designation))
     plt.show()
 
     # Save plot to file.
-    fig.savefig('_output/' + filename)
+    filename = ('_output/park_size_histogram_' + designation.lower()
+               .replace(' ','_') + '.png')
+    fig.savefig(filename)
 
 def plot_avg_size_vs_designation(df, designation):
     '''
@@ -153,21 +141,19 @@ def plot_avg_size_vs_designation(df, designation):
              .groupby(by='designation').mean())
         df = df.sort_values(by='designation')
 
-        # Horizontal bar plot of number of parks in each state.
-        title = "Average park size by designation ({})".format(designation)
-        filename = ('avg_size_vs_designation_' + designation.lower()
-                   .replace(' ','_') + '.png')
-
+        # Create horizontal bar plot of number of parks in each state.
         fig, ax = plt.subplots(figsize=(8,6))
         plt.barh(df.index, df.gross_area_acres/1e6, alpha=0.8)
-        ax.set_title(title)
+        plt.title("Average park size by designation ({})".format(designation))
         plt.yticks(fontsize=8)
         plt.xlabel("Millions of acres")
         plt.tight_layout()
         plt.show()
 
         # Save plot to file.
-        fig.savefig('_output/' + filename)
+        filename = ('_output/avg_size_vs_designation_' + designation.lower()
+                   .replace(' ','_') + '.png')
+        fig.savefig('filename)
 
     else:
         print("** Warning ** ")
@@ -199,19 +185,19 @@ def output_size_data_to_tables(df, designation):
 
     df_export = (df[['park_name', 'gross_area_acres',
                      'gross_area_square_miles']]
-                 .sort_values(by=['gross_area_acres'], ascending=False)
-                 .reset_index(drop=True))
+                .sort_values(by=['gross_area_acres'], ascending=False)
+                .reset_index(drop=True))
     df_export.index += 1
     export_cols = {'park_name': 'Park Name',
                    'gross_area_acres': 'Size (acres)',
                    'gross_area_square_miles': 'Size (square miles)'}
     df_export = df_export.rename(columns=export_cols)
 
-    filename = ('nps_parks_sorted_by_size_'
-                + designation.lower().replace(' ','_'))
+    filename = ('_output/nps_parks_sorted_by_size_'
+               + designation.lower().replace(' ','_'))
 
-    df_export.to_excel('_output/' + filename + '.xlsx', index=False)
-    df_export.to_html('_output/' + filename + '.html',
+    df_export.to_excel(filename + '.xlsx', index=False)
+    df_export.to_html(filename + '.html',
                       justify='left',
                       classes='table-park-list',
                       float_format=lambda x: '{:,.2f}'.format(x))
@@ -223,12 +209,7 @@ def main():
     df_park = df_park[~df_park.gross_area_acres.isnull()]
 
     # Map #1 - Plot park locations with size circle and save map to html file.
-    park_map = create_map()
-    park_map = add_park_size_circles_to_map(park_map, df_park)
-    filename = ('_output/nps_parks_map_size_'
-                + designation.lower().replace(' ','_')
-                + '.html')
-    park_map.save(filename)
+    create_size_map(park_map, df_park, designation)
 
     # Plot #1 - Histogram - park size
     plot_park_size_histogram(df_park, designation)

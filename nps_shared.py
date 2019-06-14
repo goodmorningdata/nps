@@ -1,3 +1,5 @@
+'''
+'''
 import pandas as pd
 import argparse
 import seaborn as sns
@@ -94,19 +96,19 @@ def get_parks_df(warning=['None']):
     # park sites are added to the map.
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--designation', type=str,
-           help = "Set of parks for which to display locations. If not \
-                  specified, all park sites will be mapped.\
-                  Possible values are: 'International Historic Sites',\
-                  'National Battlefields', 'National Battlefield Parks',\
-                  'National Battlefield Sites', 'National Military Parks',\
-                  'National Historical Parks', 'National Historic Sites',\
-                  'National Lakeshores', 'National Memorials',\
-                  'National Monuments', 'National Parks', 'National Parkways',\
-                  'National Preserves', 'National Reserves',\
-                  'National Recreation Areas', 'National Rivers',\
-                  'National Wild and Scenic Rivers and Riverways',\
-                  'National Scenic Trails', 'National Seashores',\
-                  'Other Designations'")
+        help = "Set of parks for which to display locations. If not \
+                specified, all park sites will be mapped.\
+                Possible values are: 'International Historic Sites',\
+                'National Battlefields', 'National Battlefield Parks',\
+                'National Battlefield Sites', 'National Military Parks',\
+                'National Historical Parks', 'National Historic Sites',\
+                'National Lakeshores', 'National Memorials',\
+                'National Monuments', 'National Parks', 'National Parkways',\
+                'National Preserves', 'National Reserves',\
+                'National Recreation Areas', 'National Rivers',\
+                'National Wild and Scenic Rivers and Riverways',\
+                'National Scenic Trails', 'National Seashores',\
+                'Other Designations'")
     args = parser.parse_args()
 
     # Filter the dataframe based on designation and remind user which
@@ -114,7 +116,7 @@ def get_parks_df(warning=['None']):
     if args.designation:
         df_park = df[df.designation == args.designation]
         print("\nCreating visualizations for the park designation, {}.\n"
-              .format(args.designation))
+             .format(args.designation))
         designation = args.designation
     else:
         df_park = df
@@ -140,7 +142,19 @@ def get_parks_df(warning=['None']):
             print("Park sites not included in NPS Acreage report, so no park "
                   "size available. These park sites will not be added to the " "maps or plots:")
             print(*missing_size, sep=', ')
-            print("** Total parks missing size: {}".format(len(missing_size)))
+            print("** Total parks missing size data: {}"
+                 .format(len(missing_size)))
+
+    # Check for missing visitor data.
+    if 'visitor' in warning:
+        missing_visitor = df_park[df_park[2018].isnull()].park_name
+        print("\n** Warning **")
+        print("Park sites not included in the NPS Visitor Use Statistics "
+              "report, so no park visit data available. These park sites will "
+              "not be added to the map or plots:")
+        print(*missing_visitor, sep=', ')
+        print("** Total parks missing visit data: {}"
+             .format(len(missing_visitor)))
 
     print("")
 
