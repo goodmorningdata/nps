@@ -22,8 +22,8 @@ Dependencies
    nps_parks_master_df.xlsx.
 '''
 
+from nps_shared import *
 import pandas as pd
-import argparse
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -45,7 +45,7 @@ def plot_parks_per_decade(df, designation):
     None
     '''
 
-    # Create dataframe of count of parks established each decade.
+    # Create dataframe of count of parks established per decade.
     df['decade'] = df.entry_date.dt.year//10*10
     decade_count = df.decade.value_counts()
 
@@ -80,6 +80,7 @@ def plot_parks_per_year(df, designation):
     None
     '''
 
+    # Create dataframe of count of parks established per year.
     df['year'] = df.entry_date.dt.year
     parks_per_year = df.year.value_counts().sort_index()
     year_count = (pd.Series(0, index=range(1870, 2019))
@@ -123,6 +124,9 @@ def plot_parks_per_president(df, designation):
     '''
 
     if designation in ["National Monuments", "National Parks", "All Parks"]:
+        title = "Parks established by president ({})".format(designation)
+        filename = ('parks_per_president_' + designation.lower()
+                    .replace(' ','_') + '.png')
 
         fig, ax = plt.subplots()
 
@@ -145,15 +149,12 @@ def plot_parks_per_president(df, designation):
                           .sort_values(by=['president_end_date']))
             plt.barh(pres_count.president, pres_count.park_name)
 
-        title = "Parks established by president ({})".format(designation)
-        filename = ('parks_per_president_' + designation.lower()
-                    .replace(' ','_') + '.png')
-
         plt.title(title)
         plt.xticks(fontsize=9)
         plt.tight_layout()
         plt.show()
 
+        # Save plot to file.
         fig.savefig('_output/' + filename)
 
     else:
@@ -163,7 +164,7 @@ def plot_parks_per_president(df, designation):
               "not be created for the {} designation\n".format(designation))
 
 def main():
-    df_park, designation = nps.get_parks_df(warning=['location'])
+    df_park, designation = get_parks_df()
 
     # Plot #1 - Number of parks established each decade.
     plot_parks_per_decade(df_park, designation)

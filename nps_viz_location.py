@@ -24,7 +24,7 @@ Dependencies
    nps_parks_master_df.xlsx.
 '''
 
-import nps_shared as nps
+from nps_shared import *
 import pandas as pd
 import folium
 import operator
@@ -145,28 +145,34 @@ def plot_parks_per_state(df, designation):
     state_list = reduce(operator.add, state_list)
     parks_per_state = (pd.DataFrame
         .from_dict(Counter(state_list), orient='index')
-        .reset_index()
-    )
+        .reset_index())
     parks_per_state = (parks_per_state
-        .rename(columns={'index':'state', 0:'park_count'})
-        .sort_values(by='park_count', ascending=False)
-    )
+        .rename(columns={'index':'state', 0:'park_count'}))
+    parks_per_state['state_name'] = (
+        parks_per_state.state.replace(us_state_abbrev))
+    parks_per_state.sort_values(by='state_name', ascending=False, inplace=True)
 
     # Horizontal bar plot of number of parks in each state.
+    title = "Number of parks per state ({})".format(designation)
+    filename = ('parks_per_state_' + designation.lower()
+                    .replace(' ','_') + '.png')
+
     fig, ax = plt.subplots(figsize=(8,6))
-    plt.barh(parks_per_state.state, parks_per_state.park_count, alpha=0.8)
+    plt.barh(parks_per_state.state_name, parks_per_state.park_count, alpha=0.8)
     ax.set_title("Number of Parks per state ({})".format(designation))
-    plt.yticks(fontsize=7)
+    plt.yticks(fontsize=8)
     plt.tight_layout()
     plt.show()
 
-def main():
-    df_park, designation = nps.get_parks_df(warning=['location'])
+    # Save plot to file.
+    fig.savefig('_output/' + filename)
 
-    # Map #1 - Plot park locations.
+def main():
+    df_park, designation = get_parks_df(warning=['location'])
+
+    # Map #1 - Plot park locations and save map to html file.
     park_map = create_map()
     park_map = add_park_locations_to_map(park_map, df_park)
-    # Save map to html file.
     filename = ('_output/nps_parks_map_location_'
                + designation.lower().replace(' ','_') + '.html')
     park_map.save(filename)

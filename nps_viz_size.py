@@ -25,8 +25,8 @@ Dependencies
    nps_parks_master_df.xlsx.
 '''
 
+from nps_shared import *
 import math
-import argparse
 import pandas as pd
 import folium
 
@@ -79,8 +79,9 @@ def add_park_size_circles_to_map(map, df):
       Folium map with circle area markers added.
     '''
 
-    for _, row in df[~df.lat.isnull() or
-                     ~df.gross_area_acres.isnull()].iterrows():
+    for _, row in (df[~df.lat.isnull()]
+        .sort_values(by='designation', ascending=False).iterrows()):
+
         tooltip = (row.park_name.replace("'", r"\'")
                    + ', {:,.0f}'.format(row.gross_area_square_miles)
                    + ' square miles')
@@ -134,7 +135,7 @@ def output_size_data_to_tables(df, designation):
                       float_format=lambda x: '{:,.2f}'.format(x))
 
 def main():
-    df_park, designation = nps.get_parks_df(warning=['location', 'size'])
+    df_park, designation = get_parks_df(warning=['location', 'size'])
 
     # df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
     #
@@ -194,12 +195,16 @@ def main():
     #
     # print("")
 
+    # Remove parks missing size data from the dataframe.
+    df_park = df_park[~df_park.gross_area_acres.isnull()]
+
+    # Map #1 - Plot park locations with size circle and save map to html file.
     park_map = create_map()
     park_map = add_park_size_circles_to_map(park_map, df_park)
-    filename = ('nps_parks_map_size_'
+    filename = ('_output/nps_parks_map_size_'
                 + designation.lower().replace(' ','_')
                 + '.html')
-    park_map.save('_output/' + filename)
+    park_map.save(filename)
 
     # Save park size data as an Excel spreadsheet and an html table.
     output_size_data_to_tables(df_park, designation)

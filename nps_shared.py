@@ -4,9 +4,70 @@ import seaborn as sns
 
 # Use Seaborn formatting for plots and set color palette.
 sns.set()
-sns.set_palette('Paired')
+#sns.set_palette('Paired')
+sns.set_palette('Dark2')
 
-def get_parks_df(warning=None):
+us_state_abbrev = {
+    'AL': 'Alabama',
+    'AK': 'Alaska',
+    'AZ': 'Arizona',
+    'AR': 'Arkansas',
+    'CA': 'California',
+    'CO': 'Colorado',
+    'CT': 'Connecticut',
+    'DE': 'Delaware',
+    'DC': 'District of Columbia',
+    'FL': 'Florida',
+    'GA': 'Georgia',
+    'HI': 'Hawaii',
+    'ID': 'Idaho',
+    'IL': 'Illinois',
+    'IN': 'Indiana',
+    'IA': 'Iowa',
+    'KS': 'Kansas',
+    'KY': 'Kentucky',
+    'LA': 'Louisiana',
+    'ME': 'Maine',
+    'MD': 'Maryland',
+    'MA': 'Massachusetts',
+    'MI': 'Michigan',
+    'MN': 'Minnesota',
+    'MS': 'Mississippi',
+    'MO': 'Missouri',
+    'MT': 'Montana',
+    'NE': 'Nebraska',
+    'NV': 'Nevada',
+    'NH': 'New Hampshire',
+    'NJ': 'New Jersey',
+    'NM': 'New Mexico',
+    'NY': 'New York',
+    'NC': 'North Carolina',
+    'ND': 'North Dakota',
+    'OH': 'Ohio',
+    'OK': 'Oklahoma',
+    'OR': 'Oregon',
+    'PA': 'Pennsylvania',
+    'RI': 'Rhode Island',
+    'SC': 'South Carolina',
+    'SD': 'South Dakota',
+    'TN': 'Tennessee',
+    'TX': 'Texas',
+    'UT': 'Utah',
+    'VT': 'Vermont',
+    'VA': 'Virginia',
+    'WA': 'Washington',
+    'WV': 'West Virginia',
+    'WI': 'Wisconsin',
+    'WY': 'Wyoming',
+    'AS': 'American Samoa',
+    'GU': 'Guam',
+    'MP': 'Northern Mariana Islands',
+    'PW': 'Palau',
+    'PR': 'Puerto Rico',
+    'VI': 'U.S. Virgin Islands'
+}
+
+def get_parks_df(warning=['None']):
     '''
     This function is used by all the visualization scripts to read in
     the master dataframe, read the command line designation parameter,
@@ -66,23 +127,20 @@ def get_parks_df(warning=None):
         if missing_location.size:
             print("** Warning ** ")
             print("Park sites with missing lat/long from API, so no location "
-                  "available. These park sites will not be added to any "
-                  "map visualizations:")
+                  "available. These park sites will not be added to maps:")
             print(*missing_location, sep=', ')
             print("** Total parks missing location: {}"
                  .format(len(df_park[df_park.lat.isnull()].park_name)))
 
     # Check for missing park size data.
     if 'size' in warning:
-        missing_loc = df_park[df_park.lat.isnull()].park_name
-        if missing_loc.size:
-            print("\n** Warning ** ")
-            print("Park sites with missing lat/long from API, so no location "
-                  "available. These park sites will not be added to the map:")
-            print(*missing_loc, sep=', ')
-            print("** Total parks missing location: {}"
-                 .format(len(missing_loc)))
-            df_park = df_park[~df_park.lat.isnull()]
+        missing_size = df_park[df_park.gross_area_acres.isnull()].park_name
+        if missing_size.size:
+            print("\n** Warning **")
+            print("Park sites not included in NPS Acreage report, so no park "
+                  "size available. These park sites will not be added to the " "maps or plots:")
+            print(*missing_size, sep=', ')
+            print("** Total parks missing size: {}".format(len(missing_size)))
 
     print("")
 
