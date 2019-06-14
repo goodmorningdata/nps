@@ -155,7 +155,7 @@ def plot_parks_per_state(df, designation):
     # Horizontal bar plot of number of parks in each state.
     title = "Number of parks per state ({})".format(designation)
     filename = ('parks_per_state_' + designation.lower()
-                    .replace(' ','_') + '.png')
+               .replace(' ','_') + '.png')
 
     fig, ax = plt.subplots(figsize=(8,6))
     plt.barh(parks_per_state.state_name, parks_per_state.park_count, alpha=0.8)

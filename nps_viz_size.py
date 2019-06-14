@@ -99,7 +99,7 @@ def add_park_size_circles_to_map(map, df):
 
 def plot_park_size_histogram(df, designation):
     '''
-    This function blah...
+    Generate a park size histogram.
 
     Parameters
     ----------
@@ -115,23 +115,25 @@ def plot_park_size_histogram(df, designation):
     '''
 
     x_list = (df.gross_area_acres.values/1e6).tolist()
+
+    title = "Park size in acres in 2018 ({})".format(designation)
+    filename = ('park_size_histogram_' + designation.lower()
+               .replace(' ','_') + '.png')
+
     fig, ax = plt.subplots()
-    #ax = sns.distplot(x_list, bins=12, rug=False, kde=False)
     ax = sns.distplot(x_list, kde=False)
     ax.set_xlabel("Millions of acres")
     ax.set_ylabel("Number of parks")
-    ax.set_title("Park size in acres in 2018 ({})".format(designation))
+    ax.set_title(title)
     plt.show()
 
     # Save plot to file.
-    filename = ('park_size_histogram_'
-                + designation.lower().replace(' ','_')
-                + '.png')
     fig.savefig('_output/' + filename)
 
 def plot_avg_size_vs_designation(df, designation):
     '''
-    This function blah...
+    Calculate the average park size within each designation and plot
+    as a bar chart.
 
     Parameters
     ----------
@@ -149,20 +151,24 @@ def plot_avg_size_vs_designation(df, designation):
     if designation == "All Parks":
         df = (df[['designation', 'gross_area_acres']]
              .groupby(by='designation').mean())
+        df = df.sort_values(by='designation')
+
         # Horizontal bar plot of number of parks in each state.
         title = "Average park size by designation ({})".format(designation)
         filename = ('avg_size_vs_designation_' + designation.lower()
                    .replace(' ','_') + '.png')
 
         fig, ax = plt.subplots(figsize=(8,6))
-        plt.barh(df.designation, df.gross_area_acres, alpha=0.8)
+        plt.barh(df.index, df.gross_area_acres/1e6, alpha=0.8)
         ax.set_title(title)
         plt.yticks(fontsize=8)
+        plt.xlabel("Millions of acres")
         plt.tight_layout()
         plt.show()
 
         # Save plot to file.
         fig.savefig('_output/' + filename)
+
     else:
         print("** Warning ** ")
         print("Average park size vs. designation plot only makes sense for "
