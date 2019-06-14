@@ -129,6 +129,47 @@ def plot_park_size_histogram(df, designation):
                 + '.png')
     fig.savefig('_output/' + filename)
 
+def plot_avg_size_vs_designation(df, designation):
+    '''
+    This function blah...
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data to export.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
+
+    if designation == "All Parks":
+        df = (df[['designation', 'gross_area_acres']]
+             .groupby(by='designation').mean())
+        # Horizontal bar plot of number of parks in each state.
+        title = "Average park size by designation ({})".format(designation)
+        filename = ('avg_size_vs_designation_' + designation.lower()
+                   .replace(' ','_') + '.png')
+
+        fig, ax = plt.subplots(figsize=(8,6))
+        plt.barh(df.designation, df.gross_area_acres, alpha=0.8)
+        ax.set_title(title)
+        plt.yticks(fontsize=8)
+        plt.tight_layout()
+        plt.show()
+
+        # Save plot to file.
+        fig.savefig('_output/' + filename)
+    else:
+        print("** Warning ** ")
+        print("Average park size vs. designation plot only makes sense for "
+              "all parks. You entered designation = {}. If you would like to "
+              "see the average park size vs. designation plot, please run the "
+              "script again with no designation command line parameter."
+              "Ex: 'python3 nps_viz_size.py'".format(designation))
 
 def output_size_data_to_tables(df, designation):
     '''
@@ -184,6 +225,9 @@ def main():
 
     # Plot #1 - Histogram - park size
     plot_park_size_histogram(df_park, designation)
+
+    # Plot #2 - Average designation park size bar plot.
+    plot_avg_size_vs_designation(df_park, designation)
 
     # Save park size data as an Excel spreadsheet and an html table.
     output_size_data_to_tables(df_park, designation)
