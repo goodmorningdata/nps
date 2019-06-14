@@ -176,6 +176,7 @@ def plot_avg_size_vs_designation(df, designation):
               "see the average park size vs. designation plot, please run the "
               "script again with no designation command line parameter."
               "Ex: 'python3 nps_viz_size.py'".format(designation))
+        print("****\n")
 
 def output_size_data_to_tables(df, designation):
     '''
