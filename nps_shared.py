@@ -115,19 +115,19 @@ def get_parks_df(warning=['None']):
     # park designations will be in the visualizations.
     if args.designation:
         df_park = df[df.designation == args.designation]
-        print("\nCreating visualizations for the park designation, {}.\n"
+        print("\nCreating visualizations for the park designation, {}."
              .format(args.designation))
         designation = args.designation
     else:
         df_park = df
-        print("\nCreating visualizations for all NPS sites.\n")
+        print("\nCreating visualizations for all NPS sites.")
         designation = "All Parks"
 
     # Check for missing location data.
     if 'location' in warning:
         missing_location = df_park[df_park.lat.isnull()].park_name
         if missing_location.size:
-            print("** Warning ** ")
+            print("\n** Warning ** ")
             print("Park sites with missing lat/long from API, so no location "
                   "available. These park sites will not be added to maps:")
             print(*missing_location, sep=', ')
@@ -148,13 +148,25 @@ def get_parks_df(warning=['None']):
     # Check for missing visitor data.
     if 'visitor' in warning:
         missing_visitor = df_park[df_park[2018].isnull()].park_name
-        print("\n** Warning **")
-        print("Park sites not included in the NPS Visitor Use Statistics "
-              "report, so no park visit data available. These park sites will "
-              "not be added to the map or plots:")
-        print(*missing_visitor, sep=', ')
-        print("** Total parks missing visit data: {}"
-             .format(len(missing_visitor)))
+        if missing_visitor.size:
+            print("\n** Warning **")
+            print("Park sites not included in the NPS Visitor Use Statistics "
+                  "report, so no park visit data available. These park sites "
+                  "will not be added to the map or plots:")
+            print(*missing_visitor, sep=', ')
+            print("** Total parks missing visit data: {}"
+                 .format(len(missing_visitor)))
+
+    # Check for missing state.
+    if 'state' in warning:
+        missing_state = df_park[df_park.states.isnull()].park_name
+        if missing_state.size:
+            print("\n** Warning ** ")
+            print("Park sites with missing state from API. These park sites "
+                  "will not be counted in the chloropleth maps.")
+            print(*missing_state, sep=', ')
+            print("Total parks missing state: {}"
+                 .format(len(df_park[df_park.states.isnull()].park_name)))
 
     print("")
 

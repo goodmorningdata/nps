@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 from functools import reduce
 from collections import Counter
 
-def create_location_map(map, df):
+def create_location_map(df, designation):
     '''
     This function adds all locations in the dataframe to the map. Icon
     type and color is dependent on park set assigned to each site.
@@ -157,7 +157,7 @@ def main():
     df_park, designation = get_parks_df(warning=['location'])
 
     # Map #1 - Plot park locations and save map to html file.
-    create_location_map(park_map, df_park, designation)
+    create_location_map(df_park, designation)
 
     # Plot #1 - Parks per state bar chart.
     plot_parks_per_state(df_park, designation)

@@ -17,7 +17,7 @@ Dependencies
    nps_parks_master_df.xlsx.
 '''
 
-import argparse
+from nps_shared import *
 import pandas as pd
 import folium
 import operator
@@ -129,64 +129,21 @@ def create_state_count_choropleth(df, designation):
     # Add color scale legend.
     map.add_child(color_scale)
 
+    # Save choropleth to file.
+    filename = ('nps_state_count_choropleth_'
+               + designation.lower().replace(' ','_') + '.html')
+    map.save('_output/' + filename)
+
     return map
 
 def main():
-    df = pd.read_excel('nps_parks_master_df.xlsx', header=0)
+    df_park, designation = get_parks_df(warning=['state'])
 
-    # The user can specify the set of parks to map using the command
-    # line parameter, 'designation'. If no parameter specified, all
-    # park sites are added to the map.
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--designation', type=str,
-           help = "Set of parks for which to display locations. If not \
-                  specified, all park sites will be mapped.\
-                  Possible values are: 'International Historic Sites',\
-                  'National Battlefields', 'National Battlefield Parks',\
-                  'National Battlefield Sites', 'National Military Parks',\
-                  'National Historical Parks', 'National Historic Sites',\
-                  'National Lakeshores', 'National Memorials',\
-                  'National Monuments', 'National Parks', 'National Parkways',\
-                  'National Preserves', 'National Reserves',\
-                  'National Recreation Areas', 'National Rivers',\
-                  'National Wild and Scenic Rivers and Riverways',\
-                  'National Scenic Trails', 'National Seashores',\
-                  'Other Designations'")
-    args = parser.parse_args()
-
-    # Filter the dataframe based on designation and remind user which
-    # park designations will be in the visualizations.
-    if args.designation:
-        df_park = df[df.designation == args.designation]
-        print("\nCreating visualizations for the park designation, {}."
-              .format(args.designation))
-        designation = args.designation
-    else:
-        df_park = df
-        print("\nCreating visualizations for all NPS sites.")
-        designation = "All Parks"
-
-    # Check for parks missing state and print warning.
-    missing_state = df_park[df_park.states.isnull()].park_name
-    if missing_state.size:
-        print("** Warning ** ")
-        print("Park sites with missing state from API. These park sites will "
-              "not be counted in the chloropleth maps.")
-        print(*missing_state, sep=', ')
-        print("Total parks missing state: {}"
-              .format(len(df_park[df_park.states.isnull()].park_name)))
+    # Parks not missing state.
     df_park_states = df_park[~df_park.states.isnull()]
-
-    print("")
 
     # Map #1 - Create the state park count choropleth and save to a file.
     state_map = create_state_count_choropleth(df_park_states, designation)
-
-    # Save choropleth to file.
-    filename = ('nps_state_count_choropleth_'
-                + designation.lower().replace(' ','_')
-                + '.html')
-    state_map.save('_output/' + filename)
 
 if __name__ == "__main__":
     main()
