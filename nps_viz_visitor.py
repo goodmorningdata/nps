@@ -154,31 +154,41 @@ def plot_total_estimated_park_visits_vs_year(df, designation):
     # Subset the dataframe and use only years from "start_year"
     # forward. Sum park visits for each year over all parks in the
     # dataframe.
-    start_year = 2010
-    start_col = df.columns.tolist().index(start_year)
-    df_tot = df.iloc[:, start_col:].sum()
+    start_years = [1904, 1950, 1980, 2010]
 
     # Create a linear regression classifier and fit it to the park
     # visit total data back to the value of start_year. Use the
     # classifier to predict future visit totals.
-    regressor = LinearRegression()
-    X = pd.Series(df_tot.index.values).to_frame()
-    y = pd.Series(df_tot.values)
-    regressor.fit(X, y)
-    X_estimate = pd.Series(range(start_year, 2041)).to_frame()
+    fig = plt.figure()
+    for i, year in enumerate(start_years):
+        start_col = df.columns.tolist().index(year)
+        df_tot = df.iloc[:, start_col:].sum()
+        regressor = LinearRegression()
+        X = pd.Series(df_tot.index.values).to_frame()
+        y = pd.Series(df_tot.values)
+        regressor.fit(X, y)
+        X_estimate = pd.Series(range(year, 2041)).to_frame()
 
-    # Plot both the actual visit data as a scatter plot and the linear
-    # regression line.
-    fig, ax = plt.subplots()
-    ax.scatter(df_tot.index, df_tot.values/1e6)
-    plt.plot(X_estimate, regressor.predict(X_estimate)/1e6, color='k')
-    ax.xaxis.set_major_locator(ticker.MultipleLocator(5))
-    plt.xticks(rotation=90)
-    plt.ylabel("Millions of Visits")
-    plt.suptitle("Total park visits, future estimate ({})"
-                .format(designation), fontsize=12)
-    plt.title("+ ~{:02.1f} million visitors per year"
-             .format(regressor.coef_[0]/1e6), fontsize=10)
+        # Plot both the actual visit data as a scatter plot and the
+        # linear regression line.
+        #fig, ax = plt.subplots()
+        ax = fig.add_subplot(2,2,i+1)
+        ax.scatter(df_tot.index, df_tot.values/1e6, s=8)
+        ax.plot(X_estimate, regressor.predict(X_estimate)/1e6, color='k')
+        #ax.xaxis.set_major_locator(ticker.MultipleLocator(5))
+        #plt.xticks(rotation=90)
+        #plt.ylabel("Millions of Visits")
+        #plt.suptitle("Total park visits, future estimate ({})"
+        #        .format(designation), fontsize=12)
+        ax.set_title("+ ~{:02.1f} million visitors per year ({})"
+            .format(regressor.coef_[0]/1e6, year), fontsize=10)
+        #plt.title("+ ~{:02.1f} million visitors per year ({})"
+        #    .format(regressor.coef_[0]/1e6, year), fontsize=10)
+        #plt.yticks(fontsize=8)
+        #plt.axis([1900, 2040, 0, 500])
+        ax.set_xlim(1900, 2040)
+        ax.set_ylim(0,500)
+    plt.tight_layout()
     plt.show()
 
     # Save plot to file.
@@ -279,7 +289,8 @@ def plot_park_visits_histogram(df, designation):
     x_list = (df[2018].values/1e6).tolist()
 
     fig, ax = plt.subplots()
-    ax = sns.distplot(x_list, bins=12, rug=False, kde=False)
+    #ax = sns.distplot(x_list, bins=12, rug=False, kde=False)
+    ax = plt.hist(x_list, bins=12)
     ax.set_xlabel("Millions of visits")
     ax.set_ylabel("Number of parks")
     ax.set_title("Number of park visits in 2018 ({})".format(designation))
@@ -323,8 +334,13 @@ def main():
     df_park, designation = get_parks_df(warning=['location', 'visitor'])
 
     # Parks with visitors recorded in 2018.
-    df_2018 = (df_park[~df_park[2018].isnull()]
-              .sort_values(by=[2018], ascending=False))
+    # df_2018 = (df_park[~df_park[2018].isnull()]
+    #           .sort_values(by=[2018], ascending=False))
+    df_2018 = df_park[~df_park[2018].isnull()]
+    df_2018 = df_2018[df_2018[2018] > 0.0]
+    df_2018 = df_2018.sort_values(by=[2018], ascending=False)
+
+    print(df_2018.describe())
 
     # Map #1 - Plot park locations as a circle with size corresponding
     # to the number of visits in 2018.
@@ -338,8 +354,8 @@ def main():
 
     # Plot #3 - Individual park visits vs. year for a set of parks.
     plot_title = "Park visits by year, highest 10 ({})".format(designation)
-    plot_park_visits_vs_year(df_2018.iloc[0:10,:].copy(),
-                            designation, title = plot_title)
+    plot_park_visits_vs_year(df_2018.iloc[0:10,:].copy(), designation,
+        title = plot_title)
 
     plot_title = "Park visits by year, lowest 10 ({})".format(designation)
     plot_park_visits_vs_year(df_2018.iloc[-10:,:].copy(), designation,
