@@ -55,9 +55,9 @@ def plot_parks_per_decade(df, designation):
     plt.bar(decade_count.index, decade_count.values, alpha=0.8, width=8)
     plt.title("Number of parks established each decade ({})"
              .format(designation))
-    plt.ylabel('Number of parks established', fontsize=12)
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(fontsize=9, rotation=90)
+    plt.ylabel('Number of parks established', fontsize=12)
     plt.yticks(fontsize=9)
     plt.tight_layout()
     plt.show()
@@ -99,11 +99,9 @@ def plot_parks_per_year(df, designation):
     #sns.barplot(year_count.index, year_count.year, alpha=0.8, ax=ax)
     plt.bar(year_count.index, year_count.year, alpha=0.8, width=1)
     plt.title("Number of Parks established each year ({})".format(designation))
-    plt.ylabel('Number of parks', fontsize=12)
-    #ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
-    #ax.xaxis.set_major_formatter(ticker.ScalarFormatter(useOffset=-1870))
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90, fontsize=9)
+    plt.ylabel('Number of parks', fontsize=12)
     plt.yticks(fontsize=9)
     plt.tight_layout()
     plt.show()
@@ -135,7 +133,7 @@ def plot_parks_per_president(df, designation):
     if designation in ["National Monuments", "National Parks", "All Parks"]:
 
         # Create bar plot of parks established per president.
-        fig, ax = plt.subplots()
+        fig = plt.figure()
 
         # If designation is National Monument, use president in office
         # when the monument was established.
@@ -210,7 +208,7 @@ def plot_parks_per_designation(df, designation):
             {'National Wild and Scenic Rivers and Riverways':
              'Natl Wild & Scenic Rvrs and Rvrways'}, regex=True))
 
-        fig, ax = plt.subplots()
+        fig = plt.figure()
         plt.barh(des_count.designation, des_count.park_name)
         plt.title("Parks per designation ({})".format(designation))
         plt.xticks(fontsize=9)
@@ -244,6 +242,6 @@ def main():
 
     # Plot #4 - Number of parks per designation.
     plot_parks_per_designation(df_park, designation)
-
+#
 if __name__ == "__main__":
     main()
