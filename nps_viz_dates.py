@@ -51,7 +51,6 @@ def plot_parks_per_decade(df, designation):
 
     # Create bar plot of parks established per decade.
     fig, ax = plt.subplots()
-    #sns.barplot(decade_count.index, decade_count.values, alpha=0.8, ax=ax)
     plt.bar(decade_count.index, decade_count.values, alpha=0.8, width=8)
     plt.title("Number of parks established each decade ({})"
              .format(designation))
@@ -96,7 +95,6 @@ def plot_parks_per_year(df, designation):
 
     # Create bar plot of parks established per year.
     fig, ax = plt.subplots()
-    #sns.barplot(year_count.index, year_count.year, alpha=0.8, ax=ax)
     plt.bar(year_count.index, year_count.year, alpha=0.8, width=1)
     plt.title("Number of Parks established each year ({})".format(designation))
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))

@@ -104,12 +104,14 @@ def plot_park_size_histogram(df, designation):
     None
     '''
 
-    # Create park size histogram.
+    # List of park acreage in millions of acres.
     x_list = (df.gross_area_acres.values/1e6).tolist()
-    fig, ax = plt.subplots()
-    ax = sns.distplot(x_list, kde=False)
-    ax.set_xlabel("Millions of acres")
-    ax.set_ylabel("Number of parks")
+
+    # Create park size histogram.
+    fig = plt.figure()
+    plt.hist(x_list, bins=40)
+    plt.xlabel("Millions of acres")
+    plt.ylabel("Number of parks")
     plt.title("Park size in acres in 2018 ({})".format(designation))
     plt.show()
 
@@ -142,18 +144,18 @@ def plot_avg_size_vs_designation(df, designation):
         df = df.sort_values(by='designation')
 
         # Create horizontal bar plot of number of parks in each state.
-        fig, ax = plt.subplots(figsize=(8,6))
+        fig = plt.figure(figsize=(8,6))
         plt.barh(df.index, df.gross_area_acres/1e6, alpha=0.8)
         plt.title("Average park size by designation ({})".format(designation))
-        plt.yticks(fontsize=8)
         plt.xlabel("Millions of acres")
+        plt.yticks(fontsize=8)
         plt.tight_layout()
         plt.show()
 
         # Save plot to file.
         filename = ('_output/avg_size_vs_designation_' + designation.lower()
                    .replace(' ','_') + '.png')
-        fig.savefig('filename)
+        fig.savefig(filename)
 
     else:
         print("** Warning ** ")
@@ -209,7 +211,7 @@ def main():
     df_park = df_park[~df_park.gross_area_acres.isnull()]
 
     # Map #1 - Plot park locations with size circle and save map to html file.
-    create_size_map(park_map, df_park, designation)
+    create_size_map(df_park, designation)
 
     # Plot #1 - Histogram - park size
     plot_park_size_histogram(df_park, designation)
