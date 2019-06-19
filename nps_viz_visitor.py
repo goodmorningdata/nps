@@ -16,9 +16,10 @@ The following visualizations are created:
                     nps_parks_sorted_by_visits_{designation}.html.
 3) Plots including:
    Plot #1 - Total visits for all parks vs. year.
-   Plot #2 - Estimated total visits for all parks vs. year.
-   Plot #3 - Individual park visits vs. year for a set of parks.
-   Plot #4 - Park visit histogram.
+   Plot #2 - Visit change rate, year vs. prior year.
+   Plot #3 - Estimated total visits for all parks vs. year.
+   Plot #4 - Individual park visits vs. year for a set of parks.
+   Plot #5 - Park visit histogram.
 
 Required Libraries
 ------------------
@@ -122,7 +123,7 @@ def plot_total_park_visits_vs_year(df, designation):
     ax.plot(df_tot.index, df_tot.values/1e6)
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90)
-    plt.ylabel("Millions of Visits")
+    plt.ylabel("Millions of visits")
     plt.title("Total park visits, 1904-2018 ({})".format(designation))
     plt.show()
 
@@ -130,6 +131,58 @@ def plot_total_park_visits_vs_year(df, designation):
     filename = ('_output/total_park_visits_vs_year_'
                + designation.lower().replace(' ','_') + '.png')
     fig.savefig(filename)
+
+def plot_total_park_visit_change_rate_vs_year(df, designation):
+    '''
+    Sum park visits for each year from 1904-2018 and calculate the
+    change rate of each year to the prior year as a difference in total
+    visits and as a percent. Plot each change rate vs. year. Save the
+    plot image to a .png file.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
+
+    # Sum park visits for each year over all parks in the dataframe.
+    start_col = df.columns.tolist().index(1904)
+    df_tot = df.iloc[:, start_col:].sum().to_list()
+    change_rate, change_pct = [], []
+
+    # Calculate change rate for each year compared to the prior year
+    # as a difference in total visists and as a percent.
+    for i, tot in enumerate(df_tot):
+        if i > 0:
+            change_rate.append((df_tot[i] - df_tot[i-1])/1e6)
+            change_pct.append((df_tot[i] - df_tot[i-1])/df_tot[i-1])
+
+    # Plot change rate as number of visits vs. year.
+    fig, ax = plt.subplots()
+    ax.plot(range(1905, 2019), change_rate)
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
+    plt.xticks(rotation=90)
+    plt.ylabel("Change rate (millions of visits)")
+    plt.title("Visit change rate, year to prior year, 1905-2018 ({})"
+             .format(designation))
+    plt.show()
+
+    # Plot change rate as a percent of prior year visits vs. year.
+    fig, ax = plt.subplots()
+    ax.plot(range(1905, 2019), change_pct)
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
+    plt.xticks(rotation=90)
+    plt.ylabel("Change rate percent")
+    plt.title("Visit change rate percent, year to prior year, 1905-2018 ({})"
+             .format(designation))
+    plt.show()
 
 def plot_total_estimated_park_visits_vs_year(df, designation):
     '''
@@ -251,7 +304,7 @@ def plot_park_visits_vs_year(df, designation, title=None):
     # X-axis ticks are every 10th year, displayed vertically.
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90)
-    plt.ylabel('Millions of Visits')
+    plt.ylabel('Millions of visits')
     plt.show()
 
     # Save plot to file.
@@ -334,10 +387,13 @@ def main():
     # Plot #1 - Total visits for all parks vs. year.
     plot_total_park_visits_vs_year(df_park, designation)
 
-    # Plot #2 - Estimated future visits for all parks vs. year.
+    # Plot #2 - Visit change rate, year vs. prior year.
+    plot_total_park_visit_change_rate_vs_year(df_park, designation)
+
+    # Plot #3 - Estimated future visits for all parks vs. year.
     plot_total_estimated_park_visits_vs_year(df_park, designation)
 
-    # Plot #3 - Individual park visits vs. year for a set of parks.
+    # Plot #4 - Individual park visits vs. year for a set of parks.
     plot_title = "Park visits by year, highest 10 ({})".format(designation)
     plot_park_visits_vs_year(df_2018.iloc[0:10,:].copy(), designation,
         title = plot_title)
@@ -350,7 +406,7 @@ def main():
     #plot_park_visits_vs_year(df_park[df_park['park_code'] == 'acad'],
     #                         "Acadia NP")
 
-    # Plot #4 - Histogram - 2018 visits by park
+    # Plot #5 - Histogram - 2018 visits by park
     plot_park_visits_histogram(df_2018, designation)
 
     # Save park visit data as an Excel spreadsheet and an html table.
