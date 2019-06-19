@@ -174,6 +174,11 @@ def plot_total_park_visit_change_rate_vs_year(df, designation):
              .format(designation))
     plt.show()
 
+    # Save plot to file.
+    filename = ('_output/visit_change_rate_vs_year_'
+               + designation.lower().replace(' ','_') + '.png')
+    fig.savefig(filename)
+
     # Plot change rate as a percent of prior year visits vs. year.
     fig, ax = plt.subplots()
     ax.plot(range(1905, 2019), change_pct)
@@ -183,6 +188,11 @@ def plot_total_park_visit_change_rate_vs_year(df, designation):
     plt.title("Visit change rate percent, year to prior year, 1905-2018 ({})"
              .format(designation))
     plt.show()
+
+    # Save plot to file.
+    filename = ('_output/visit_change_rate_pct_vs_year_'
+               + designation.lower().replace(' ','_') + '.png')
+    fig.savefig(filename)
 
 def plot_total_estimated_park_visits_vs_year(df, designation):
     '''
