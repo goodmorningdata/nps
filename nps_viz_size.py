@@ -83,9 +83,7 @@ def create_size_map(df, designation):
         ).add_to(map)
 
     # Save map to file.
-    filename = ('_output/nps_parks_map_size_'
-               + designation.lower().replace(' ','_') + '.html')
-    map.save(filename)
+    map.save(set_filename('size_map', designation, 'html'))
 
 def plot_park_size_histogram(df, designation):
     '''
@@ -112,13 +110,11 @@ def plot_park_size_histogram(df, designation):
     plt.hist(x_list, bins=40)
     plt.xlabel("Millions of acres")
     plt.ylabel("Number of parks")
-    plt.title("Park size in acres in 2018 ({})".format(designation))
+    plt.title(set_title("Park size in acres in 2018", designation))
     plt.show()
 
     # Save plot to file.
-    filename = ('_output/park_size_histogram_' + designation.lower()
-               .replace(' ','_') + '.png')
-    fig.savefig(filename)
+    fig.savefig(set_filename('size_histogram_', designation, 'png'))
 
 def plot_avg_size_vs_designation(df, designation):
     '''
@@ -146,16 +142,16 @@ def plot_avg_size_vs_designation(df, designation):
         # Create horizontal bar plot of number of parks in each state.
         fig = plt.figure(figsize=(8,6))
         plt.barh(df.index, df.gross_area_acres/1e6, alpha=0.8)
-        plt.title("Average park size by designation ({})".format(designation))
+        plt.title(set_title("Average park size by designation",
+                            designation))
         plt.xlabel("Millions of acres")
         plt.yticks(fontsize=8)
         plt.tight_layout()
         plt.show()
 
         # Save plot to file.
-        filename = ('_output/avg_size_vs_designation_' + designation.lower()
-                   .replace(' ','_') + '.png')
-        fig.savefig(filename)
+        fig.savefig(set_filename('size_avg_size_vs_designation',
+                                 designation, 'png'))
 
     else:
         print("** Warning ** ")
@@ -195,11 +191,10 @@ def output_size_data_to_tables(df, designation):
                    'gross_area_square_miles': 'Size (square miles)'}
     df_export = df_export.rename(columns=export_cols)
 
-    filename = ('_output/nps_parks_sorted_by_size_'
-               + designation.lower().replace(' ','_'))
+    filename = set_filename('size_parks_sorted_by_size', designation)
 
-    df_export.to_excel(filename + '.xlsx', index=False)
-    df_export.to_html(filename + '.html',
+    df_export.to_excel(filename + 'xlsx', index=False)
+    df_export.to_html(filename + 'html',
                       justify='left',
                       classes='table-park-list',
                       float_format=lambda x: '{:,.2f}'.format(x))

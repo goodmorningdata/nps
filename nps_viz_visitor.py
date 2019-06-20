@@ -92,9 +92,7 @@ def create_visitor_map(df, designation):
         ).add_to(map)
 
     # Save map to file.
-    filename = ('_output/nps_parks_map_visits_'
-               + designation.lower().replace(' ','_') + '.html')
-    map.save(filename)
+    map.save(set_filename('visit_map', designation, 'html'))
 
 def plot_total_park_visits_vs_year(df, designation):
     '''
@@ -124,13 +122,12 @@ def plot_total_park_visits_vs_year(df, designation):
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90)
     plt.ylabel("Millions of visits")
-    plt.title("Total park visits, 1904-2018 ({})".format(designation))
+    plt.title(set_title("Total park visits, 1904-2018", designation))
     plt.show()
 
     # Save plot to file.
-    filename = ('_output/total_park_visits_vs_year_'
-               + designation.lower().replace(' ','_') + '.png')
-    fig.savefig(filename)
+    fig.savefig(set_filename('visit_total_park_visits_vs_year',
+                             designation, 'png'))
 
 def plot_total_park_visit_change_rate_vs_year(df, designation):
     '''
@@ -170,29 +167,27 @@ def plot_total_park_visit_change_rate_vs_year(df, designation):
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90)
     plt.ylabel("Change rate (millions of visits)")
-    plt.title("Visit change rate, year to prior year, 1905-2018 ({})"
-             .format(designation))
+    plt.title(set_title("Visit change rate, year to prior year, 1905-2018",
+                        designation))
     plt.show()
 
     # Save plot to file.
-    filename = ('_output/visit_change_rate_vs_year_'
-               + designation.lower().replace(' ','_') + '.png')
-    fig.savefig(filename)
+    fig.savefig(set_filename('visit_change_rate_vs_year',
+                             designation, 'png'))
 
     # Plot change rate as a percent of prior year visits vs. year.
     fig, ax = plt.subplots()
     ax.plot(range(1905, 2019), change_pct)
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90)
-    plt.ylabel("Change rate percent")
-    plt.title("Visit change rate percent, year to prior year, 1905-2018 ({})"
-             .format(designation))
+    plt.ylabel("Change percent")
+    plt.title(set_title("Visit change percent, year to prior year, 1905-2018",
+                        designation))
     plt.show()
 
     # Save plot to file.
-    filename = ('_output/visit_change_rate_pct_vs_year_'
-               + designation.lower().replace(' ','_') + '.png')
-    fig.savefig(filename)
+    fig.savefig(set_filename('visit_change_pct_vs_year',
+                             designation, 'png'))
 
 def plot_total_estimated_park_visits_vs_year(df, designation):
     '''
@@ -238,8 +233,8 @@ def plot_total_estimated_park_visits_vs_year(df, designation):
         ax = fig.add_subplot(2,2,i+1)
         ax.scatter(df_tot.index, df_tot.values/1e6, s=8)
         ax.plot(X_estimate, regressor.predict(X_estimate)/1e6, color='k')
-        ax.set_title("+ ~{:02.1f} million visitors per year ({})"
-            .format(regressor.coef_[0]/1e6, year), fontsize=10)
+        title = set_title("+ ~{:02.1f} million visitors per year".format(regressor.coef_[0]/1e6), designation)
+        ax.set_title(title, fontsize=10)
         ax.set_xlim(1900, 2040)
         ax.set_ylim(0,500)
 
@@ -247,9 +242,8 @@ def plot_total_estimated_park_visits_vs_year(df, designation):
     plt.show()
 
     # Save plot to file.
-    filename = ('total_estimated_park_visits_vs_year_'
-               + designation.lower().replace(' ','_') + '.png')
-    fig.savefig('_output/' + filename)
+    fig.savefig(set_filename('visit_total_estimated_park_visits_vs_year',
+                             designation, 'png'))
 
 def plot_park_visits_vs_year(df, designation, title=None):
     '''
@@ -295,14 +289,8 @@ def plot_park_visits_vs_year(df, designation, title=None):
         ax.plot(plot_row/1e6, label=row.park_name)
 
     # Use parameter title if specified, otherwise standard title.
-    if title:
-        plt.title(title)
-        filename = (title.lower().replace(' ', '_').replace(',', '')
-                    .replace('(', '').replace(')', '') + '.png')
-    else:
-        plt.title("Park visits by year ({})".format(designation))
-        filename = ('park_visits_vs_year_' + designation.lower()
-                    .replace(' ','_') + '.png')
+    if len(title) == 0:
+        title = "Park visits vs. year"
 
     # Shrink the plot by 30% and put the legend to the right of the
     # current axis.
@@ -311,6 +299,8 @@ def plot_park_visits_vs_year(df, designation, title=None):
     ax.legend(bbox_to_anchor=(1, 0.5), loc='center left',
               fancybox=True, borderaxespad=2, fontsize=9)
 
+    plt.title(set_title(title, designation))
+
     # X-axis ticks are every 10th year, displayed vertically.
     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
     plt.xticks(rotation=90)
@@ -318,7 +308,7 @@ def plot_park_visits_vs_year(df, designation, title=None):
     plt.show()
 
     # Save plot to file.
-    fig.savefig('_output/' + filename)
+    fig.savefig(set_filename('visit_' + title, designation, 'png'))
 
 def plot_park_visits_histogram(df, designation):
     '''
@@ -344,14 +334,12 @@ def plot_park_visits_histogram(df, designation):
     ax = plt.hist(x_list, bins=12)
     plt.xlabel("Millions of visits")
     plt.ylabel("Number of parks")
-    plt.title("Number of park visits in 2018 ({})".format(designation))
+    plt.title(set_title("Number of park visits in 2018", designation))
     plt.tight_layout()
     plt.show()
 
     # Save plot to file.
-    filename = ('park_visits_histogram_' + designation.lower().replace(' ','_')
-               + '.png')
-    fig.savefig('_output/' + filename)
+    fig.savefig(set_filename('visit_histogram', designation, 'png'))
 
 def output_visit_data_to_tables(df, designation):
     '''
@@ -376,8 +364,8 @@ def output_visit_data_to_tables(df, designation):
     export_cols = {'park_name': 'Park Name', '2018': 'Visits in 2018'}
     df_export = df_export.rename(columns=export_cols)
 
-    filename = ('_output/nps_parks_sorted_by_visits_'
-               + designation.lower().replace(' ','_'))
+    filename = set_filename('visit_parks_sorted_by_visits', designation)
+
     df_export.to_excel(filename + '.xlsx', index=True)
     df_export.to_html(filename + '.html', justify='left',
         classes='table-park-list', float_format=lambda x: '{:,.2f}'.format(x))
@@ -404,13 +392,11 @@ def main():
     plot_total_estimated_park_visits_vs_year(df_park, designation)
 
     # Plot #4 - Individual park visits vs. year for a set of parks.
-    plot_title = "Park visits by year, highest 10 ({})".format(designation)
     plot_park_visits_vs_year(df_2018.iloc[0:10,:].copy(), designation,
-        title = plot_title)
+        title = "Park visits vs. year, highest 10")
 
-    plot_title = "Park visits by year, lowest 10 ({})".format(designation)
     plot_park_visits_vs_year(df_2018.iloc[-10:,:].copy(), designation,
-        title = plot_title)
+        title = "Park visits vs. year, lowest 10")
 
     # Plot park visits by year for just one park.
     #plot_park_visits_vs_year(df_park[df_park['park_code'] == 'acad'],
