@@ -106,9 +106,7 @@ def create_location_map(df, designation):
                                icon = map_icon).add_to(map)
 
     # Save map to file.
-    filename = ('_output/nps_parks_map_location_'
-               + designation.lower().replace(' ','_') + '.html')
-    map.save(filename)
+    map.save(set_filename('loc_map', designation, 'html'))
 
 def plot_parks_per_state(df, designation):
     '''
@@ -143,15 +141,13 @@ def plot_parks_per_state(df, designation):
     # Horizontal bar plot of number of parks in each state.
     fig = plt.figure(figsize=(8,6))
     plt.barh(parks_per_state.state_name, parks_per_state.park_count, alpha=0.8)
-    plt.title("Number of Parks per state ({})".format(designation))
+    plt.title(set_title("Number of parks per state", designation))
     plt.yticks(fontsize=8)
     plt.tight_layout()
     plt.show()
 
     # Save plot to file.
-    filename = ('_output/parks_per_state_' + designation.lower()
-               .replace(' ','_') + '.png')
-    fig.savefig(filename)
+    fig.savefig(set_filename('loc_parks_per_state', designation, 'png'))
 
 def main():
     df_park, designation = get_parks_df(warning=['location'])
