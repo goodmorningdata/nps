@@ -88,8 +88,8 @@ def create_state_count_choropleth(df, designation):
     state_list = df['states'].apply(lambda x: x.split(','))
     state_list = reduce(operator.add, state_list)
     parks_per_state = (pd.DataFrame
-                       .from_dict(Counter(state_list), orient='index')
-                       .reset_index())
+                      .from_dict(Counter(state_list), orient='index')
+                      .reset_index())
     parks_per_state = (parks_per_state
                       .rename(columns={'index':'state', 0:'park_count'}))
 
@@ -98,7 +98,7 @@ def create_state_count_choropleth(df, designation):
                                  vmin=parks_per_state['park_count'].min(),
                                  vmax=parks_per_state['park_count'].max())
     color_scale.caption = ("Number of parks per state ({})"
-                           .format(designation))
+                          .format(designation))
 
     # Create a dataframe from the json file using GeoPandas.
     df_geo = gpd.read_file('_reference_data/us-states.json')
