@@ -3,3 +3,4 @@ _output/*
 
 # Don't track this stuff either.
 .DS_Store
+~*
