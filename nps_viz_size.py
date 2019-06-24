@@ -193,7 +193,7 @@ def output_size_data_to_tables(df, designation):
 
     filename = set_filename('size_parks_sorted_by_size', designation)
 
-    df_export.to_excel(filename + 'xlsx', index=False)
+    df_export.to_excel(filename + 'xlsx', index=True)
     df_export.to_html(filename + 'html',
                       justify='left',
                       classes='table-park-list',
