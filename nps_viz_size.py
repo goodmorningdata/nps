@@ -207,7 +207,9 @@ def main():
     # Remove parks missing size data from the dataframe.
     df_park = df_park[~df_park.gross_area_acres.isnull()]
 
-    print(df_park[['gross_area_acres', 'gross_area_square_miles', 'gross_area_square_meters']].describe(), '\n')
+    # Print statistical info for dataframe.
+    print(df_park[['gross_area_acres', 'gross_area_square_miles',
+                   'gross_area_square_meters']].describe(), '\n')
 
     # Map #1 - Plot park locations with size circle and save map to html file.
     create_size_map(df_park, designation)
