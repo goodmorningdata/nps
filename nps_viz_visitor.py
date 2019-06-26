@@ -380,7 +380,8 @@ def main():
     df_2018 = df_2018[df_2018[2018] > 0.0]
     df_2018 = df_2018.sort_values(by=[2018], ascending=False)
 
-    print(df_2018[2018].describe(), '\n')    
+    # Print statistical info for dataframe.
+    print(df_2018[2018].describe(), '\n')
 
     # Map #1 - Plot park locations as a circle with size corresponding
     # to the number of visits in 2018.
