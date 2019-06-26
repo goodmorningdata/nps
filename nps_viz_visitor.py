@@ -23,7 +23,7 @@ The following visualizations are created:
 
 Required Libraries
 ------------------
-pandas, numpy, folium, matplotlib, seaborn, sklearn
+math, pandas, numpy, folium, matplotlib, seaborn, sklearn
 
 Dependencies
 ------------
@@ -34,6 +34,7 @@ Dependencies
 '''
 
 from nps_shared import *
+import math
 import pandas as pd
 import numpy as np
 import folium
@@ -331,7 +332,8 @@ def plot_park_visits_histogram(df, designation):
     x_list = (df[2018].values/1e6).tolist()
 
     fig, ax = plt.subplots()
-    ax = plt.hist(x_list, bins=12)
+    #ax = plt.hist(x_list, bins=12)
+    plt.hist(x_list, bins=list(range(math.ceil(max(x_list)) + 1)), alpha=0.8)
     plt.xlabel("Millions of visits")
     plt.ylabel("Number of parks")
     plt.title(set_title("Number of park visits in 2018", designation))
@@ -377,6 +379,8 @@ def main():
     df_2018 = df_park[~df_park[2018].isnull()]
     df_2018 = df_2018[df_2018[2018] > 0.0]
     df_2018 = df_2018.sort_values(by=[2018], ascending=False)
+
+    print(df_2018[2018].describe(), '\n')    
 
     # Map #1 - Plot park locations as a circle with size corresponding
     # to the number of visits in 2018.

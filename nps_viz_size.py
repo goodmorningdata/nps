@@ -110,8 +110,6 @@ def plot_park_size_histogram(df, designation):
     # Create park size histogram.
     fig = plt.figure()
     plt.hist(x_list, bins=list(range(math.ceil(max(x_list)) + 1)), alpha=0.8)
-    #plt.hist(x_list, bins=list(range(15)), alpha=0.8)
-    #plt.hist(x_list, bins=[0,1,2,3,4,5,6,7,8,9,10,11,12], alpha=0.8)
     plt.xlabel("Thousands of square miles")
     plt.ylabel("Number of parks")
     plt.title(set_title("Park size histogram 2018", designation))
