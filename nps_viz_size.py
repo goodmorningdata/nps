@@ -105,7 +105,6 @@ def plot_park_size_histogram(df, designation):
     # List of park acreage in millions of acres.
     #x_list = (df.gross_area_acres.values/1e6).tolist()
     x_list = (df.gross_area_square_miles.values/1e3).tolist()
-    print(x_list)
 
     # Create park size histogram.
     fig = plt.figure()
