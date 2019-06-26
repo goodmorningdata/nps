@@ -329,11 +329,26 @@ def plot_park_visits_histogram(df, designation):
     None
     '''
 
-    x_list = (df[2018].values/1e6).tolist()
+    # List of park visits in millions of visits.
+    #x_list = (df[2018].values/1e6).tolist()
+    x_list = (df[2018].values/1e6)
 
+    # Mean and median text box.
+    mean = df[2018].mean()
+    median = np.median(df[2018])
+    text_string = '$\mu=%.2f$\n$\mathrm{median}=%.2f$'%(mean, median)
+
+    # matplotlib.patch.Patch properties.
+    props = dict(facecolor='white', alpha=0.5)
+
+    # Create park visit histogram.
     fig, ax = plt.subplots()
-    #ax = plt.hist(x_list, bins=12)
-    plt.hist(x_list, bins=list(range(math.ceil(max(x_list)) + 1)), alpha=0.8)
+    ax.hist(x_list, bins=list(range(math.ceil(max(x_list)) + 1)), alpha=0.8)
+    ax.text(0.96, 0.95, text_string,
+            transform=ax.transAxes,
+            fontsize=10,
+            verticalalignment='top', horizontalalignment='right',
+            bbox=props)
     plt.xlabel("Millions of visits")
     plt.ylabel("Number of parks")
     plt.title(set_title("Number of park visits in 2018", designation))
@@ -363,14 +378,14 @@ def output_visit_data_to_tables(df, designation):
                 .sort_values(by=[2018], ascending=False)
                 .reset_index(drop=True))
     df_export.index += 1
-    export_cols = {'park_name': 'Park Name', '2018': 'Visits in 2018'}
+    export_cols = {'park_name': 'Park Name', 2018: 'Visits in 2018'}
     df_export = df_export.rename(columns=export_cols)
 
     filename = set_filename('visit_parks_sorted_by_visits', designation)
 
-    df_export.to_excel(filename + '.xlsx', index=True)
-    df_export.to_html(filename + '.html', justify='left',
-        classes='table-park-list', float_format=lambda x: '{:,.2f}'.format(x))
+    df_export.to_excel(filename + 'xlsx', index=True)
+    df_export.to_html(filename + 'html', justify='left',
+        classes='table-park-list', float_format=lambda x: '{:,.0f}'.format(x))
 
 def main():
     df_park, designation = get_parks_df(warning=['location', 'visitor'])

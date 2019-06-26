@@ -173,6 +173,8 @@ def get_parks_df(warning=['None']):
     return df_park, designation
 
 def set_filename(name, designation, type=''):
+    name = name.lower().replace(' ','_').replace(',','').replace('.','')
+    
     filename = ('_output/'
                + name + '_'
                + designation.lower().replace(' ','_')

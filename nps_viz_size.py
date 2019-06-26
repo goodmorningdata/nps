@@ -28,6 +28,7 @@ Dependencies
 from nps_shared import *
 import math
 import pandas as pd
+import numpy as np
 import folium
 import matplotlib.pyplot as plt
 
@@ -102,13 +103,25 @@ def plot_park_size_histogram(df, designation):
     None
     '''
 
-    # List of park acreage in millions of acres.
-    #x_list = (df.gross_area_acres.values/1e6).tolist()
-    x_list = (df.gross_area_square_miles.values/1e3).tolist()
+    # List of park acreage in thousands of square miles.
+    x_list = (df.gross_area_square_miles.values/1e3)
+
+    # Mean and median text box.
+    mean = df.gross_area_square_miles.mean()
+    median = np.median(df.gross_area_square_miles)
+    text_string = '$\mu=%.2f$\n$\mathrm{median}=%.2f$'%(mean, median)
+
+    # matplotlib.patch.Patch properties.
+    props = dict(facecolor='white', alpha=0.5)
 
     # Create park size histogram.
-    fig = plt.figure()
-    plt.hist(x_list, bins=list(range(math.ceil(max(x_list)) + 1)), alpha=0.8)
+    fig, ax = plt.subplots()
+    ax.hist(x_list, bins=list(range(math.ceil(max(x_list)) + 1)), alpha=0.8)
+    ax.text(0.96, 0.95, text_string,
+            transform=ax.transAxes,
+            fontsize=10,
+            verticalalignment='top', horizontalalignment='right',
+            bbox=props)
     plt.xlabel("Thousands of square miles")
     plt.ylabel("Number of parks")
     plt.title(set_title("Park size histogram 2018", designation))
