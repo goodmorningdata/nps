@@ -330,7 +330,6 @@ def plot_park_visits_histogram(df, designation):
     '''
 
     # List of park visits in millions of visits.
-    #x_list = (df[2018].values/1e6).tolist()
     x_list = (df[2018].values/1e6)
 
     # Mean and median text box.
