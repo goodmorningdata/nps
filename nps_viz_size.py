@@ -103,18 +103,20 @@ def plot_park_size_histogram(df, designation):
     '''
 
     # List of park acreage in millions of acres.
-    x_list = (df.gross_area_acres.values/1e6).tolist()
+    #x_list = (df.gross_area_acres.values/1e6).tolist()
+    x_list = (df.gross_area_square_miles.values/1e3).tolist()
 
     # Create park size histogram.
     fig = plt.figure()
-    plt.hist(x_list, bins=40)
-    plt.xlabel("Millions of acres")
+    plt.hist(x_list, bins=list(range(13)), alpha=0.8)
+    #plt.hist(x_list, bins=[0,1,2,3,4,5,6,7,8,9,10,11,12], alpha=0.8)
+    plt.xlabel("Thousands of square miles")
     plt.ylabel("Number of parks")
-    plt.title(set_title("Park size in acres in 2018", designation))
+    plt.title(set_title("Park size histogram 2018", designation))
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('size_histogram_', designation, 'png'))
+    fig.savefig(set_filename('size_histogram', designation, 'png'))
 
 def plot_avg_size_vs_designation(df, designation):
     '''
@@ -204,6 +206,8 @@ def main():
 
     # Remove parks missing size data from the dataframe.
     df_park = df_park[~df_park.gross_area_acres.isnull()]
+
+    print(df_park[['gross_area_acres', 'gross_area_square_miles', 'gross_area_square_meters']].describe(), '\n')
 
     # Map #1 - Plot park locations with size circle and save map to html file.
     create_size_map(df_park, designation)
