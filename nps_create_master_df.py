@@ -131,6 +131,55 @@ def read_park_sites_web(df_api):
     df['park_code'] = df.park_name.apply(
                       lambda x: lookup_park_code(x, df_api))
 
+    # Create abbreviated park name.
+    df['park_name_abbrev'] = df['park_name'].replace(
+        {"International Historic Site":"IHS",
+        "International Peace Memorial":"IPMem",
+        "National Battlefield Park":"NBP",
+        "National Battlefield Site":"NBS",
+        "National Battlefield":"NB",
+        "National Historical Park and Ecological Preserve":"NHP&EcoPres",
+        "National Historical Park and Preserve":"NHP&Pres",
+        "Ecological and Historic Preserve":"Eco&HPres",
+        "National Historic Park":"NHP",
+        "National Historical Park":"NHP",
+        "National Historic Reserve":"NHR",
+        "National Historical Reserve":"NHR",
+        "National Historic Site":"NHS",
+        "National Historic Trail":"NHT",
+        "National Lakeshore":"NL",
+        "National Monument and Preserve":"NM&Pres",
+        "National Monument & Preserve":"NM&Pres",
+        "National Monument":"NM",
+        "National Memorial":"NMem",
+        "Memorial":"Mem",
+        "National Military Park":"NMP",
+        "Parkway":"Pkwy",
+        "National Parkway":"NPkwy",
+        "National Park & Preserve":"NP&Pres",
+        "National Park":"NP",
+        "National Preserve":"NPres",
+        "National Recreation Area":"NRA",
+        "National Recreational River":"NRRvr",
+        "National River and Recreation Areas":"NRvr&RA",
+        "National River and Recreation Area":"NRvr&RA",
+        "National River":"NRvr",
+        "National Reserve":"NRes",
+        "National Seashore":"NS",
+        "National Scenic Riverway":"NSRvrway",
+        "National Scenic Riverways":"NSRvrways",
+        "National Scenic River":"NSR",
+        "National Scenic Trail":"NST",
+        "National Scenic and Recreational River":"NS&RR",
+        "Scenic and Recreational River":"S&RRvr",
+        "Wild River":"WRvr",
+        "Wild and Scenic River":"W&SRvr",
+        "National Wild & Scenic River":"NW&SRvr"
+        },
+        regex=True)
+
+    print(df['park_name_abbrev'])
+
     return df
 
 def lookup_park_code(park_name, df_lookup):
@@ -481,7 +530,8 @@ def main():
     # Merge the nps.gov NPS Unit/Park list with the NPS API dataframe.
     df_master = read_park_sites_web(df_api)
     if debug: print_debug('df_master', df_master, 'df_api', df_api, 'park_code')
-    df_master = pd.merge(df_master[['park_name', 'park_code', 'designation']],
+    df_master = pd.merge(df_master[['park_name', 'park_name_abbrev',
+                                    'park_code', 'designation']],
                          df_api[['park_code', 'states', 'lat', 'long']],
                          how='left', on='park_code')
 
