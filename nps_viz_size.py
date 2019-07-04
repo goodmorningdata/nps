@@ -103,12 +103,12 @@ def plot_park_size_histogram(df, designation):
     None
     '''
 
-    # List of park acreage in thousands of square miles.
-    x_list = (df.gross_area_square_miles.values/1e3)
+    # List of park acreage in millions of acrea.
+    x_list = (df.gross_area_acres.values)/1e6
 
     # Mean and median text box.
-    mean = df.gross_area_square_miles.mean()
-    median = np.median(df.gross_area_square_miles)
+    mean = df.gross_area_acres.mean()/1e6
+    median = np.median(df.gross_area_acres)/1e6
     text_string = '$\mu=%.2f$\n$\mathrm{median}=%.2f$'%(mean, median)
 
     # matplotlib.patch.Patch properties.
@@ -122,7 +122,7 @@ def plot_park_size_histogram(df, designation):
             fontsize=10,
             verticalalignment='top', horizontalalignment='right',
             bbox=props)
-    plt.xlabel("Thousands of square miles")
+    plt.xlabel("Millions of acres")
     plt.ylabel("Number of parks")
     plt.title(set_title("Park size histogram 2018", designation))
     plt.show()
@@ -230,7 +230,7 @@ def main():
     plot_park_size_histogram(df_park, designation)
 
     # Plot #2 - Average designation park size bar plot.
-    plot_avg_size_vs_designation(df_park, designation)
+    #plot_avg_size_vs_designation(df_park, designation)
 
     # Save park size data as an Excel spreadsheet and an html table.
     output_size_data_to_tables(df_park, designation)
