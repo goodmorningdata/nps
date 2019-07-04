@@ -269,16 +269,6 @@ def plot_park_visits_vs_year(df, designation, title=None):
     None
     '''
 
-    # Shorten the park name so that the legend will fit.
-    df.loc[:,'park_name'] = df.loc[:,'park_name'].replace(
-        {'National Park':'NP', 'Mountain':'Mtn',
-         'National Recreation Area':'NRA',
-         'Memorial Parkway':'Mem Pkwy',
-         '& Preserve':'',
-         'National Historic Site':'NHS',
-         'National Memorial':'NMem',
-         'National Battlefield Site':'NBS'}, regex=True)
-
     start_col = df.columns.tolist().index(1904)
 
     fig, ax = plt.subplots(figsize=(8,5))
@@ -287,7 +277,7 @@ def plot_park_visits_vs_year(df, designation, title=None):
     for _, row in df.iterrows():
         plot_row = row.iloc[start_col:]
         plot_row = plot_row[plot_row > 0]
-        ax.plot(plot_row/1e6, label=row.park_name)
+        ax.plot(plot_row/1e6, label=row.park_name_abbrev)
 
     # Use parameter title if specified, otherwise standard title.
     if len(title) == 0:
