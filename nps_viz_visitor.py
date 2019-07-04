@@ -323,8 +323,8 @@ def plot_park_visits_histogram(df, designation):
     x_list = (df[2018].values/1e6)
 
     # Mean and median text box.
-    mean = df[2018].mean()
-    median = np.median(df[2018])
+    mean = df[2018].mean()/1e6
+    median = np.median(df[2018])/1e6
     text_string = '$\mu=%.2f$\n$\mathrm{median}=%.2f$'%(mean, median)
 
     # matplotlib.patch.Patch properties.
