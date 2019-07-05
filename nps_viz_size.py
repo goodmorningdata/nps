@@ -70,8 +70,9 @@ def create_size_map(df, designation):
 
         # Create tooltip with park size.
         tooltip = (row.park_name.replace("'", r"\'")
-                  + ', {:,.0f}'.format(row.gross_area_square_miles)
-                  + ' square miles')
+                  + ', {:,.0f} acres'.format(row.gross_area_acres)
+                  + ' ({:,.0f}'.format(row.gross_area_square_miles)
+                  + ' square miles)')
 
         # Add marker to map.
         folium.Circle(
