@@ -196,11 +196,16 @@ def output_size_data_to_tables(df, designation):
     None
     '''
 
+    df = df.round(0)
     df_export = (df[['park_name', 'gross_area_acres',
                      'gross_area_square_miles']]
                 .sort_values(by=['gross_area_acres'], ascending=False)
                 .reset_index(drop=True))
     df_export.index += 1
+
+    df_export['gross_area_square_miles'].replace(
+        to_replace=0, value="<1", regex=True, inplace=True)
+
     export_cols = {'park_name': 'Park Name',
                    'gross_area_acres': 'Size (acres)',
                    'gross_area_square_miles': 'Size (square miles)'}
@@ -212,7 +217,7 @@ def output_size_data_to_tables(df, designation):
     df_export.to_html(filename + 'html',
                       justify='left',
                       classes='table-park-list',
-                      float_format=lambda x: '{:,.2f}'.format(x))
+                      float_format=lambda x: '{:,.0f}'.format(x))
 
 def main():
     df_park, designation = get_parks_df(warning=['location', 'size'])
