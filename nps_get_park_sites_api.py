@@ -88,6 +88,7 @@ def create_parks_df():
     park_list = []
     for i, item in enumerate(js['data']):
         park_list.append(item)
+
     df = pd.DataFrame(park_list)
 
     # Split latLong column into two columns.
