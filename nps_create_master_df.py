@@ -92,6 +92,9 @@ def read_park_sites_api():
             "Delaware National Scenic River"},
         regex=True, inplace=True)
 
+    df['region'] = df.states.apply(
+        lambda x: lookup_park_region(x))
+
     df = df.sort_values(by=['park_name'])
 
     return df[['park_code', 'park_name', 'states', 'lat', 'long']]
@@ -178,8 +181,6 @@ def read_park_sites_web(df_api):
         },
         regex=True)
 
-    print(df['park_name_abbrev'])
-
     return df
 
 def lookup_park_code(park_name, df_lookup):
@@ -253,6 +254,9 @@ def lookup_park_code(park_name, df_lookup):
     if park_name.lower().startswith("world war i "): park_code = 'xxx2'
 
     return park_code
+
+def lookup_park_region(states):
+    return 'unknown'
 
 def read_park_dates(df_api):
     '''
@@ -474,6 +478,36 @@ def read_visitor_data(df_master):
 
     return df
 
+def read_budget_data(df_master):
+    col_names = ['park_name', 'park_base_fte1', 'fy2016_total_fte2',
+                 'fy2016_finals', 'fy2017_cr_baseline',
+                 'fixed_costs_and_internal_transfers', 'program_changes',
+                 'fy2018_request']
+    filename = '_reference_data/park_and_program_summary_fy2018.xlsx'
+    df = pd.read_excel(filename, usecols='A:H', names=col_names, nrows=473)
+
+    df = df.dropna(axis=0).reset_index(drop=True)
+    df = df[df.park_name != 'ORGANIZATIONS']
+
+    # Make some park name replacements to make matching the park name
+    # to the df_api dataframe to find the park code work correctly.
+    df['park_name'].replace(
+        {"Dayton Aviation":"Dayton Aviation Heritage",
+         "Fort Sumter":"Fort Sumter and Fort Moultrie",
+         "Jefferson National Expansion Memorial":"Gateway Arch National Park",
+         " NHS":" National Historical Site",
+         " NRA":" National Recreation Area"},
+        regex=True, inplace=True
+    )
+
+    # Look up the matching park name in the master dataframe.
+    df['park_name_match'] = df.park_name.apply(
+                      lambda x: lookup_park_name(x, df_master))
+
+    df.to_excel('test_budget_data.xlsx')
+
+    return df
+
 def print_debug(df1_name, df1, df2_name, df2, join_type):
     '''
     Print some debug information.
@@ -522,7 +556,7 @@ def print_debug(df1_name, df1, df2_name, df2, join_type):
 
 def main():
     pd.set_option('display.max_rows', 1000)
-    debug = True
+    debug = False
 
     # Read the NPS API data from file into a dataframe.
     df_api = read_park_sites_api()
@@ -567,14 +601,17 @@ def main():
     )
 
     # Add the NPS Acreage report data to the master df.
-    df_acreage = read_acreage_data(df_master)
-    if debug: print_debug('df_master', df_master, 'df_acreage', df_acreage, 'park_name')
-    df_master = pd.merge(df_master, df_acreage, how='left', on='park_name')
+    # df_acreage = read_acreage_data(df_master)
+    # if debug: print_debug('df_master', df_master, 'df_acreage', df_acreage, 'park_name')
+    # df_master = pd.merge(df_master, df_acreage, how='left', on='park_name')
 
     # Add the NPS Visitor Use Statistics report data to the master df.
-    df_visitor = read_visitor_data(df_master)
-    if debug: print_debug('df_master', df_master, 'df_visitor', df_visitor, 'park_name')
-    df_master = pd.merge(df_master, df_visitor, how='left', on='park_name')
+    # df_visitor = read_visitor_data(df_master)
+    # if debug: print_debug('df_master', df_master, 'df_visitor', df_visitor, 'park_name')
+    # df_master = pd.merge(df_master, df_visitor, how='left', on='park_name')
+
+    # Add the budget data to the master df.
+    df_budget = read_budget_data(df_master)
 
     # Sort and save the master dataframe to an Excel file.
     df_master = df_master.sort_values(by=['park_name']).reset_index(drop=True)
