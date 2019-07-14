@@ -601,17 +601,19 @@ def main():
     )
 
     # Add the NPS Acreage report data to the master df.
-    # df_acreage = read_acreage_data(df_master)
-    # if debug: print_debug('df_master', df_master, 'df_acreage', df_acreage, 'park_name')
-    # df_master = pd.merge(df_master, df_acreage, how='left', on='park_name')
+    df_acreage = read_acreage_data(df_master)
+    if debug: print_debug('df_master', df_master,
+                          'df_acreage', df_acreage, 'park_name')
+    df_master = pd.merge(df_master, df_acreage, how='left', on='park_name')
 
     # Add the NPS Visitor Use Statistics report data to the master df.
-    # df_visitor = read_visitor_data(df_master)
-    # if debug: print_debug('df_master', df_master, 'df_visitor', df_visitor, 'park_name')
-    # df_master = pd.merge(df_master, df_visitor, how='left', on='park_name')
+    df_visitor = read_visitor_data(df_master)
+    if debug: print_debug('df_master', df_master,
+                          'df_visitor', df_visitor, 'park_name')
+    df_master = pd.merge(df_master, df_visitor, how='left', on='park_name')
 
     # Add the budget data to the master df.
-    df_budget = read_budget_data(df_master)
+    #df_budget = read_budget_data(df_master)
 
     # Sort and save the master dataframe to an Excel file.
     df_master = df_master.sort_values(by=['park_name']).reset_index(drop=True)

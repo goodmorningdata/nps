@@ -174,7 +174,7 @@ def get_parks_df(warning=['None']):
 
 def set_filename(name, designation, type=''):
     name = name.lower().replace(' ','_').replace(',','').replace('.','')
-    
+
     filename = ('_output/'
                + name + '_'
                + designation.lower().replace(' ','_')
