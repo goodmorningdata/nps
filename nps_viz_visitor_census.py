@@ -1,3 +1,27 @@
+'''
+This script creates a set of visualizations using the NPS visitation
+data availalable from the NPS website and census data avialable from
+census.gov.
+
+The following visualizations are created:
+1) Plots including:
+   Plot #1 -
+
+Required Libraries
+------------------
+math, pandas, numpy, folium, matplotlib, seaborn, sklearn
+
+Dependencies
+------------
+1) Run the script, nps_create_master_df.py to create the file,
+   nps_parks_master_df.xlsx.
+2) Run the script, nps_read_population_data.py to create the file,
+   us_est_1900-2018.xlsx.
+'''
+
+from nps_shared import *
+import matplotlib.pyplot as plt
+
 def read_census_data():
     '''
     Read census population data from the Excel file,
@@ -22,7 +46,7 @@ def read_census_data():
 
     return df_pop
 
-def plot_park_visits_vs_us_pop(df_visits, df_pop, park_set):
+def plot_park_visits_vs_us_pop(df_park, df_pop, designation):
     '''
     This fuction creates two plots. The first plots total park visits
     per year in one subplot, and U.S. population for the same years in
@@ -31,55 +55,62 @@ def plot_park_visits_vs_us_pop(df_visits, df_pop, park_set):
 
     Parameters
     ----------
-    df_visits : Pandas DataFrame
-      DataFrame of park visit data to plot filtered by park set
-      parameter.
+    df_park : Pandas DataFrame
+      DataFrame of park visitation data to plot.
 
     df_pop : Pandas DataFrame
-      DataFrame of U.S. population by year.
+        DataFrame of U.S. population by year.
 
-    park_set : str
-      Set of parks in the dataframe. The dataframe, df, has already
-      been filtered for this park set, but the parameter is necessary
-      for use in the plot title and output filename.
+    designation : str
+      Designation of parks in the dataframe.
 
     Returns
     -------
     None
     '''
 
-    # Sum visits for each year over all parks in the dataframe, re-index
-    # visits dataframe with numeric years, and calculate the visits
-    # per capita.
-    visit_totals = pd.DataFrame(df_visits.sum().loc['1904':'2018'],
-                                columns=['visitors'])
-    visit_totals.index = range(1904,2019)
-    visit_totals['visits_div_pop'] = (visit_totals['visitors'] /
-                                      df_pop['population'].loc[1904:2018])
+    # Sum park visits for each year over all parks in the dataframe.
+    start_col = df_park.columns.tolist().index(1904)
+    df_tot = df_park.iloc[:, start_col:].sum()
+
+    # Limit population data to 1904-2018
+    df_pop = df_pop.loc[1904:2018]
+
+    # Calculate park visits per capita
+    visits_div_pop = df_tot.values / df_pop['population']
 
     # Plot total park visits and U.S. population by year.
     fig, ax = plt.subplots(2, sharex=True)
-    ax[0].plot(visit_totals.index, visit_totals.visitors/1e6)
-    ax[0].set_title("Total park visits ({})".format(park_set))
+    ax[0].plot(df_tot.index, df_tot.values/1e6)
+    ax[0].set_title(set_title("Total park visits", designation))
     ax[0].set_ylabel("Millions of visits")
-    ax[1].plot(visit_totals.index, df_pop['population'].loc[1904:2018]/1e6)
-    ax[1].set_title("U.S. population")
+    ax[0].set_ylim(bottom=0, top=350)
+
+    ax[1].plot(df_pop.index, df_pop['population']/1e6)
+    ax[1].set_title("U.S. population" )
     ax[1].set_ylabel("Millions of people")
+    ax[1].set_ylim(bottom=0, top=350)
     plt.show()
 
     # Save plot to file.
-    fig.savefig('_output/park_visits_vs_us_pop.png')
+    fig.savefig(set_filename('census_park_visits_vs_us_pop', designation, 'png'))
 
     # Plot park visits per capita by year.
     fig, ax = plt.subplots()
-    ax.plot(visit_totals.index, visit_totals.visits_div_pop)
-    ax.set_title("Park visits per capita ({})".format(park_set))
+    ax.plot(df_tot.index, visits_div_pop)
+    plt.title(set_title("Park visits per capita", designation))
+    #ax.set_title("Park visits per capita ({})".format(designation))
     plt.show()
 
     # Save plot to file.
-    fig.savefig('_output/park_visits_per_capita.png')
+    fig.savefig(set_filename('census_park_visits_per_capita', designation, 'png'))
 
+def main():
+    df_park, designation = get_parks_df()
+    df_pop = read_census_data()
 
-        # Plot park visits in relation to the U.S. population.
-        #df_pop = read_census_data()
-        #plot_park_visits_vs_us_pop(df_park, df_pop, park_set)
+    # Plots #1 and #2 -  park visits in relation to the U.S. population.
+    plot_park_visits_vs_us_pop(df_park, df_pop, designation)
+
+if __name__ == '__main__':
+    main()
