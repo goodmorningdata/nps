@@ -1,0 +1,471 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>How many people visit the national parks? – Good Morning Data – A blog of data science</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+
+    <meta name="description" content="With the data that the NPS makes available, we can’t determine how many unique visitors that the parks get each year, but they do track the number of visits to each park. The number of visits and how that number changes over time can give us an idea of how crowded a park is and the human impact that the park needs to prepare for.
+
+" />
+    <meta property="og:description" content="With the data that the NPS makes available, we can’t determine how many unique visitors that the parks get each year, but they do track the number of visits to each park. The number of visits and how that number changes over time can give us an idea of how crowded a park is and the human impact that the park needs to prepare for.
+
+" />
+
+    <meta name="author" content="Good Morning Data" />
+
+
+    <meta property="og:title" content="How many people visit the national parks?" />
+    <meta property="twitter:title" content="How many people visit the national parks?" />
+
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Good Morning Data - A blog of data science" href="/feed.xml" />
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+
+    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="/" class="site-avatar"><img src="https://raw.githubusercontent.com/goodmorningdata/goodmorningdata.github.io/master/images/sun_logo_180x180.png" /></a>
+
+          <div class="site-info">
+            <h1 class="site-name"><a href="/">Good Morning Data</a></h1>
+            <p class="site-description">A blog of data science</p>
+          </div>
+
+          <nav>
+            <a href="/">Blog</a>
+            <a href="/about">About</a>
+          </nav>
+        </header>
+      </div>
+    </div>
+
+    <div id="main" role="main" class="container">
+      <article class="post">
+  <h1>How many people visit the national parks?</h1>
+  <h3>May 22, 2019</h3>
+
+  <div class="entry">
+    <p>With the data that the NPS makes available, we can’t determine how many unique visitors that the parks get each year, but they do track the number of visits to each park. The number of visits and how that number changes over time can give us an idea of how crowded a park is and the human impact that the park needs to prepare for.</p>
+
+<p>The map below marks the location of each national park with a circle of size relative to the number of visits to that park in 2018.</p>
+
+<p>An interactive version of the map that will tell you the park name and number of visits in 2018 when you hover over the circles is found <a href="/assets/20190522_visit_map_national_parks.html" target="_blank">here</a>.</p>
+
+<p><img src="/assets/20190522_visit_map_national_parks.png" alt="Map image" target="_blank" />
+<em><span style="font-size:10pt;">The map was created using the Python library, <a href="https://python-visualization.github.io/folium/" target="_blank">Folium</a></span></em></p>
+
+<p>The national park with the highest numbers of visits in 2018 by far is Great Smoky Mountains National Park, eclipsing the second place park, Grand Canyon, with almost twice as many visitors. The national park with the fewest number of visits is Gates of the Arctic in Alaska, with 9,591. This isn’t surprising since Gates of the Arctic doesn’t have any roads so to visit you have to fly in or hike in from the nearest highway.</p>
+
+<p>The mean number of visits in 2018 ~1.4 million while the median is ~656,000. This shows the data is skewed to the right, just like the park size data. A few of the national parks are receiving massive numbers of visitors, but the majority receive a much smaller amount.</p>
+
+<p><img src="/assets/20190522_visit_histogram_national_parks.png" alt="Histogram image" /></p>
+
+<p>You can see Great Smoky Mountains NP out there on the right of the histogram, and some of the other biggies, but over half of the national parks receive less than one million visits per year.</p>
+
+<h3 id="national-parks-in-order-of-number-of-visits">National Parks in Order of Number of Visits</h3>
+<table border="1" class="dataframe table-park-list">
+  <thead>
+    <tr style="text-align: left;">
+      <th></th>
+      <th>Park Name</th>
+      <th>Visits in 2018</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>Great Smoky Mountains National Park</td>
+      <td>11,421,200</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Grand Canyon National Park</td>
+      <td>6,380,495</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Rocky Mountain National Park</td>
+      <td>4,590,493</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Zion National Park</td>
+      <td>4,320,033</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Yellowstone National Park</td>
+      <td>4,115,000</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Yosemite National Park</td>
+      <td>4,009,436</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Acadia National Park</td>
+      <td>3,537,575</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Grand Teton National Park</td>
+      <td>3,491,151</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Olympic National Park</td>
+      <td>3,104,455</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Glacier National Park</td>
+      <td>2,965,309</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Joshua Tree National Park</td>
+      <td>2,942,382</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Bryce Canyon National Park</td>
+      <td>2,679,478</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Cuyahoga Valley National Park</td>
+      <td>2,096,053</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Gateway Arch National Park</td>
+      <td>2,016,180</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Indiana Dunes National Park</td>
+      <td>1,756,079</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Death Valley National Park</td>
+      <td>1,678,660</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Arches National Park</td>
+      <td>1,663,557</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>Mount Rainier National Park</td>
+      <td>1,518,491</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>Hot Springs National Park</td>
+      <td>1,506,887</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>Shenandoah National Park</td>
+      <td>1,264,880</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>Sequoia National Park</td>
+      <td>1,229,594</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>Capitol Reef National Park</td>
+      <td>1,227,627</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>Hawai'i Volcanoes National Park</td>
+      <td>1,116,891</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>Haleakalā National Park</td>
+      <td>1,044,084</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>Badlands National Park</td>
+      <td>1,008,942</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>Saguaro National Park</td>
+      <td>957,405</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>Theodore Roosevelt National Park</td>
+      <td>749,389</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>Canyonlands National Park</td>
+      <td>739,449</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>Crater Lake National Park</td>
+      <td>720,659</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>Kings Canyon National Park</td>
+      <td>699,023</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>Wind Cave National Park</td>
+      <td>656,397</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>Petrified Forest National Park</td>
+      <td>644,922</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>Glacier Bay National Park</td>
+      <td>597,915</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>Everglades National Park</td>
+      <td>597,124</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>Denali National Park</td>
+      <td>594,660</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>Mesa Verde National Park</td>
+      <td>563,420</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>Mammoth Cave National Park</td>
+      <td>533,206</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>Lassen Volcanic National Park</td>
+      <td>499,435</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>Redwood National Park</td>
+      <td>482,536</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>Biscayne National Park</td>
+      <td>469,253</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>Carlsbad Caverns National Park</td>
+      <td>465,912</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>Great Sand Dunes National Park</td>
+      <td>442,905</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>Big Bend National Park</td>
+      <td>440,091</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>Channel Islands National Park</td>
+      <td>366,250</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>Kenai Fjords National Park</td>
+      <td>321,596</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>Black Canyon of the Gunnison National Park</td>
+      <td>308,962</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>Voyageurs National Park</td>
+      <td>239,656</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>Pinnacles National Park</td>
+      <td>222,152</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>Guadalupe Mountains National Park</td>
+      <td>172,347</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>Great Basin National Park</td>
+      <td>153,094</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>Congaree National Park</td>
+      <td>145,929</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>Virgin Islands National Park</td>
+      <td>112,287</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>Wrangell-St. Elias National Park</td>
+      <td>79,450</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>Dry Tortugas National Park</td>
+      <td>56,810</td>
+    </tr>
+    <tr>
+      <th>55</th>
+      <td>Katmai National Park</td>
+      <td>37,818</td>
+    </tr>
+    <tr>
+      <th>56</th>
+      <td>North Cascades National Park</td>
+      <td>30,085</td>
+    </tr>
+    <tr>
+      <th>57</th>
+      <td>National Park of American Samoa</td>
+      <td>28,626</td>
+    </tr>
+    <tr>
+      <th>58</th>
+      <td>Isle Royale National Park</td>
+      <td>25,798</td>
+    </tr>
+    <tr>
+      <th>59</th>
+      <td>Kobuk Valley National Park</td>
+      <td>14,937</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>Lake Clark National Park</td>
+      <td>14,479</td>
+    </tr>
+    <tr>
+      <th>61</th>
+      <td>Gates of the Arctic National Park</td>
+      <td>9,591</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="data-sources">Data Sources</h3>
+<p>The list of 419 official park units (as of 5/1/2019) broken out by designation comes from the <a href="https://www.nps.gov/aboutus/national-park-system.htm" target="_blank">National Park System</a> page at nps.gov. Park location data, including latitude, longitude, and state(s) are from the National Park Service <a href="https://www.nps.gov/subjects/digital/nps-data-api.htm" target="_blank">API</a>. Park visit data from the report, “Annual Summary Report (1904 - Last Calendar Year)” found on the <a href="https://irma.nps.gov/Stats/reports/national" target="_blank">NPS Stats</a> website.</p>
+
+<h3 id="using-the-scripts">Using the Scripts</h3>
+<p>Instructions to run the scripts are found in the readme in the GitHub repository found <a href="https://github.com/goodmorningdata/nps" target="_blank">here</a>.</p>
+
+<hr />
+
+  </div>
+
+  <div class="date">
+    Written on May 22, 2019
+  </div>
+
+
+<div class="comments">
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+
+	    var disqus_shortname = 'https-goodmorningdata-github-io';
+
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+</article>
+
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+
+<a href="mailto:goodmorningdata@gmail.com"><i class="svg-icon email"></i></a>
+
+
+<a href="https://github.com/goodmorningdata/nps"><i class="svg-icon github"></i></a>
+<a href="https://instagram.com/goodmorningdata"><i class="svg-icon instagram"></i></a>
+
+
+
+
+
+
+
+        </footer>
+      </div>
+    </div>
+
+
+	<!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-135945180-1', 'auto');
+		ga('send', 'pageview', {
+		  'page': '/how-many-visitors-to-the-national-parks/',
+		  'title': 'How many people visit the national parks?'
+		});
+	</script>
+	<!-- End Google Analytics -->
+
+
+  </body>
+</html>
