@@ -376,6 +376,34 @@ def output_visit_data_to_tables(df, designation):
     df_export.to_html(filename + 'html', justify='left',
         classes='table-park-list', float_format=lambda x: '{:,.0f}'.format(x))
 
+def output_total_visit_data_to_tables(df, designation):
+    '''
+    This function outputs the total park visit data by year as a
+    table to both an Excel spreadsheet and an html file. The data is
+    sorted by year.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data to export.
+
+    Returns
+    -------
+    None
+    '''
+
+    start_col = df.columns.tolist().index(1904)
+    df_export = df.iloc[:, start_col:].sum()
+    df_export = df_export.to_frame()
+    df_export.columns = ['Total Visits']
+
+    filename = set_filename('visit_total_park_visits_by_year', designation)
+
+    df_export.to_excel(filename + 'xlsx', index=True,
+        index_label='Year', float_format='%.2f')
+    df_export.to_html(filename + 'html', justify='left', index=True,
+        classes='table-park-list', float_format=lambda x: '{:,.0f}'.format(x))
+
 def main():
     df_park, designation = get_parks_df(warning=['location', 'visitor'])
 
@@ -414,8 +442,11 @@ def main():
     # Plot #5 - Histogram - 2018 visits by park
     plot_park_visits_histogram(df_2018, designation)
 
-    # Save park visit data as an Excel spreadsheet and an html table.
+    # Save park visit data.
     output_visit_data_to_tables(df_2018, designation)
+
+    # Save total park visit data by year.
+    output_total_visit_data_to_tables(df_park, designation)
 
 if __name__ == '__main__':
     main()
