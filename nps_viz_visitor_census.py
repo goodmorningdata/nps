@@ -107,11 +107,30 @@ def plot_park_visits_per_capita_vs_year(df_tot, df_pop, designation):
     '''
 
     # Calculate park visits per capita
-    visits_div_pop = df_tot.values / df_pop['population']
+    df_tot['visits_div_pop'] = df_tot.total_visits / df_pop.population
+    df_tot['diff_visits_div_pop'] = df_tot.visits_div_pop.diff()
+
+    # Find first decrease in per capita visits since 1965
+    df_1965 = df_tot.loc[1965:]
+    first_dec_yr = df_1965.index[df_1965.diff_visits_div_pop < 0].tolist()[0]
+
+    # Calculate average per capita visits from first decrease year to 2018.
+    per_capita_mean = df_tot.loc[first_dec_yr:].mean().visits_div_pop
+
+    #text_string = '$\mu=%.2f$\n$\mathrm{median}=%.2f$'%(mean, median)
+    text_string = 'Mean per capita visits since {} = {:.2f}'.format(first_dec_yr, per_capita_mean)
+
+    # matplotlib.patch.Patch properties.
+    props = dict(facecolor='white', alpha=0.5)
 
     # Plot park visits per capita by year.
     fig, ax = plt.subplots()
-    ax.plot(df_tot.index, visits_div_pop)
+    ax.text(0.05, 0.95, text_string,
+            transform=ax.transAxes,
+            fontsize=10,
+            verticalalignment='top', horizontalalignment='left',
+            bbox=props)
+    ax.plot(df_tot.index, df_tot.visits_div_pop)
     plt.title(set_title("Park visits per capita", designation))
     plt.show()
 
@@ -127,7 +146,9 @@ def main():
 
     # Sum park visits for each year over all parks in the dataframe.
     start_col = df_park.columns.tolist().index(1904)
-    df_tot = df_park.iloc[:, start_col:].sum()
+    df_tot = df_park.iloc[:, start_col:].sum().to_frame()
+    df_tot.index = df_tot.index.map(int)
+    df_tot.columns = ['total_visits']
 
     # Plot #1 - Park visits and U.S. population vs. year
     plot_park_visits_and_us_pop_vs_year(df_tot, df_pop, designation)
