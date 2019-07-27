@@ -7,6 +7,8 @@ The following visualizations are created:
 1) Plots including:
    Plot #1 - Park visits and U.S. population vs. year
    Plot #2 - Park visits per capita
+   Plot #3 - Total sites in the NPS system per year.
+   Plot #4 - Total sites per person per year.
 
 Required Libraries
 ------------------
@@ -137,6 +139,44 @@ def plot_park_visits_per_capita_vs_year(df_tot, df_pop, designation):
     # Save plot to file.
     fig.savefig(set_filename('census_park_visits_per_capita', designation, 'png'))
 
+def plot_parks_in_system_vs_year(df, df_pop, designation):
+    '''
+    This function ...
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data.
+
+    df_pop : Pandas DataFrame
+      DataFrame of U.S. population by year.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
+
+    # Extract year for each park from entry_date
+    print (df.entry_date)
+    df['entry_year'] = pd.DatetimeIndex(df.entry_date).year
+    print (df.entry_year)
+    # start_col = df.columns.tolist().index(1904)
+    # df_park_years = df.iloc[:, start_col:]
+    # df_park_years.fillna(value=0)
+    # df_tot_parks = df_park_years.gt(0).sum()
+    #
+    # # Plot number of parks in NPS system vs. year.
+    # fig, ax = plt.subplots()
+    # ax.plot(df_tot_parks.index, df_tot_parks.values)
+    # plt.title(set_title("Total NPS sites per year", designation))
+    # plt.show()
+
+    # # Save plot to file.
+    # fig.savefig(set_filename('census_total_nps_sites_per_year', designation, 'png'))
+
 def main():
     df_park, designation = get_parks_df()
 
@@ -155,6 +195,15 @@ def main():
 
     # Plot #2 - Park visits per capita
     plot_park_visits_per_capita_vs_year(df_tot, df_pop, designation)
+
+    # Plot #3 - Total sites in the NPS system per year.
+    # Plot #4 - Total sites per person per year.
+    if designation == "All Parks":
+        plot_parks_in_system_vs_year(df_park, df_pop, designation)
+    else:
+        print("** Warning **")
+        print("Parks in system per year plots only generated if designation "
+              "not specified.\n")
 
 if __name__ == '__main__':
     main()

@@ -358,6 +358,9 @@ def output_visit_data_to_tables(df, designation):
     df : Pandas DataFrame
       DataFrame of park visit data to export.
 
+    designation : str
+      Designation of parks in the dataframe.
+
     Returns
     -------
     None
@@ -386,6 +389,9 @@ def output_total_visit_data_to_tables(df, designation):
     ----------
     df : Pandas DataFrame
       DataFrame of park visit data to export.
+
+    designation : str
+      Designation of parks in the dataframe.
 
     Returns
     -------
