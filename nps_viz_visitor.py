@@ -385,8 +385,8 @@ def output_visit_data_to_tables(df, designation):
 
     filename = set_filename('visit_parks_sorted_by_visits_top_10', designation)
 
-    df_export.to_excel(filename + 'xlsx', index=True)
-    df_export.to_html(filename + 'html', justify='left',
+    df_export_top_10.to_excel(filename + 'xlsx', index=True)
+    df_export_top_10.to_html(filename + 'html', justify='left',
         classes='table-park-list', float_format=lambda x: '{:,.0f}'.format(x))
 
 def output_total_visit_data_to_tables(df, designation):
