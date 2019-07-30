@@ -366,6 +366,7 @@ def output_visit_data_to_tables(df, designation):
     None
     '''
 
+    # Export all parks in the dataframe.
     df_export = (df[['park_name', 2018]]
                 .sort_values(by=[2018], ascending=False)
                 .reset_index(drop=True))
@@ -374,6 +375,15 @@ def output_visit_data_to_tables(df, designation):
     df_export = df_export.rename(columns=export_cols)
 
     filename = set_filename('visit_parks_sorted_by_visits', designation)
+
+    df_export.to_excel(filename + 'xlsx', index=True)
+    df_export.to_html(filename + 'html', justify='left',
+        classes='table-park-list', float_format=lambda x: '{:,.0f}'.format(x))
+
+    # Export the top 10 parks in the dataframe.
+    df_export_top_10 = df_export.head(10)
+
+    filename = set_filename('visit_parks_sorted_by_visits_top_10', designation)
 
     df_export.to_excel(filename + 'xlsx', index=True)
     df_export.to_html(filename + 'html', justify='left',
