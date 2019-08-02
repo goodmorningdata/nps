@@ -91,7 +91,8 @@ def plot_park_visits_and_us_pop_vs_year(df_tot, df_pop, designation):
     # Save plot to file.
     fig.savefig(set_filename('census_park_visits_vs_us_pop', designation, 'png'))
 
-def plot_total_park_visits_per_capita_vs_year(df_tot, df_pop, designation):
+def plot_total_park_visits_per_capita_vs_year(df_tot, df_pop, designation,
+                                              title=None):
     '''
     This function plots park visits per capita for 1904-2018.
 
@@ -131,11 +132,14 @@ def plot_total_park_visits_per_capita_vs_year(df_tot, df_pop, designation):
     y = pd.Series(df_dec.visits_div_pop.values)
     regressor.fit(X, y)
 
+    # Add a text box to the plot.
     text_string = ("Mean per capita visits since {} = "
                   "{:.2f}".format(first_dec_yr, per_capita_mean))
-
-    # matplotlib.patch.Patch properties.
     props = dict(facecolor='white', alpha=0.5)
+
+    # Use parameter title if specified, otherwise standard title.
+    if len(title) == 0:
+        title = set_title("Park visits per capita vs. year", designation)
 
     # Plot park visits per capita by year.
     fig, ax = plt.subplots()
@@ -146,46 +150,46 @@ def plot_total_park_visits_per_capita_vs_year(df_tot, df_pop, designation):
             verticalalignment='top', horizontalalignment='left',
             bbox=props)
     ax.plot(df_tot.index, df_tot.visits_div_pop)
-    plt.title(set_title("Park visits per capita", designation))
+    plt.title(title)
     plt.show()
 
     # Save plot to file.
     fig.savefig(set_filename('census_park_visits_per_capita', designation, 'png'))
 
-def plot_park_visits_per_capita_vs_year(df_park, df_pop, designation,
-                                        title=None):
-
-    start_col = df_park.columns.tolist().index(1904)
-
-    fig, ax = plt.subplots(figsize=(8,5))
-
-    for _, row in df_park.iterrows():
-        plot_row = row.iloc[start_col:].to_frame()
-        plot_row.columns = ['total_visits']
-        plot_row['visits_div_pop'] = plot_row.total_visits / df_pop.population
-        ax.plot(plot_row.visits_div_pop, label=row.park_name_abbrev)
-
-    # Use parameter title if specified, otherwise standard title.
-    if len(title) == 0:
-        title = "Park visits per capita vs. year"
-
-    # Shrink the plot by 30% and put the legend to the right of the
-    # current axis.
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
-    ax.legend(bbox_to_anchor=(1, 0.5), loc='center left',
-              fancybox=True, borderaxespad=2, fontsize=9)
-
-    plt.title(set_title(title, designation))
-
-    # X-axis ticks are every 10th year, displayed vertically.
-    ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
-    plt.xticks(rotation=90)
-    plt.ylabel('Park visits per capita')
-    plt.show()
-
-    # Save plot to file.
-    fig.savefig(set_filename('census_' + title, designation, 'png'))
+# def plot_park_visits_per_capita_vs_year(df_park, df_pop, designation,
+#                                         title=None):
+#
+#     start_col = df_park.columns.tolist().index(1904)
+#
+#     fig, ax = plt.subplots(figsize=(8,5))
+#
+#     for _, row in df_park.iterrows():
+#         plot_row = row.iloc[start_col:].to_frame()
+#         plot_row.columns = ['total_visits']
+#         plot_row['visits_div_pop'] = plot_row.total_visits / df_pop.population
+#         ax.plot(plot_row.visits_div_pop, label=row.park_name_abbrev)
+#
+#     # Use parameter title if specified, otherwise standard title.
+#     if len(title) == 0:
+#         title = set_title("Park visits per capita vs. year", designation)
+#
+#     # Shrink the plot by 30% and put the legend to the right of the
+#     # current axis.
+#     box = ax.get_position()
+#     ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
+#     ax.legend(bbox_to_anchor=(1, 0.5), loc='center left',
+#               fancybox=True, borderaxespad=2, fontsize=9)
+#
+#     plt.title(title)
+#
+#     # X-axis ticks are every 10th year, displayed vertically.
+#     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
+#     plt.xticks(rotation=90)
+#     plt.ylabel('Park visits per capita')
+#     plt.show()
+#
+#     # Save plot to file.
+#     fig.savefig(set_filename('census_' + title, designation, 'png'))
 
 def plot_parks_in_system_vs_year(df, df_pop, designation):
     '''
@@ -246,15 +250,26 @@ def main():
     # Plot #1 - Park visits and U.S. population vs. year
     plot_park_visits_and_us_pop_vs_year(df_tot, df_pop, designation)
 
-    # Plot #2 - Park total park visits per capita
-    plot_total_park_visits_per_capita_vs_year(df_tot, df_pop, designation)
+    # Plot #2 - Total park visits per capita
+    plot_total_park_visits_per_capita_vs_year(df_tot, df_pop, designation, title="")
+
+    # Plot #2 - Total park visits per capita for a specific park
+    #print(df_park)
+    park_code = 'jotr'
+    df_one_park = df_park[df_park.park_code == park_code]
+    park_name = df_one_park.park_name_abbrev.to_list()[0]
+    df_one_tot = df_one_park.iloc[:, start_col:].sum().to_frame()
+    df_one_tot.index = df_one_tot.index.map(int)
+    df_one_tot.columns = ['total_visits']
+    title = "Park visits per capita vs. year ({})".format(park_name)
+    plot_total_park_visits_per_capita_vs_year(df_one_tot, df_pop, park_name, title)
 
     # Plot #3 - Park visits per capita vs. year for a set of parks.
-    plot_park_visits_per_capita_vs_year(df_2018.iloc[0:10,:].copy(), df_pop,
-        designation,title = "Park visits per capita vs. year, highest 10")
-
-    plot_park_visits_per_capita_vs_year(df_2018.iloc[-10:,:].copy(), df_pop,
-        designation,title = "Park visits per capita vs. year, lowest 10")
+    # plot_park_visits_per_capita_vs_year(df_2018.iloc[0:10,:].copy(), df_pop,
+    #     designation,title = "Park visits per capita vs. year, highest 10")
+    #
+    # plot_park_visits_per_capita_vs_year(df_2018.iloc[-10:,:].copy(), df_pop,
+    #     designation,title = "Park visits per capita vs. year, lowest 10")
 
     # Plot #4 - Total sites in the NPS system per year.
     # Plot #5 - Total sites per person per year.
