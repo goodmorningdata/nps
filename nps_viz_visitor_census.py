@@ -7,13 +7,13 @@ The following visualizations are created:
 1) Plots including:
    Plot #1 - Park visits and U.S. population vs. year
    Plot #2 - Total park visits per capita
-   Plot #3 - Park visits per capita (top 10)
+   Plot #3 - Park visits per capita vs. rate of change quadrant
    TODO - Plot #4 - Total sites in the NPS system per year.
    TODO - Plot #5 - Total sites per person per year.
 
 Required Libraries
 ------------------
-pandas, nps_shared, matplotlib
+pandas, nps_shared, matplotlib, scipy
 
 Dependencies
 ------------
@@ -216,14 +216,12 @@ def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
                         'per_capita_mean' : per_capita_mean,
                         'change_rate' : m}, ignore_index=True)
 
-    print(df)
-
     # Divide quadrants vertically by average of visits per capita.
     mean_per_capita_mean = df.per_capita_mean.mean()
 
-    print('Maximum change rate:')
+    print('\n** Park with Maximum change rate:')
     print(df.loc[df.change_rate.idxmax()])
-    print('Minimum change rate:')
+    print('\n** Park with Minimum change rate:')
     print(df.loc[df.change_rate.idxmin()])
 
     # Quadrant labels.
