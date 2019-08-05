@@ -163,9 +163,6 @@ def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
     plt.show()
 
     # Save plot to file.
-    # fig.savefig(set_filename('census_park_visits_per_capita',
-    #                          designation, 'png'))
-    # Save plot to file.
     fig.savefig(set_filename('census_' + title, 'png'))
 
 

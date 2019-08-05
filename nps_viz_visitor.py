@@ -93,7 +93,7 @@ def create_visitor_map(df, designation):
         ).add_to(map)
 
     # Save map to file.
-    map.save(set_filename('visit_map', designation, 'html'))
+    map.save(set_filename('visit_map', 'html', designation))
 
 def plot_total_park_visits_vs_year(df, designation):
     '''
@@ -127,8 +127,8 @@ def plot_total_park_visits_vs_year(df, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('visit_total_park_visits_vs_year',
-                             designation, 'png'))
+    fig.savefig(set_filename('visit_total_park_visits_vs_year', 'png',
+                             designation))
 
 def plot_total_park_visit_change_rate_vs_year(df, designation):
     '''
@@ -173,8 +173,7 @@ def plot_total_park_visit_change_rate_vs_year(df, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('visit_change_rate_vs_year',
-                             designation, 'png'))
+    fig.savefig(set_filename('visit_change_rate_vs_year', 'png', designation))
 
     # Plot change rate as a percent of prior year visits vs. year.
     fig, ax = plt.subplots()
@@ -187,8 +186,7 @@ def plot_total_park_visit_change_rate_vs_year(df, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('visit_change_pct_vs_year',
-                             designation, 'png'))
+    fig.savefig(set_filename('visit_change_pct_vs_year', 'png', designation))
 
 def plot_total_estimated_park_visits_vs_year(df, designation):
     '''
@@ -244,7 +242,7 @@ def plot_total_estimated_park_visits_vs_year(df, designation):
 
     # Save plot to file.
     fig.savefig(set_filename('visit_total_estimated_park_visits_vs_year',
-                             designation, 'png'))
+                             'png', designation))
 
 def plot_park_visits_vs_year(df, designation, title=None):
     '''
@@ -299,7 +297,7 @@ def plot_park_visits_vs_year(df, designation, title=None):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('visit_' + title, designation, 'png'))
+    fig.savefig(set_filename('visit_' + title, 'png', designation))
 
 def plot_park_visits_histogram(df, designation):
     '''
@@ -345,7 +343,7 @@ def plot_park_visits_histogram(df, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('visit_histogram', designation, 'png'))
+    fig.savefig(set_filename('visit_histogram', 'png', designation))
 
 def output_visit_data_to_tables(df, designation):
     '''
@@ -374,7 +372,7 @@ def output_visit_data_to_tables(df, designation):
     export_cols = {'park_name': 'Park Name', 2018: 'Visits in 2018'}
     df_export = df_export.rename(columns=export_cols)
 
-    filename = set_filename('visit_parks_sorted_by_visits', designation)
+    filename = set_filename('visit_parks_sorted_by_visits', designation=designation)
 
     df_export.to_excel(filename + 'xlsx', index=True)
     df_export.to_html(filename + 'html', justify='left',
@@ -383,7 +381,7 @@ def output_visit_data_to_tables(df, designation):
     # Export the top 10 parks in the dataframe.
     df_export_top_10 = df_export.head(10)
 
-    filename = set_filename('visit_parks_sorted_by_visits_top_10', designation)
+    filename = set_filename('visit_parks_sorted_by_visits_top_10', designation=designation)
 
     df_export_top_10.to_excel(filename + 'xlsx', index=True)
     df_export_top_10.to_html(filename + 'html', justify='left',
@@ -413,7 +411,7 @@ def output_total_visit_data_to_tables(df, designation):
     df_export = df_export.to_frame()
     df_export.columns = ['Total Visits']
 
-    filename = set_filename('visit_total_park_visits_by_year', designation)
+    filename = set_filename('visit_total_park_visits_by_year', designation=designation)
 
     df_export.to_excel(filename + 'xlsx', index=True,
         index_label='Year', float_format='%.2f')
