@@ -92,7 +92,11 @@ def park_visits_and_us_pop_vs_year(df_tot, df_pop, designation):
 
 def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
     '''
-    This function plots park visits per capita for 1904-2018.
+    This function plots park visits per capita for 1904-2018. A linear
+    regression line is added for the years 1967-2018. 1967 is the
+    first year that a dip in per capita visits for all parks is seen
+    since the end of World War II. Growth since 1967 is assumed to
+    indicate current park visit growth.
 
     Parameters
     ----------
@@ -162,6 +166,26 @@ def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
                              designation, 'png'))
 
 def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
+    '''
+    This function plots the mean per capita visits over 1967 - 2018
+    vs. the change rate in per capita visits from 1967 to 2018 and
+    adds quadrant dividing lines.
+
+    Parameters
+    ----------
+    df_park : Pandas DataFrame
+      DataFrame of park data.
+
+    df_pop : Pandas DataFrame
+      DataFrame of U.S. population by year.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
 
     df = pd.DataFrame(columns=['park_name', 'per_capita_mean', 'change_rate'])
 
@@ -237,9 +261,24 @@ def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('census_popularity_quad', designation, 'png'))
+    fig.savefig(set_filename('census_' + title, designation, 'png'))
 
 def get_visit_df(df):
+    '''
+    This function sums and formats the park visits data in the
+    parameter dataframe for plotting functions in this script.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park data.
+
+    Returns
+    -------
+    df_tot : Pandas DataFrame
+      DataFrame ready for plot functions.
+    '''
+
     start_col = df.columns.tolist().index(1904)
     df_tot = df.iloc[:, start_col:].sum().to_frame()
     df_tot.index = df_tot.index.map(int)
@@ -274,7 +313,7 @@ def main():
     total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title)
 
     # Plot #3 - Park visits per capita vs. rate of change quadrant
-    park_visits_per_cap_vs_change_rate_quadrant(df_park, df_pop, designation)
+    park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation)
 
     # Plot #4 - Total sites in the NPS system per year.
     # Plot #5 - Total sites per person per year.
