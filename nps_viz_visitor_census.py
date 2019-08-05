@@ -28,6 +28,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from sklearn.linear_model import LinearRegression
+from scipy.stats import linregress
 
 def read_census_data():
     '''
@@ -131,35 +132,85 @@ def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
     # Calculate average per capita visits from first decrease year to 2018.
     per_capita_mean = df_dec.mean().visits_div_pop
 
-    # Fit a linear regression model and estimate visits
-    regressor = LinearRegression()
-    X = pd.Series(df_dec.index.values).to_frame()
-    y = pd.Series(df_dec.visits_div_pop.values)
-    regressor.fit(X, y)
+    regress_x = df_dec.index
+    regress_y = df_dec.visits_div_pop
+    stats = linregress(regress_x, regress_y)
+    m = stats.slope
+    b = stats.intercept
 
+    # # Fit a linear regression model and estimate visits
+    # regressor = LinearRegression()
+    # X = pd.Series(df_dec.index.values).to_frame()
+    # y = pd.Series(df_dec.visits_div_pop.values)
+    # regressor.fit(X, y)
+    #
     # Add a text box to the plot.
     text_string = ("Mean per capita visits since {} = "
-                  "{:.4f}".format(first_dec_yr, per_capita_mean))
+                   "{:.4f}\nRegression line slope = {:.4f}".format(first_dec_yr, per_capita_mean, stats.slope))
     props = dict(facecolor='white', alpha=0.5)
 
     # Use parameter title if specified, otherwise standard title.
     if len(title) == 0:
         title = set_title("Park visits per capita vs. year", designation)
 
-    # Plot park visits per capita by year.
+    # Plot park visits per capita by year with regression line.
     fig, ax = plt.subplots()
-    ax.plot(X, regressor.predict(X), ':', color='gray')
+    #ax.plot(X, regressor.predict(X), ':', color='gray')
     ax.text(0.05, 0.95, text_string,
             transform=ax.transAxes,
             fontsize=10,
             verticalalignment='top', horizontalalignment='left',
             bbox=props)
     ax.plot(df_tot.index, df_tot.visits_div_pop)
+    ax.plot(regress_x, m*regress_x + b, '--', alpha=0.5)
     plt.title(title)
     plt.show()
 
     # Save plot to file.
     fig.savefig(set_filename('census_park_visits_per_capita', designation, 'png'))
+
+def park_visits_per_cap_vs_change_rate(df_park, df_pop, designation):
+    # For each park in df, fit a regression line to data since 1967, find slope of line, plot average visits per capita vs. change rate (slope)
+
+    df = pd.DataFrame(columns=['park_name', 'per_capita_mean', 'change_rate'])
+
+    for _, row in df_park.iterrows():
+        df_row = row.to_frame().T
+        df_tot = get_visit_df(df_row)
+        df_tot['visits_div_pop'] = df_tot.total_visits / df_pop.population
+
+        first_dec_yr = 1967
+        df_dec = df_tot.loc[first_dec_yr:]
+
+        # Calculate average per capita visits from first decrease year to 2018.
+        per_capita_mean = df_dec.mean().visits_div_pop
+        regress_x = df_dec.index
+        regress_y = df_dec.visits_div_pop
+        stats = linregress(regress_x, regress_y)
+        m = stats.slope
+
+        print(df_row.park_name, per_capita_mean, m)
+
+        df = df.append({'park_name' : df_row.park_name,
+                        'per_capita_mean' : per_capita_mean,
+                        'change_rate' : m}, ignore_index=True)
+
+        #print('{}: mean={}, slope={}'.format(row.park_name, per_capita_mean, m))
+        #ax.plot(per_capita_mean, m, 'bo')
+
+    print(df)
+
+    mean_per_capita_mean = df.per_capita_mean.mean()
+
+    fig, ax = plt.subplots(figsize=(9,5))
+    ax.scatter(df.per_capita_mean, df.change_rate, s=10)
+    ax.set_ylim(-0.00020, 0.00020)
+    plt.axhline(y=0.0, linewidth=1.0, alpha=0.3, color='red')
+    plt.axvline(x=mean_per_capita_mean, linewidth=1.0, alpha=0.3, color='red')
+    plt.xlabel('Mean visits per capita since 1967')
+    plt.ylabel('Visits per capita change rate')
+    plt.title
+    plt.show()
 
 # def plot_park_visits_per_capita_vs_year(df_park, df_pop, designation,
 #                                         title=None):
@@ -234,6 +285,14 @@ def parks_in_system_vs_year(df, df_pop, designation):
     # # Save plot to file.
     # fig.savefig(set_filename('census_total_nps_sites_per_year', designation, 'png'))
 
+def get_visit_df(df):
+    start_col = df.columns.tolist().index(1904)
+    df_tot = df.iloc[:, start_col:].sum().to_frame()
+    df_tot.index = df_tot.index.map(int)
+    df_tot.columns = ['total_visits']
+
+    return df_tot
+
 def main():
     df_park, designation = get_parks_df()
 
@@ -242,31 +301,54 @@ def main():
     df_pop = df_pop.loc[1904:2018]
 
     # Parks with visitors recorded in 2018.
-    df_2018 = df_park[~df_park[2018].isnull()]
-    df_2018 = df_2018[df_2018[2018] > 0.0]
-    df_2018 = df_2018.sort_values(by=[2018], ascending=False)
+    # df_2018 = df_park[~df_park[2018].isnull()]
+    # df_2018 = df_2018[df_2018[2018] > 0.0]
+    # df_2018 = df_2018.sort_values(by=[2018], ascending=False)
 
     # Sum park visits for each year over all parks in the dataframe.
-    start_col = df_park.columns.tolist().index(1904)
-    df_tot = df_park.iloc[:, start_col:].sum().to_frame()
-    df_tot.index = df_tot.index.map(int)
-    df_tot.columns = ['total_visits']
+    # start_col = df_park.columns.tolist().index(1904)
+    # df_tot = df_park.iloc[:, start_col:].sum().to_frame()
+    # df_tot.index = df_tot.index.map(int)
+    # df_tot.columns = ['total_visits']
+
+    # Sum all parks and format dataframe for plotting.
+    df_tot = get_visit_df(df_park)
 
     # Plot #1 - Park visits and U.S. population vs. year
     park_visits_and_us_pop_vs_year(df_tot, df_pop, designation)
 
     # Plot #2 - Total park visits per capita
-    total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title="")
+    total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, "")
 
-    # Plot #2 - Total park visits per capita for a specific park
+    # Filter park dataframe by selected park and format for plotting.
     park_code = 'jotr'
     df_one_park = df_park[df_park.park_code == park_code]
+    print('** df_one_park **')
+    print(type(df_one_park))
+    print(df_one_park)
     park_name = df_one_park.park_name_abbrev.to_list()[0]
-    df_one_tot = df_one_park.iloc[:, start_col:].sum().to_frame()
-    df_one_tot.index = df_one_tot.index.map(int)
-    df_one_tot.columns = ['total_visits']
+    df_tot = get_visit_df(df_park[df_park.park_code == park_code])
+
+    # Plot #2 - Total park visits per capita (for selected park)
     title = "Park visits per capita vs. year ({})".format(park_name)
-    total_park_visits_per_cap_vs_year(df_one_tot, df_pop, park_name, title)
+    total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title)
+
+    # Plot #3 - Park visits per capita vs. rate of change
+    park_visits_per_cap_vs_change_rate(df_park, df_pop, designation)
+
+    #df_tot = get_visit_df (df_park[df_park.park_code == park_code])
+    # df_one_park = df_park[df_park.park_code == park_code]
+    # park_name = df_one_park.park_name_abbrev.to_list()[0]
+    # df_tot = df_one_park.iloc[:, start_col:].sum().to_frame()
+    # df_tot.index = df_tot.index.map(int)
+    # df_tot.columns = ['total_visits']
+    # title = "Park visits per capita vs. year ({})".format(park_name)
+
+    # Plot #2 - Total park visits per capita for a specific park
+    #total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title)
+
+    # Plot #3 - Park visits per capita vs. rate of change
+    #park_visits_per_cap_vs_change_rate(df_park, df_pop, designation)
 
     # Plot #3 - Park visits per capita vs. year for a set of parks.
     # plot_park_visits_per_capita_vs_year(df_2018.iloc[0:10,:].copy(), df_pop,
