@@ -61,7 +61,7 @@ def plot_parks_per_decade(df, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('date_parks_per_decade', designation, 'png'))
+    fig.savefig(set_filename('date_parks_per_decade', 'png', designation))
 
 def plot_parks_per_year(df, designation):
     '''
@@ -102,7 +102,7 @@ def plot_parks_per_year(df, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('date_parks_per_year', designation, 'png'))
+    fig.savefig(set_filename('date_parks_per_year', 'png', designation)
 
 def plot_parks_per_president(df, designation):
     '''
@@ -159,8 +159,7 @@ def plot_parks_per_president(df, designation):
         plt.show()
 
         # Save plot to file.
-        fig.savefig(set_filename('date_parks_per_pres',
-                                 designation, 'png'))
+        fig.savefig(set_filename('date_parks_per_pres', 'png', designation))
 
     else:
         print("\n** Warning **")
@@ -209,8 +208,8 @@ def plot_parks_per_designation(df, designation):
         plt.show()
 
         # Save plot to file.
-        fig.savefig(set_filename('date_parks_per_designation',
-                                  designation, 'png'))
+        fig.savefig(set_filename('date_parks_per_designation', 'png',
+                                 designation))
 
     else:
         print("\n** Warning **")

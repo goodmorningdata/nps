@@ -85,7 +85,7 @@ def create_size_map(df, designation):
         ).add_to(map)
 
     # Save map to file.
-    map.save(set_filename('size_map', designation, 'html'))
+    map.save(set_filename('size_map', 'html', designation))
 
 def plot_park_size_histogram(df, designation):
     '''
@@ -129,7 +129,7 @@ def plot_park_size_histogram(df, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('size_histogram', designation, 'png'))
+    fig.savefig(set_filename('size_histogram', 'png', designation))
 
 def plot_avg_size_vs_designation(df, designation):
     '''
@@ -166,7 +166,7 @@ def plot_avg_size_vs_designation(df, designation):
 
         # Save plot to file.
         fig.savefig(set_filename('size_avg_size_vs_designation',
-                                 designation, 'png'))
+                                 'png', designation))
 
     else:
         print("** Warning ** ")
@@ -211,7 +211,8 @@ def output_size_data_to_tables(df, designation):
                    'gross_area_square_miles': 'Size (square miles)'}
     df_export = df_export.rename(columns=export_cols)
 
-    filename = set_filename('size_parks_sorted_by_size', designation)
+    filename = set_filename('size_parks_sorted_by_size',
+                            designation=designation)
 
     df_export.to_excel(filename + 'xlsx', index=True)
     df_export.to_html(filename + 'html',

@@ -88,7 +88,8 @@ def park_visits_and_us_pop_vs_year(df_tot, df_pop, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('census_park_visits_vs_us_pop', designation, 'png'))
+    fig.savefig(set_filename('census_park_visits_vs_us_pop',
+                             'png', designation))
 
 def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
     '''
@@ -162,8 +163,11 @@ def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('census_park_visits_per_capita',
-                             designation, 'png'))
+    # fig.savefig(set_filename('census_park_visits_per_capita',
+    #                          designation, 'png'))
+    # Save plot to file.
+    fig.savefig(set_filename('census_' + title, 'png'))
+
 
 def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
     '''
@@ -255,13 +259,12 @@ def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
     plt.xlabel('Mean visits per capita since 1967', size=10)
     plt.ylabel('Visits per capita change rate', size=10)
     ax.tick_params(labelsize=8)
-
-    title = set_title("Park popularity quadrant", designation)
-    plt.title(title)
+    plt.title(set_title("Park popularity quadrant", designation))
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('census_' + title, designation, 'png'))
+    fig.savefig(set_filename('census_park_popularity_quadrant',
+                             'png', designation))
 
 def get_visit_df(df):
     '''

@@ -106,7 +106,7 @@ def create_location_map(df, designation):
                                icon = map_icon).add_to(map)
 
     # Save map to file.
-    map.save(set_filename('loc_map', designation, 'html'))
+    map.save(set_filename('loc_map', 'html', designation))
 
 def plot_parks_per_state(df, designation):
     '''
@@ -149,7 +149,7 @@ def plot_parks_per_state(df, designation):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('loc_parks_per_state', designation, 'png'))
+    fig.savefig(set_filename('loc_parks_per_state', 'png', designation))
 
 def main():
     df_park, designation = get_parks_df(warning=['location'])

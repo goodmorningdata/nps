@@ -130,7 +130,7 @@ def create_state_count_choropleth(df, designation):
     map.add_child(color_scale)
 
     # Save choropleth to file.
-    map.save(set_filename('choropleth_map', designation, 'html'))
+    map.save(set_filename('choropleth_map', 'html', designation))
 
     return map
 
