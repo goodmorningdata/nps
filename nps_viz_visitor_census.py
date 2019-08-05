@@ -202,6 +202,8 @@ def park_visits_per_cap_vs_change_rate(df_park, df_pop, designation):
 
     mean_per_capita_mean = df.per_capita_mean.mean()
 
+    title = set_title("Park popularity quadrant", designation)
+
     fig, ax = plt.subplots(figsize=(9,5))
     ax.scatter(df.per_capita_mean, df.change_rate, s=10)
     ax.set_ylim(-0.00020, 0.00020)
@@ -209,7 +211,7 @@ def park_visits_per_cap_vs_change_rate(df_park, df_pop, designation):
     plt.axvline(x=mean_per_capita_mean, linewidth=1.0, alpha=0.3, color='red')
     plt.xlabel('Mean visits per capita since 1967')
     plt.ylabel('Visits per capita change rate')
-    plt.title
+    plt.title(title)
     plt.show()
 
 # def plot_park_visits_per_capita_vs_year(df_park, df_pop, designation,
