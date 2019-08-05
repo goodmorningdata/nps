@@ -211,18 +211,54 @@ def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
         m = stats.slope
 
         # Add park row to dataframe.
-        df = df.append({'park_name' : df_row.park_name,
-                        'park_code' : df_row.park_code,
+        df = df.append({'park_name' : row.park_name,
+                        'park_code' : row.park_code,
                         'per_capita_mean' : per_capita_mean,
                         'change_rate' : m}, ignore_index=True)
+
+    print(df)
 
     # Divide quadrants vertically by average of visits per capita.
     mean_per_capita_mean = df.per_capita_mean.mean()
 
+    print('Maximum change rate:')
+    print(df.loc[df.change_rate.idxmax()])
+    print('Minimum change rate:')
+    print(df.loc[df.change_rate.idxmin()])
+
     # Quadrant labels.
-    quad2 = "Q2: Most popular and increasing"
-    quad3 = "Q3: Least popular and declining"
+    quad1 = "QI: Most popular and increasing"
+    quad2 = "QII: Least popular and increasing"
+    quad3 = "QIII: Least popular and declining"
+    quad4 = "QIV: Most popular and declining"
+    quads = [quad1, quad2, quad3, quad4]
     props = dict(facecolor='white', alpha=0.5)
+
+    # Print park contents of each quadrant.
+    print ('\n** Quad I **')
+    Q1 = df[(df.per_capita_mean > mean_per_capita_mean)
+            & (df.change_rate > 0.0)]
+    print(', '.join(Q1.park_name.values))
+    print('Total QI: {}'.format(len(Q1.index)))
+
+    print('\n** Quad II **')
+    Q2 = df[(df.per_capita_mean <= mean_per_capita_mean)
+            & (df.change_rate > 0.0)]
+    print(', '.join(Q2.park_name.values))
+    print('Total QII: {}'.format(len(Q2.index)))
+
+    print('\n** Quad III **')
+    Q3 = df[(df.per_capita_mean <= mean_per_capita_mean)
+            & (df.change_rate < 0.0)]
+    print(', '.join(Q3.park_name.values))
+    print('Total QIII: {}'.format(len(Q3.index)))
+
+    print('\n** Quad IV **')
+    Q4 = df[(df.per_capita_mean > mean_per_capita_mean)
+            & (df.change_rate < 0.0)]
+    print(', '.join(Q4.park_name.values))
+    print('Total QIV: {}'.format(len(Q4.index)))
+    print('\n')
 
     # Plot park visits per capita vs. change rate.
     fig, ax = plt.subplots(figsize=(9,5))
@@ -230,22 +266,35 @@ def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
 
     # Label each point with the park code.
     for i, txt in enumerate(df.park_code):
-        ax.annotate(txt.values[0], (df.per_capita_mean[i], df.change_rate[i]), size=8)
+        ax.annotate(txt, (df.per_capita_mean[i], df.change_rate[i]), size=8)
 
-    # Add label for quadrant 2.
-    ax.text(0.97, 0.95, quad2,
+    # Add label for quadrant I.
+    ax.text(0.97, 0.95, quad1,
             transform=ax.transAxes,
             fontsize=8, color='red', alpha=0.7,
             verticalalignment='top', horizontalalignment='right',
             bbox=props)
 
-    # Add label for quadrant 3.
-    ax.text(0.02, 0.07, quad3,
+    # Add label for quadrant II.
+    ax.text(0.03, 0.95, quad2,
             transform=ax.transAxes,
             fontsize=8, color='red', alpha=0.7,
             verticalalignment='top', horizontalalignment='left',
             bbox=props)
 
+    # Add label for quadrant III.
+    ax.text(0.03, 0.05, quad3,
+            transform=ax.transAxes,
+            fontsize=8, color='red', alpha=0.7,
+            verticalalignment='bottom', horizontalalignment='left',
+            bbox=props)
+
+    # Add label for quadrant IV.
+    ax.text(0.97, 0.05, quad4,
+            transform=ax.transAxes,
+            fontsize=8, color='red', alpha=0.7,
+            verticalalignment='bottom', horizontalalignment='right',
+            bbox=props)
 
     # Add lines to divide plot into quadrants.
     plt.axhline(y=0.0, linewidth=1.0, alpha=0.3, color='red')
@@ -303,7 +352,7 @@ def main():
     total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, "")
 
     # Filter park dataframe by selected park and format for plotting.
-    park_code = 'jotr'
+    park_code = 'cuva'
     df_one_park = df_park[df_park.park_code == park_code]
     park_name = df_one_park.park_name_abbrev.to_list()[0]
     df_tot = get_visit_df(df_one_park)
