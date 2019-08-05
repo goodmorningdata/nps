@@ -26,8 +26,6 @@ Dependencies
 from nps_shared import *
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
-from sklearn.linear_model import LinearRegression
 from scipy.stats import linregress
 
 def read_census_data():
@@ -149,7 +147,6 @@ def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
 
     # Plot park visits per capita by year with regression line.
     fig, ax = plt.subplots()
-    #ax.plot(X, regressor.predict(X), ':', color='gray')
     ax.text(0.05, 0.95, text_string,
             transform=ax.transAxes,
             fontsize=10,
@@ -161,9 +158,10 @@ def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
     plt.show()
 
     # Save plot to file.
-    fig.savefig(set_filename('census_park_visits_per_capita', designation, 'png'))
+    fig.savefig(set_filename('census_park_visits_per_capita',
+                             designation, 'png'))
 
-def park_visits_per_cap_vs_change_rate(df_park, df_pop, designation):
+def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
 
     df = pd.DataFrame(columns=['park_name', 'per_capita_mean', 'change_rate'])
 
@@ -238,78 +236,8 @@ def park_visits_per_cap_vs_change_rate(df_park, df_pop, designation):
     plt.title(title)
     plt.show()
 
-# def plot_park_visits_per_capita_vs_year(df_park, df_pop, designation,
-#                                         title=None):
-#
-#     start_col = df_park.columns.tolist().index(1904)
-#
-#     fig, ax = plt.subplots(figsize=(8,5))
-#
-#     for _, row in df_park.iterrows():
-#         plot_row = row.iloc[start_col:].to_frame()
-#         plot_row.columns = ['total_visits']
-#         plot_row['visits_div_pop'] = plot_row.total_visits / df_pop.population
-#         ax.plot(plot_row.visits_div_pop, label=row.park_name_abbrev)
-#
-#     # Use parameter title if specified, otherwise standard title.
-#     if len(title) == 0:
-#         title = set_title("Park visits per capita vs. year", designation)
-#
-#     # Shrink the plot by 30% and put the legend to the right of the
-#     # current axis.
-#     box = ax.get_position()
-#     ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
-#     ax.legend(bbox_to_anchor=(1, 0.5), loc='center left',
-#               fancybox=True, borderaxespad=2, fontsize=9)
-#
-#     plt.title(title)
-#
-#     # X-axis ticks are every 10th year, displayed vertically.
-#     ax.xaxis.set_major_locator(ticker.MultipleLocator(10))
-#     plt.xticks(rotation=90)
-#     plt.ylabel('Park visits per capita')
-#     plt.show()
-#
-#     # Save plot to file.
-#     fig.savefig(set_filename('census_' + title, designation, 'png'))
-
-def parks_in_system_vs_year(df, df_pop, designation):
-    '''
-    This function ...
-
-    Parameters
-    ----------
-    df : Pandas DataFrame
-      DataFrame of park visit data.
-
-    df_pop : Pandas DataFrame
-      DataFrame of U.S. population by year.
-
-    designation : str
-      Designation of parks in the dataframe.
-
-    Returns
-    -------
-    None
-    '''
-
-    # Extract year for each park from entry_date
-    print (df.entry_date)
-    df['entry_year'] = pd.DatetimeIndex(df.entry_date).year
-    print (df.entry_year)
-    # start_col = df.columns.tolist().index(1904)
-    # df_park_years = df.iloc[:, start_col:]
-    # df_park_years.fillna(value=0)
-    # df_tot_parks = df_park_years.gt(0).sum()
-    #
-    # # Plot number of parks in NPS system vs. year.
-    # fig, ax = plt.subplots()
-    # ax.plot(df_tot_parks.index, df_tot_parks.values)
-    # plt.title(set_title("Total NPS sites per year", designation))
-    # plt.show()
-
-    # # Save plot to file.
-    # fig.savefig(set_filename('census_total_nps_sites_per_year', designation, 'png'))
+    # Save plot to file.
+    fig.savefig(set_filename('census_popularity_quad', designation, 'png'))
 
 def get_visit_df(df):
     start_col = df.columns.tolist().index(1904)
@@ -345,8 +273,8 @@ def main():
     title = "Park visits per capita vs. year ({})".format(park_name)
     total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title)
 
-    # Plot #3 - Park visits per capita vs. rate of change
-    park_visits_per_cap_vs_change_rate(df_park, df_pop, designation)
+    # Plot #3 - Park visits per capita vs. rate of change quadrant
+    park_visits_per_cap_vs_change_rate_quadrant(df_park, df_pop, designation)
 
     # Plot #4 - Total sites in the NPS system per year.
     # Plot #5 - Total sites per person per year.
