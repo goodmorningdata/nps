@@ -189,28 +189,47 @@ def park_visits_per_cap_vs_change_rate(df_park, df_pop, designation):
         stats = linregress(regress_x, regress_y)
         m = stats.slope
 
-        print(df_row.park_name, per_capita_mean, m)
-
         df = df.append({'park_name' : df_row.park_name,
+                        'park_code' : df_row.park_code,
                         'per_capita_mean' : per_capita_mean,
                         'change_rate' : m}, ignore_index=True)
-
-        #print('{}: mean={}, slope={}'.format(row.park_name, per_capita_mean, m))
-        #ax.plot(per_capita_mean, m, 'bo')
-
-    print(df)
 
     mean_per_capita_mean = df.per_capita_mean.mean()
 
     title = set_title("Park popularity quadrant", designation)
 
+    quad2 = "Q2: Most popular and increasing"
+    quad3 = "Q3: Least popular and declining"
+    props = dict(facecolor='white', alpha=0.5)
+
     fig, ax = plt.subplots(figsize=(9,5))
     ax.scatter(df.per_capita_mean, df.change_rate, s=10)
+
+    for i, txt in enumerate(df.park_code):
+        ax.annotate(txt.values[0], (df.per_capita_mean[i], df.change_rate[i]), size=8)
+
+    ax.text(0.97, 0.95, quad2,
+            transform=ax.transAxes,
+            fontsize=8,
+            color='red',
+            alpha=0.7,
+            verticalalignment='top', horizontalalignment='right',
+            bbox=props)
+
+    ax.text(0.02, 0.07, quad3,
+            transform=ax.transAxes,
+            fontsize=8,
+            color='red',
+            alpha=0.7,
+            verticalalignment='top', horizontalalignment='left',
+            bbox=props)
+
     ax.set_ylim(-0.00020, 0.00020)
     plt.axhline(y=0.0, linewidth=1.0, alpha=0.3, color='red')
     plt.axvline(x=mean_per_capita_mean, linewidth=1.0, alpha=0.3, color='red')
-    plt.xlabel('Mean visits per capita since 1967')
-    plt.ylabel('Visits per capita change rate')
+    plt.xlabel('Mean visits per capita since 1967', size=10)
+    plt.ylabel('Visits per capita change rate', size=10)
+    ax.tick_params(labelsize=8)
     plt.title(title)
     plt.show()
 
@@ -325,11 +344,8 @@ def main():
     # Filter park dataframe by selected park and format for plotting.
     park_code = 'jotr'
     df_one_park = df_park[df_park.park_code == park_code]
-    print('** df_one_park **')
-    print(type(df_one_park))
-    print(df_one_park)
     park_name = df_one_park.park_name_abbrev.to_list()[0]
-    df_tot = get_visit_df(df_park[df_park.park_code == park_code])
+    df_tot = get_visit_df(df_one_park)
 
     # Plot #2 - Total park visits per capita (for selected park)
     title = "Park visits per capita vs. year ({})".format(park_name)
