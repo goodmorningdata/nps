@@ -22,12 +22,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--parkcode', type=str,
         help = "Four character park code of park for which to display \
-                information. Example values are: 'YELL', 'CUVA', 'SHEN', \
+                park data. Example values are: 'YELL', 'CUVA', 'SHEN', \
                 etc.")
     args = parser.parse_args()
 
     if args.parkcode:
         print('** Parkcode: {}'.format(args.parkcode))
+    else:
+        print("\n** Warning ** ")
+        print('Please enter a park code parameter to display park data.\n')
 
 if __name__ == '__main__':
     main()
