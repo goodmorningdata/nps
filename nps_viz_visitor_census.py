@@ -350,7 +350,7 @@ def main():
     total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, "")
 
     # Filter park dataframe by selected park and format for plotting.
-    park_code = 'cuva'
+    park_code = 'shen'
     df_one_park = df_park[df_park.park_code == park_code]
     park_name = df_one_park.park_name_abbrev.to_list()[0]
     df_tot = get_visit_df(df_one_park)
