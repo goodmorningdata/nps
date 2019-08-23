@@ -332,25 +332,25 @@ def park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation):
 
     # Print park contents of each quadrant.
     print ('\n** Quad I **')
-    Q1 = df[(df.per_capita_mean > mean_per_capita_mean)
-            & (df.change_rate > 0.0)]
+    Q1 = df[(df.per_capita_mean >= mean_per_capita_mean)
+            & (df.change_rate >= 0.0)]
     print(', '.join(Q1.park_name.values))
     print('Total Q I: {}'.format(len(Q1.index)))
 
     print('\n** Quad II **')
-    Q2 = df[(df.per_capita_mean <= mean_per_capita_mean)
-            & (df.change_rate > 0.0)]
+    Q2 = df[(df.per_capita_mean < mean_per_capita_mean)
+            & (df.change_rate >= 0.0)]
     print(', '.join(Q2.park_name.values))
     print('Total Q II: {}'.format(len(Q2.index)))
 
     print('\n** Quad III **')
-    Q3 = df[(df.per_capita_mean <= mean_per_capita_mean)
+    Q3 = df[(df.per_capita_mean < mean_per_capita_mean)
             & (df.change_rate < 0.0)]
     print(', '.join(Q3.park_name.values))
     print('Total Q III: {}'.format(len(Q3.index)))
 
     print('\n** Quad IV **')
-    Q4 = df[(df.per_capita_mean > mean_per_capita_mean)
+    Q4 = df[(df.per_capita_mean >= mean_per_capita_mean)
             & (df.change_rate < 0.0)]
     print(', '.join(Q4.park_name.values))
     print('Total Q IV: {}'.format(len(Q4.index)))
