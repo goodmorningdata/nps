@@ -160,16 +160,31 @@ def total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title=""):
     if len(title) == 0:
         title = set_title("Park visits per capita vs. year", designation)
 
-    # Plot park visits per capita by year with regression line.
-    fig, ax = plt.subplots()
-    ax.text(0.05, 0.95, text_string,
-            transform=ax.transAxes,
+    # Plot park visits per capita vs. year.
+    fig, ax1 = plt.subplots()
+    ax1.text(0.05, 0.95, text_string,
+            transform=ax1.transAxes,
             fontsize=10,
             verticalalignment='top', horizontalalignment='left',
             bbox=props)
-    ax.plot(df_tot.index, df_tot.visits_div_pop)
-    ax.plot(regress_x, m*regress_x + b, '--', alpha=0.5)
+    ax1.plot(df_tot.index, df_tot.visits_div_pop, label='Visits per capita')
+    ax1.set_ylabel("Visits per capita")
+
+    # Plot regression line.
+    ax1.plot(regress_x, m*regress_x + b, '--', alpha=0.5)
+
+    # Plot park visits vs. year.
+    ax2 = ax1.twinx()
+    ax2.plot(df_tot.index, df_tot.total_visits/1e6, color='blue', alpha=0.1, label='Total visits')
+    ax2.set_ylabel("Total visits (millions of visits)")
+
+    # Add legend.
+    fig.legend(loc="lower right",
+               bbox_to_anchor=(1, 0),
+               bbox_transform=ax1.transAxes)
+
     plt.title(title)
+    fig.tight_layout()
     plt.show()
 
     # Save plot to file.
@@ -468,7 +483,7 @@ def main():
     total_park_visits_per_cap_vs_year_4(df_parks, df_pop)
 
     # Plot #4 - Park visits per capita vs. rate of change quadrant
-    park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation)
+    #park_visits_per_cap_vs_change_rate_quad(df_park, df_pop, designation)
 
     # Plot #5 - Total sites in the NPS system per year.
     # Plot #6 - Total sites per person per year.
