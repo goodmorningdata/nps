@@ -197,7 +197,7 @@ def total_park_visits_per_cap_vs_year_4(df_parks, df_pop):
     '''
 
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True)
-    title = 'Park visits per capita vs. year'
+    title = 'Park visits per capita vs. year (4 parks)'
     fig.suptitle(title)
 
     # Park dataframe counter.
@@ -209,7 +209,7 @@ def total_park_visits_per_cap_vs_year_4(df_parks, df_pop):
             df_tot = get_visit_df(df_parks.iloc[p].to_frame().T)
             df_tot['visits_div_pop'] = df_tot.total_visits / df_pop.population
 
-            # Limit .
+            # Limit years to those with > 0 visits, 1967 or later.
             first_dec_yr = 1967
             first_positive_yr = 1904
             df_tot_zero = df_tot[df_tot.visits_div_pop == 0.0]
@@ -458,8 +458,13 @@ def main():
     total_park_visits_per_cap_vs_year(df_tot, df_pop, designation, title)
 
     # Plot #3 - Total park visits per capita - 4 park grid
-    park_codes = ['cuva', 'glac', 'yell', 'zion']
-    df_parks = df_park[df_park.park_code.isin(park_codes)].reset_index(drop=True)
+    # QI examples: park_codes = ['cuva', 'glac', 'yell', 'zion']
+    # Q2 examples: park_codes = ['arch', 'care', 'viis', 'jotr']
+    # Q3 examples: park_codes = ['cave', 'ever', 'pinn', 'redw']
+    park_codes = ['acad', 'grte', 'maca', 'shen']
+    df_parks = (
+        df_park[df_park.park_code.isin(park_codes)]
+        .reset_index(drop=True).copy())
     total_park_visits_per_cap_vs_year_4(df_parks, df_pop)
 
     # Plot #4 - Park visits per capita vs. rate of change quadrant
