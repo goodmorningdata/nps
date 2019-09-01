@@ -12,14 +12,20 @@ The following visualizations are created:
 
 2) A table of park visits in order of total visits, greatest number of
    visits to smallest.
-   - Output files = nps_parks_sorted_by_visits_{designation}.xlsx,
-                    nps_parks_sorted_by_visits_{designation}.html.
+   - Output files = visit_parks_sorted_by_visits_{designation}.xlsx,
+                    visit_parks_sorted_by_visits_{designation}.html.
+
+3) A table of park visits per acre in descending order.
+   - Output files = visit_park_visits_per_acre_{designation}.xlsx,
+                    visit_parks_sorted_by_visits_{designation}.html.
+
 3) Plots including:
    Plot #1 - Total visits for all parks vs. year.
    Plot #2 - Visit change rate, year vs. prior year.
    Plot #3 - Estimated total visits for all parks vs. year.
    Plot #4 - Individual park visits vs. year for a set of parks.
    Plot #5 - Park visit histogram.
+   Plot #6 - Park visits per acre histogram.
 
 Required Libraries
 ------------------
@@ -345,6 +351,97 @@ def plot_park_visits_histogram(df, designation):
     # Save plot to file.
     fig.savefig(set_filename('visit_histogram', 'png', designation))
 
+def plot_park_visits_per_acre_histogram(df, designation):
+    '''
+    This function creates a histogram of park visits per acre. The
+    plot image is saved to a .png file.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visitation data to plot.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
+
+    # List of park visits in millions of visits.
+    df = df[df.park_code != 'jeff'].copy()
+    df['visits_per_acre'] = df[2018]/df.gross_area_acres
+    x_list = df['visits_per_acre'].values
+
+    # Mean and median text box.
+    mean = df.visits_per_acre.mean()
+    median = np.median(df.visits_per_acre)
+    text_string = '$\mu=%.2f$\n$\mathrm{median}=%.2f$'%(mean, median)
+
+    # matplotlib.patch.Patch properties.
+    props = dict(facecolor='white', alpha=0.5)
+
+    # Create park visit histogram.
+    fig, ax = plt.subplots()
+    ax.hist(x_list, alpha=0.8, bins=np.arange(0, 350, 25))
+    ax.text(0.96, 0.95, text_string,
+            transform=ax.transAxes,
+            fontsize=10,
+            verticalalignment='top', horizontalalignment='right',
+            bbox=props)
+    plt.xlabel("Vists per acre")
+    plt.ylabel("Number of parks")
+    # The spaces are hacky, but title and suptitle do not center together.
+    plt.suptitle(set_title("      Number of park visits per acre in 2018", designation))
+    plt.title("Gateway Arch NP is not included because it is such an extreme outlier.", size=10)
+    plt.tight_layout(rect=[0, 0.02, 1, 0.98])
+    plt.show()
+
+    # Save plot to file.
+    fig.savefig(set_filename('visits_per_acre_histogram', 'png', designation))
+
+def output_park_visits_per_acre(df, designation):
+    '''
+    This function outputs the park visits per acre data as a table
+    to both an Excel spreadsheet and an html file. The data is sorted
+    by number of visits, largest first.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data to export.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
+
+    df['visits_per_acre'] = df[2018]/df.gross_area_acres
+    df = df.round(0)
+    df_export = (df[['park_name', 'gross_area_acres', 'visits_per_acre']]
+                .sort_values(by=['visits_per_acre'], ascending=False)
+                .reset_index(drop=True))
+
+    df_export.index += 1
+
+    print(df_export)
+
+    df_export['visits_per_acre'].replace(
+        to_replace=0, value="<1", regex=True, inplace=True)
+
+    export_cols = {'park_name': 'Park Name', 'gross_area_acres': 'Park size (acres)', 'visits_per_acre': 'Visits per acre in 2018'}
+    df_export = df_export.rename(columns=export_cols)
+
+    filename = set_filename('visit_park_visits_per_acre', designation=designation)
+
+    df_export.to_excel(filename + 'xlsx', index=True)
+    df_export.to_html(filename + 'html', justify='left',
+        classes='table-park-list', float_format=lambda x: '{:,.0f}'.format(x))
+
 def output_visit_data_to_tables(df, designation):
     '''
     This function outputs the park visit data as a table to both an
@@ -431,30 +528,36 @@ def main():
 
     # Map #1 - Plot park locations as a circle with size corresponding
     # to the number of visits in 2018.
-    create_visitor_map(df_2018, designation)
+    #create_visitor_map(df_2018, designation)
 
     # Plot #1 - Total visits for all parks vs. year.
-    plot_total_park_visits_vs_year(df_park, designation)
+    #plot_total_park_visits_vs_year(df_park, designation)
 
     # Plot #2 - Visit change rate, year vs. prior year.
-    plot_total_park_visit_change_rate_vs_year(df_park, designation)
+    #plot_total_park_visit_change_rate_vs_year(df_park, designation)
 
     # Plot #3 - Estimated future visits for all parks vs. year.
-    plot_total_estimated_park_visits_vs_year(df_park, designation)
+    #plot_total_estimated_park_visits_vs_year(df_park, designation)
 
     # Plot #4 - Individual park visits vs. year for a set of parks.
-    plot_park_visits_vs_year(df_2018.iloc[0:10,:].copy(), designation,
-        title = "Park visits vs. year, highest 10")
+    #plot_park_visits_vs_year(df_2018.iloc[0:10,:].copy(), designation,
+    #    title = "Park visits vs. year, highest 10")
 
-    plot_park_visits_vs_year(df_2018.iloc[-10:,:].copy(), designation,
-        title = "Park visits vs. year, lowest 10")
+    #plot_park_visits_vs_year(df_2018.iloc[-10:,:].copy(), designation,
+    #    title = "Park visits vs. year, lowest 10")
 
     # Plot park visits by year for just one park.
     #plot_park_visits_vs_year(df_park[df_park['park_code'] == 'acad'],
     #                         "Acadia NP")
 
     # Plot #5 - Histogram - 2018 visits by park
-    plot_park_visits_histogram(df_2018, designation)
+    #plot_park_visits_histogram(df_2018, designation)
+
+    # Plot #6 - Park visits per acre histogram.
+    plot_park_visits_per_acre_histogram(df_park, designation)
+
+    # Save park visits per acre table.
+    output_park_visits_per_acre(df_park, designation)
 
     # Save park visit data.
     output_visit_data_to_tables(df_2018, designation)
