@@ -1,3 +1,7 @@
+'''
+### THIS SCRIPT NEEDS DOCUMENTATION ###
+'''
+
 import os
 import sys
 import urllib.request, urllib.parse

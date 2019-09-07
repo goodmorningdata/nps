@@ -1,3 +1,22 @@
+'''
+This script reads the webpage,
+https://www.census.gov/geographies/reference-files/2010/geo/state-area.html,
+saved as an html file, and extracts the list of states and their area
+in sqaure miles. This list is saved as a csv file,
+'census_state_area_measurements.csv'
+
+Required Libraries
+------------------
+pandas, BeautifulSoup, nps_shared
+
+Dependencies
+------------
+1) Save the webpage:
+   https://www.census.gov/geographies/reference-files/2010/geo/state-area.html,
+   as 'census_state_area_measurements.html' in the '_reference_data'
+   folder of this project.
+'''
+
 import pandas as pd
 from bs4 import BeautifulSoup
 from nps_shared import *
@@ -25,7 +44,6 @@ def get_state_area(filename):
 
     df = pd.DataFrame(columns=['state_name', 'state_code', 'area'])
 
-    # Find the table of National Parks.
     table_rows = soup.find_all('tbody')[0].find_all('tr')
     for row in table_rows[6:]:
         table_cells = row.find_all('td')
