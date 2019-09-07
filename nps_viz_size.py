@@ -182,14 +182,17 @@ def plot_avg_size_vs_designation(df, designation):
               "Ex: 'python3 nps_viz_size.py'".format(designation))
         print("****\n")
 
-def chart_total_park_area_per_state(df_park, designation):
+def chart_total_park_area_per_state(df, designation):
     '''
-    This function
+    This function plots park area in each state as a percent of total
+    U.S. park area as a pie chart. The first 6 states are given their
+    own pie wedge and the remaining states grouped as "other" for
+    readability.
 
     Parameters
     ----------
     df : Pandas DataFrame
-      DataFrame of park visit data to export.
+      DataFrame of park size data.
 
     designation : str
       Designation of parks in the dataframe.
@@ -198,11 +201,85 @@ def chart_total_park_area_per_state(df_park, designation):
     -------
     None
     '''
-    df_state = pd.read_csv('_reference_data/census_state_area_measurements.csv')
-                     #skiprows=3, header=None, usecols= np.r_[2, 5:14], nrows=51)
-    df_state_check = df_park[df_park.states.str.len() > 3]
-    print('*** df_state_check ***')
-    print(df_state_check[['park_code', 'gross_area_acres', 'states']])
+
+    # Total area of all parks in the dataframe.
+    total_area = df.gross_area_acres.sum()
+
+    # Group and sum area by state.
+    df_state_areas = (df[['main_state', 'gross_area_acres']]
+                      .groupby(['main_state'])
+                      .sum()
+                      .sort_values('gross_area_acres', ascending=False))
+
+    # Split into top six and "Other".
+    df_plot = df_state_areas[:6].copy()
+    df_plot.loc['Other'] = [df_state_areas['gross_area_acres'][6:].sum()]
+
+    # Pie chart.
+    fig, ax = plt.subplots()
+    ax.pie(df_plot.gross_area_acres, labels=df_plot.index,
+           startangle=90, autopct='%1.1f%%', shadow=False)
+    ax.axis('equal')
+    plt.suptitle(set_title("Percent of total U.S. park area by state",
+                           designation), size=16)
+    plt.title('Total U.S. park area ({}) is {:,.0f} acres'
+              .format(designation.lower(), total_area))
+    plt.tight_layout(rect=[0, 0.05, 1, 0.95])
+    plt.show()
+
+    # Save plot to file.
+    fig.savefig(set_filename('size_total_park_area_by_state',
+                             'png', designation))
+
+def plot_park_area_pct_of_state(df, designation):
+    '''
+    This function plots park area percent of total state area for each
+    state as a horizontal bar plot. If a state does not have any parks
+    in the designation parameter category, it will not be included in
+    the plot.
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park size data.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
+
+    # Get state areas from file.
+    df_state = pd.read_csv('_reference_data/census_state_area.csv',
+                           index_col='state_code')
+
+    # Group and sum area by state.
+    df_park_area = (df[['main_state', 'gross_area_acres']]
+                    .groupby(['main_state'])
+                    .sum()
+                    .sort_values('gross_area_acres', ascending=False))
+
+    # Join park area and state area dataframes and calculate percent.
+    df_park_area = df_park_area.join(df_state, how='left')
+    df_park_area['pct_area'] = (df_park_area.gross_area_acres /
+                                df_park_area.area_acres * 100)
+    df_park_area.sort_values(by=['pct_area'], ascending=False, inplace=True)
+
+    # Plot park area percent of state area by state.
+    fig = plt.figure(figsize=(8,6))
+    plt.barh(df_park_area.index, df_park_area.pct_area, alpha=0.8)
+    plt.title(set_title("Park area as a percent of total state area",
+                        designation), size=16)
+    plt.xlabel("Percent of total state area")
+    plt.yticks(fontsize=8)
+    plt.tight_layout()
+    plt.show()
+
+    # Save plot to file.
+    fig.savefig(set_filename('size_park_area_pct_of_state',
+                             'png', designation))
 
 def output_size_data_to_tables(df, designation):
     '''
@@ -261,13 +338,16 @@ def main():
     create_size_map(df_park, designation)
 
     # Plot #1 - Histogram - park size
-    #plot_park_size_histogram(df_park, designation)
+    plot_park_size_histogram(df_park, designation)
 
-    # Plot #2 - Average designation park size bar plot.
+    # NOT COMPLETE - Plot #2 - Average designation park size bar plot.
     #plot_avg_size_vs_designation(df_park, designation)
 
     # Plot #3 - Total park area per state pie chart.
     chart_total_park_area_per_state(df_park, designation)
+
+    # Plot #4 - Park area as a percent of state area.
+    plot_park_area_pct_of_state(df_park, designation)
 
     # Save park size data as an Excel spreadsheet and an html table.
     output_size_data_to_tables(df_park, designation)

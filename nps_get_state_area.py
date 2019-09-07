@@ -42,7 +42,7 @@ def get_state_area(filename):
 
     soup = BeautifulSoup(open(filename), 'html.parser')
 
-    df = pd.DataFrame(columns=['state_name', 'state_code', 'area'])
+    df = pd.DataFrame(columns=['state_name', 'state_code', 'area_square_miles'])
 
     table_rows = soup.find_all('tbody')[0].find_all('tr')
     for row in table_rows[6:]:
@@ -53,16 +53,18 @@ def get_state_area(filename):
             area = float(table_cells[1].text.replace(',',''))
             df = df.append({'state_name': state_name,
                             'state_code': state_name,
-                            'area': area},
+                            'area_square_miles': area},
                             ignore_index = True)
+
     df.state_code = df.state_code.replace(us_state_name_to_code)
+    df['area_acres'] = df.area_square_miles * 640
 
     return df
 
 def main():
     infile = '_reference_data/census_state_area_measurements.html'
     df = get_state_area(infile)
-    df.to_csv('_reference_data/census_state_area_measurements.csv', index=False)
+    df.to_csv('_reference_data/census_state_area.csv', index=False)
 
 if __name__ == '__main__':
     main()
