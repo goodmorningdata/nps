@@ -1,0 +1,57 @@
+state_name,state_code,area
+Alabama,AL,52420.0
+Alaska,AK,665384.0
+Arizona,AZ,113990.0
+Arkansas,AR,53179.0
+California,CA,163695.0
+Colorado,CO,104094.0
+Connecticut,CT,5543.0
+Delaware,DE,2489.0
+District of Columbia,DC,68.0
+Florida,FL,65758.0
+Georgia,GA,59425.0
+Hawaii,HI,10932.0
+Idaho,ID,83569.0
+Illinois,IL,57914.0
+Indiana,IN,36420.0
+Iowa,IA,56273.0
+Kansas,KS,82278.0
+Kentucky,KY,40408.0
+Louisiana,LA,52378.0
+Maine,ME,35380.0
+Maryland,MD,12406.0
+Massachusetts,MA,10554.0
+Michigan,MI,96714.0
+Minnesota,MN,86936.0
+Mississippi,MS,48432.0
+Missouri,MO,69707.0
+Montana,MT,147040.0
+Nebraska,NE,77348.0
+Nevada,NV,110572.0
+New Hampshire,NH,9349.0
+New Jersey,NJ,8723.0
+New Mexico,NM,121590.0
+New York,NY,54555.0
+North Carolina,NC,53819.0
+North Dakota,ND,70698.0
+Ohio,OH,44826.0
+Oklahoma,OK,69899.0
+Oregon,OR,98379.0
+Pennsylvania,PA,46054.0
+Rhode Island,RI,1545.0
+South Carolina,SC,32020.0
+South Dakota,SD,77116.0
+Tennessee,TN,42144.0
+Texas,TX,268596.0
+Utah,UT,84897.0
+Vermont,VT,9616.0
+Virginia,VA,42775.0
+Washington,WA,71298.0
+West Virginia,WV,24230.0
+Wisconsin,WI,65496.0
+Wyoming,WY,97813.0
+Puerto Rico,PR,5325.0
+American Samoa,AS,581.0
+Guam,GU,571.0
+Northern Mariana Islands,MP,1976.0
+U.S. Virgin Islands,VI,733.0

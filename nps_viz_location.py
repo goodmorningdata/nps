@@ -135,7 +135,7 @@ def plot_parks_per_state(df, designation):
     parks_per_state = (parks_per_state
         .rename(columns={'index':'state', 0:'park_count'}))
     parks_per_state['state_name'] = (
-        parks_per_state.state.replace(us_state_abbrev))
+        parks_per_state.state.replace(us_state_code_to_name))
     parks_per_state.sort_values(by='state_name', ascending=False, inplace=True)
 
     # Horizontal bar plot of number of parks in each state.

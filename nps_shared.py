@@ -9,7 +9,7 @@ sns.set()
 #sns.set_palette('Paired')
 sns.set_palette('Dark2')
 
-us_state_abbrev = {
+us_state_code_to_name = {
     'AL': 'Alabama',
     'AK': 'Alaska',
     'AZ': 'Arizona',
@@ -68,6 +68,8 @@ us_state_abbrev = {
     'PR': 'Puerto Rico',
     'VI': 'U.S. Virgin Islands'
 }
+
+us_state_name_to_code = dict([[v,k] for k,v in us_state_code_to_name.items()])
 
 def get_parks_df(warning=['None']):
     '''
