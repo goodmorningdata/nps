@@ -200,7 +200,9 @@ def chart_total_park_area_per_state(df_park, designation):
     '''
     df_state = pd.read_csv('_reference_data/census_state_area_measurements.csv')
                      #skiprows=3, header=None, usecols= np.r_[2, 5:14], nrows=51)
-    print(df_park.park_name, df_park.states)
+    df_state_check = df_park[df_park.states.str.len() > 3]
+    print('*** df_state_check ***')
+    print(df_state_check[['park_code', 'gross_area_acres', 'states']])
 
 def output_size_data_to_tables(df, designation):
     '''

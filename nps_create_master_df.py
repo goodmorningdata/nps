@@ -19,7 +19,7 @@ only with the 419 official units.
 
 Required Libraries
 ------------------
-pandas, SequenceMatcher
+pandas, SequenceMatcher, nps_shared
 
 Dependencies
 ------------
@@ -39,6 +39,7 @@ Dependencies
 
 import pandas as pd
 from difflib import SequenceMatcher
+from nps_shared import *
 
 def read_park_sites_api():
     '''
@@ -95,9 +96,15 @@ def read_park_sites_api():
     df['region'] = df.states.apply(
         lambda x: lookup_park_region(x))
 
+    # Add columnn for the main state for each park.
+    df['main_state'] = df.apply(
+        lambda row: get_main_state(row.park_code, row.states),
+        axis=1
+    )
+
     df = df.sort_values(by=['park_name'])
 
-    return df[['park_code', 'park_name', 'states', 'lat', 'long']]
+    return df[['park_code', 'park_name', 'states', 'main_state', 'lat', 'long']]
 
 def read_park_sites_web(df_api):
     '''
@@ -257,6 +264,31 @@ def lookup_park_code(park_name, df_lookup):
 
 def lookup_park_region(states):
     return 'unknown'
+
+def get_main_state(park_code, states):
+    '''
+    Return main state for a park if it has more than one state
+    assigned in the states column. Main state is looked up for those
+    parks in the dictionary, park_main_state, defined in the
+    script, nps_shared.py
+
+    Parameters
+    ----------
+    park_code : str
+        4 character park code.
+    states : str
+        List of states that park is located in.
+
+    Returns
+    -------
+    states : str
+        Main state of park.
+    '''
+
+    if len(states) > 2:
+        states = park_main_state.get(park_code)
+
+    return(states)
 
 def read_park_dates(df_api):
     '''
@@ -566,7 +598,8 @@ def main():
     if debug: print_debug('df_master', df_master, 'df_api', df_api, 'park_code')
     df_master = pd.merge(df_master[['park_name', 'park_name_abbrev',
                                     'park_code', 'designation']],
-                         df_api[['park_code', 'states', 'lat', 'long']],
+                         df_api[['park_code', 'states', 'main_state', 'lat',
+                                 'long']],
                          how='left', on='park_code')
 
     # Assign states to two parks not available through API.

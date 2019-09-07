@@ -73,6 +73,17 @@ us_state_code_to_name = {
 
 us_state_name_to_code = dict([[v,k] for k,v in us_state_code_to_name.items()])
 
+park_main_state = {
+    'appa': 'WV', 'asis': 'MD', 'biso': 'TN', 'bica': 'MT', 'blrv': 'MA',
+    'blri': 'NC', 'choh': 'MD', 'chch': 'GA', 'cuga': 'KY', 'deva': 'CA',
+    'dewa': 'PA', 'dino': 'CO', 'frst': 'DE', 'fodo': 'TN', 'fosm': 'AR',
+    'fous': 'ND', 'fova': 'WA', 'gate': 'NY', 'gwmp': 'VA', 'glca': 'AZ',
+    'grsm': 'TN', 'guis': 'FL', 'hafe': 'WV', 'hove': 'CO', 'lake': 'NV',
+    'lewi': 'OR', 'lode': 'PA', 'mapr': 'NM', 'miin': 'ID', 'mnrr': 'SD',
+    'natt': 'MS', 'natr': 'MS', 'nepe': 'ID', 'pohe': 'WV', 'sacn': 'WI',
+    'shil': 'TN', 'upde': 'PA', 'vick': 'MS', 'yell': 'WY'
+}
+
 def get_parks_df(warning=['None']):
     '''
     This function is used by all the visualization scripts to read in
