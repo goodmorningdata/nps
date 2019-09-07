@@ -15,6 +15,11 @@ The following visualizations are created:
    - Output files = nps_parks_sorted_by_visits_{designation}.xlsx,
                     nps_parks_sorted_by_visits_{designation}.html.
 
+3) Plots including:
+   Plot #1 - Park size histogram.
+   NOT COMPLETE - Plot #2 - Average designation park size bar plot.
+   Plot #3 - Total park area per state pie chart.
+
 Required Libraries
 ------------------
 math, pandas, folium, matplotlib
@@ -177,6 +182,26 @@ def plot_avg_size_vs_designation(df, designation):
               "Ex: 'python3 nps_viz_size.py'".format(designation))
         print("****\n")
 
+def chart_total_park_area_per_state(df_park, designation):
+    '''
+    This function
+
+    Parameters
+    ----------
+    df : Pandas DataFrame
+      DataFrame of park visit data to export.
+
+    designation : str
+      Designation of parks in the dataframe.
+
+    Returns
+    -------
+    None
+    '''
+    df_state = pd.read_csv('_reference_data/census_state_area_measurements.csv')
+                     #skiprows=3, header=None, usecols= np.r_[2, 5:14], nrows=51)
+    print(df_park.park_name, df_park.states)
+
 def output_size_data_to_tables(df, designation):
     '''
     This function outputs the park size data as a table to both an
@@ -234,10 +259,13 @@ def main():
     create_size_map(df_park, designation)
 
     # Plot #1 - Histogram - park size
-    plot_park_size_histogram(df_park, designation)
+    #plot_park_size_histogram(df_park, designation)
 
     # Plot #2 - Average designation park size bar plot.
     #plot_avg_size_vs_designation(df_park, designation)
+
+    # Plot #3 - Total park area per state pie chart.
+    chart_total_park_area_per_state(df_park, designation)
 
     # Save park size data as an Excel spreadsheet and an html table.
     output_size_data_to_tables(df_park, designation)
