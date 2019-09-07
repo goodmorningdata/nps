@@ -19,7 +19,7 @@ The following visualizations are created:
    - Output files = visit_park_visits_per_acre_{designation}.xlsx,
                     visit_parks_sorted_by_visits_{designation}.html.
 
-3) Plots including:
+4) Plots including:
    Plot #1 - Total visits for all parks vs. year.
    Plot #2 - Visit change rate, year vs. prior year.
    Plot #3 - Estimated total visits for all parks vs. year.
